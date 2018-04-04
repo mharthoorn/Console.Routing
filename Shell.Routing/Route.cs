@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Harthoorn.Shell.Routing
@@ -18,9 +19,11 @@ namespace Harthoorn.Shell.Routing
             Method = method;
         }
 
+
         public override string ToString()
         {
-            return $"{Group.Name.ToLower()} {Method.Name.ToLower()}";
+            string pars = string.Join(" ", this.GetRoutingParameters().Select(p => p.AsString));
+            return $"{Group.Name.ToLower()} {Method.Name.ToLower()} {pars}";
         }
     }
 

@@ -5,7 +5,7 @@ namespace Harthoorn.Shell.Routing
 
     public class Optional : Attribute { }
 
-
+    
     public class Option
     {
         public bool Set;
@@ -15,7 +15,6 @@ namespace Harthoorn.Shell.Routing
             return option.Set;
         }
     }
-
 
     public class OptionValue
     {
@@ -33,5 +32,19 @@ namespace Harthoorn.Shell.Routing
         }
     }
 
+    public class RoutingParameter
+    {
+        public string Name;
+        public Type Type;
+        public bool Optional;
+
+        public string AsString
+        {
+            get
+            {
+                return Optional ? "(<" + Name + ">)" : "<"+Name+">";
+            }
+        }
+    }
 
 }

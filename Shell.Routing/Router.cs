@@ -8,26 +8,39 @@ namespace Harthoorn.Shell.Routing
 
     public class Router
     {
-        List<Route> Routes;
+        List<Route> AllRoutes;
 
-        public Router() : this(Assembly.GetExecutingAssembly())
+        public Router() : this(Assembly.GetCallingAssembly())
         {
         }
 
         public Router(Assembly assembly)
         {
-            this.Routes = GetRoutes(assembly).ToList();
+            this.AllRoutes = GetRoutes(assembly).ToList();
         }
 
         public void Handle(Arguments arguments)
         {
+            bool ok = false;
+
             var routes = GetCommandRoutes(arguments);
-            var count = routes.Count();
-            switch (count)
+            int count = routes.Count();
+            
+            if (count >= 1)
             {
-                case 0: throw new Exception($"Could not find a command matching {arguments}");
-                case 1: BindAndRun(routes, arguments); break;
-                default: throw new Exception($"Command is ambiguous. Did you mean: \n" + string.Join("\n", routes));
+                ok = BindAndRun(routes, arguments);
+                // list all routes + parameters.
+                //throw new Exception($"Command is ambiguous. Did you mean: \n" + string.Join("\n", routes));
+            }
+
+            if (!ok)
+            {
+                Console.WriteLine("Could not find a mathing command for these parameters.");
+                Console.WriteLine("Did you mean:");
+                foreach(var route in routes)
+                {
+                    Console.WriteLine("  "+route);
+                }
             }
         }
 
@@ -48,17 +61,17 @@ namespace Harthoorn.Shell.Routing
         {
             if (arguments.TryGetHead(out string group))
             {
-                var selection = Routes.FindGroup(group).ToList();
+                var selection = AllRoutes.FindGroup(group).ToList();
                 if (selection.Any())
                 {
                     arguments.RemoveHead();
                     if (arguments.TryGetHead(out string method))
                     {
                         var routes = selection.FindMethod(method).ToList();
-                        if (Routes.Any())
-                        {
+                        if (routes.Any())
+                        { 
                             arguments.RemoveHead();
-                            return Routes; 
+                            return routes; 
                         }
                     }
                     else
@@ -68,7 +81,7 @@ namespace Harthoorn.Shell.Routing
                 }
                 else
                 {
-                    var routes = Routes.FindMethod(group).ToList();
+                    var routes = AllRoutes.FindMethod(group).ToList();
                     if (routes != null)
                     {
                         arguments.RemoveHead();
@@ -77,7 +90,7 @@ namespace Harthoorn.Shell.Routing
                 }
             }
 
-            return null;
+            return Enumerable.Empty<Route>(); 
         }
 
         public void Run(MethodInfo method, Arguments arguments)
@@ -95,10 +108,9 @@ namespace Harthoorn.Shell.Routing
         {
             foreach (var route in routes)
             {
-                var method = route.Method;
-                if (method.TryBind(arguments, out var values))
+                if (route.TryBind(arguments, out var values))
                 {
-                    Run(method, values);
+                    Run(route.Method, values);
                     return true;
                 }
             }

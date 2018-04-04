@@ -27,34 +27,49 @@ namespace Harthoorn.Shell.Routing
 
         }
 
-        public static bool TryBind(this MethodInfo method, Arguments arguments, out object[] values)
+        public static IEnumerable<RoutingParameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
-            // group command value value -dev -all -special:souce -route C:\temp
-
-            var parameters = method.GetParameters();
-            values = new object[parameters.Length];
-            int i = 0;
-
             foreach (var parameter in parameters)
             {
-                var name = parameter.Name.ToLower();
-                var type = parameter.ParameterType;
-                bool optional = parameter.GetCustomAttribute<Optional>() != null;
-
-                if (type == typeof(string))
+                yield return new RoutingParameter
                 {
-                    if (arguments.TryTakeHeadValue(out string value) || optional)
+                    Name = parameter.Name.ToLower(),
+                    Type = parameter.ParameterType,
+                    Optional = (parameter.GetCustomAttribute<Optional>() != null)
+                };
+            }
+        }
+
+        public static IEnumerable<RoutingParameter> GetRoutingParameters(this Route route)
+        {
+            var parameters = route.Method.GetParameters();
+            return GetRoutingParameters(parameters);
+        }
+
+
+        public static bool TryBind(this Route route, Arguments arguments, out object[] values)
+        {
+            // group command value value -dev -all -special:souce -route C:\temp
+            var count  = route.Method.GetParameters().Count();
+            values = new object[count];
+            int i = 0;
+
+            foreach (var param in route.GetRoutingParameters())
+            {
+                if (param.Type == typeof(string))
+                {
+                    if (arguments.TryTakeHeadValue(out string value) || param.Optional)
                     {
-                        values[i++] = value;  
+                        values[i++] = value;
                     }
                     else
                     {
                         return false;
                     }
                 }
-                else if (type == typeof(Option))
+                else if (param.Type == typeof(Option))
                 {
-                    if (arguments.HasOption(name))
+                    if (arguments.HasOption(param.Name))
                     {
                         values[i++] = new Option { Set = true };
                     }
@@ -63,11 +78,20 @@ namespace Harthoorn.Shell.Routing
                         values[i++] = new Option { Set = false };
                     }
                 }
-                else if (type == typeof(OptionValue))
+                else if (param.Type == typeof(OptionValue))
                 {
-                    string value = arguments.GetOptionValue(name);
+                    string value = arguments.GetOptionValue(param.Name);
 
                     values[i++] = new OptionValue { Set = !string.IsNullOrEmpty(value), Value = value };
+                }
+                else if (param.Type == typeof(Arguments))
+                {
+                    values[i++] = arguments;
+                }
+                else
+                {
+                    // this method has a signature with wrong types.
+                    return false;
                 }
                 
             }
