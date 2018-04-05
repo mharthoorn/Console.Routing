@@ -16,15 +16,15 @@ namespace Harthoorn.Shell.Routing
 
         public int Count => args.Count;
 
-        public string GetOptionValue(string option)
+        public OptionValue GetOptionValue(string option)
         {
             int idx = args.IndexOf("-" + option);
-            if (idx > 0)
+            if (idx >= 0)
             {
                 idx++;
-                if (idx <= Count - 1) return args[idx];
+                if (idx <= Count - 1) return new OptionValue(args[idx]);
             }
-            return null;
+            return OptionValue.Unset();
         }
 
         public IEnumerable<string> GetAssignments()

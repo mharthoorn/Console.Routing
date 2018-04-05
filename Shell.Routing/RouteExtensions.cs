@@ -69,20 +69,13 @@ namespace Harthoorn.Shell.Routing
                 }
                 else if (param.Type == typeof(Option))
                 {
-                    if (arguments.HasOption(param.Name))
-                    {
-                        values[i++] = new Option { Set = true };
-                    }
-                    else
-                    {
-                        values[i++] = new Option { Set = false };
-                    }
+                    var hasoption = arguments.HasOption(param.Name);
+                    values[i++] = new Option(hasoption);
                 }
                 else if (param.Type == typeof(OptionValue))
                 {
-                    string value = arguments.GetOptionValue(param.Name);
-
-                    values[i++] = new OptionValue { Set = !string.IsNullOrEmpty(value), Value = value };
+                    var option = arguments.GetOptionValue(param.Name);
+                    values[i++] = option;
                 }
                 else if (param.Type == typeof(Arguments))
                 {

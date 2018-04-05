@@ -9,17 +9,41 @@ namespace Harthoorn.Shell.Routing
     public class Option
     {
         public bool Set;
-
+        public Option(bool set)
+        {
+            this.Set = set;
+        }
+        
         public static implicit operator bool(Option option)
         {
             return option.Set;
+        }
+
+        public override string ToString()
+        {
+            return Set ? "Set" : "Not set";
         }
     }
 
     public class OptionValue
     {
         public bool Set;
+        public bool Provided;
         public string Value;
+
+
+        public OptionValue(string value, bool provided = true)
+        {
+            this.Provided = provided;
+            this.Set = provided && !string.IsNullOrEmpty(value);
+            this.Value = value;
+        }
+        
+
+        public static OptionValue Unset()
+        {
+            return new OptionValue(null, false);
+        }
 
         public static implicit operator bool(OptionValue option)
         {
@@ -29,6 +53,11 @@ namespace Harthoorn.Shell.Routing
         public static implicit operator string(OptionValue option)
         {
             return option.Value;
+        }
+
+        public override string ToString()
+        {
+            return Value;
         }
     }
 
@@ -44,6 +73,12 @@ namespace Harthoorn.Shell.Routing
             {
                 return Optional ? "(<" + Name + ">)" : "<"+Name+">";
             }
+        }
+
+        public override string ToString()
+        {
+            string optional = Optional ? "optional " : "";
+            return $"{optional}<{Name}> ({Type.Name}) ";
         }
     }
 
