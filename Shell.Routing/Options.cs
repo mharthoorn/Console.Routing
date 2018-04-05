@@ -71,7 +71,24 @@ namespace Harthoorn.Shell.Routing
         {
             get
             {
-                return Optional ? "(<" + Name + ">)" : "<"+Name+">";
+                if (Type == typeof(string))
+                {
+                    return Optional ? "(<" + Name + ">)" : "<" + Name + ">";
+                }
+                else if (Type == typeof(Option))
+                {
+                    return "-" + Name;
+                }
+                else if (Type == typeof(OptionValue))
+                {
+                    return "-" + Name + " <value>";
+                }
+                else if (Type == typeof(Arguments))
+                {
+                    return "(" + Name + "...)";
+                }
+                else return "---" + Name + "---"; // shouldn't get here.
+                
             }
         }
 

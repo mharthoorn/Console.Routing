@@ -9,7 +9,7 @@ namespace Harthoorn.Shell.Routing
         public static IEnumerable<Route> FindGroup(this IEnumerable<Route> routes, string group)
         {
             string g = group.ToLower();
-            return routes.Where(r => string.Compare(r.Group.Name, g, ignoreCase: true) == 0);
+            return routes.Where(r => string.Compare(r.Section.Name, g, ignoreCase: true) == 0);
         }
 
         public static IEnumerable<Route> FindMethod(this IEnumerable<Route> routes, string methodName)
@@ -44,6 +44,14 @@ namespace Harthoorn.Shell.Routing
         {
             var parameters = route.Method.GetParameters();
             return GetRoutingParameters(parameters);
+        }
+
+        public static string ParametersDescription(this Route route)
+        {
+            var paraminfo = route.Method.GetParameters();
+            var parameters = GetRoutingParameters(paraminfo);
+            return string.Join(" ", parameters.Select(p => p.AsString));
+            
         }
 
 

@@ -8,7 +8,7 @@ namespace Harthoorn.Shell.Routing
 
     public class Router
     {
-        List<Route> AllRoutes;
+        public List<Route> Routes { get; }
 
         public Router() : this(Assembly.GetCallingAssembly())
         {
@@ -16,7 +16,7 @@ namespace Harthoorn.Shell.Routing
 
         public Router(Assembly assembly)
         {
-            this.AllRoutes = GetRoutes(assembly).ToList();
+            this.Routes = GetRoutes(assembly).ToList();
         }
 
         public void Handle(Arguments arguments)
@@ -61,7 +61,7 @@ namespace Harthoorn.Shell.Routing
         {
             if (arguments.TryGetHead(out string group))
             {
-                var selection = AllRoutes.FindGroup(group).ToList();
+                var selection = Routes.FindGroup(group).ToList();
                 if (selection.Any())
                 {
                     arguments.RemoveHead();
@@ -81,7 +81,7 @@ namespace Harthoorn.Shell.Routing
                 }
                 else
                 {
-                    var routes = AllRoutes.FindMethod(group).ToList();
+                    var routes = Routes.FindMethod(group).ToList();
                     if (routes != null)
                     {
                         arguments.RemoveHead();
@@ -130,5 +130,6 @@ namespace Harthoorn.Shell.Routing
             BindAndRun(routes, arguments);
         }
     }
+   
 
 }

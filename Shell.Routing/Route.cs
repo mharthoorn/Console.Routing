@@ -6,14 +6,14 @@ namespace Harthoorn.Shell.Routing
 {
     public class Route
     {
-        public Section Group { get; }
+        public Section Section { get; }
         public Command Command { get; }
         public Type Type { get; }
         public MethodInfo Method { get; }
 
-        public Route(Section group, Command command, Type type, MethodInfo method)
+        public Route(Section section, Command command, Type type, MethodInfo method)
         {
-            Group = group;
+            Section = section;
             Command = command;
             Type = type;
             Method = method;
@@ -22,8 +22,8 @@ namespace Harthoorn.Shell.Routing
 
         public override string ToString()
         {
-            string pars = string.Join(" ", this.GetRoutingParameters().Select(p => p.AsString));
-            return $"{Group.Name.ToLower()} {Method.Name.ToLower()} {pars}";
+            var pars = this.ParametersDescription();
+            return $"{Section.Name.ToLower()} {Method.Name.ToLower()} {pars}";
         }
     }
 
