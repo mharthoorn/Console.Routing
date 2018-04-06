@@ -19,28 +19,42 @@ namespace Harthoorn.Shell.Routing
             this.Routes = GetRoutes(assembly).ToList();
         }
 
+        public IEnumerable<Bind> GetBoundRoutes(Arguments arguments)
+        {
+            var routes = GetCommandRoutes(arguments);
+            var binds = BindRoutes(routes, arguments);
+            return binds;
+        }
+
         public void Handle(Arguments arguments)
         {
             bool ok = false;
-
-            var routes = GetCommandRoutes(arguments);
-            int count = routes.Count();
+            var binds = GetBoundRoutes(arguments).ToList();
+            int count = binds.Count();
             
-            if (count >= 1)
+            if (count == 1)
             {
-                ok = BindAndRun(routes, arguments);
-                // list all routes + parameters.
-                //throw new Exception($"Command is ambiguous. Did you mean: \n" + string.Join("\n", routes));
+                Run(binds.First());
             }
+            else
+            {
+                //onfail(binds);
+            }
+        }
 
-            if (!ok)
+        public void DefaultOnFail(List<Bind> binds)
+        {
+            // no matching parameters (0), see if we can list the other routes.
+            // multiple matching parameters... throw, because it's the programmers fault?
+
+            if (binds.Count == 0)
             {
                 Console.WriteLine("Could not find a mathing command for these parameters.");
                 Console.WriteLine("Did you mean:");
-                foreach(var route in routes)
-                {
-                    Console.WriteLine("  "+route);
-                }
+                //foreach (var route in routes)
+                //{
+                //    Console.WriteLine("  " + route);
+                //}
             }
         }
 
@@ -104,8 +118,34 @@ namespace Harthoorn.Shell.Routing
             Run(route.Method, arguments);
         }
 
+        public IEnumerable<Bind> BindRoutes(IEnumerable<Route> routes, Arguments arguments)
+        {
+            foreach (var route in routes)
+            {
+                if (route.TryBind(arguments, out var values))
+                {
+                    yield return new Bind(route, values);
+                }
+            }
+        }
+
         private bool BindAndRun(IEnumerable<Route> routes, Arguments arguments)
         {
+            var binds = BindRoutes(routes, arguments).ToList();
+            if (binds.Count == 0)
+            {
+                
+            }
+            if (binds.Count == 1)
+            {
+                Run(binds.First());
+            }
+
+            if (binds.Count > 2)
+            {
+
+            }
+
             foreach (var route in routes)
             {
                 if (route.TryBind(arguments, out var values))
@@ -122,6 +162,11 @@ namespace Harthoorn.Shell.Routing
             
             var instance = Activator.CreateInstance(method.DeclaringType);
             method.Invoke(instance, arguments);
+        }
+
+        public void Run(Bind bind)
+        {
+            Run(bind.Route.Method, bind.Arguments);
         }
 
         public void Test(Arguments arguments)
