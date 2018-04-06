@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Harthoorn.Shell.Routing 
 {
+    
     public class Arguments 
     {
         List<string> args;
@@ -24,7 +25,48 @@ namespace Harthoorn.Shell.Routing
                 idx++;
                 if (idx <= Count - 1) return new OptionValue(args[idx]);
             }
-            return OptionValue.Unset();
+            return OptionValue.Unset;
+        }
+
+        public bool TryGetOptionValue(string name, out OptionValue option)
+        {
+            var i = args.IndexOf("-" + name);
+            if (i >= 0)
+            {
+                if (i + 1 <= args.Count)
+                {
+                    option = new OptionValue(args[i+1]);
+                    return true;
+                }
+                else
+                {
+                    option = new OptionValue(null, provided: false);
+                    return false;
+                }
+            }
+            else
+            {
+                option = OptionValue.Unset;
+                return false;
+            }
+                
+        }
+
+        public OptionValue TakeOptionValue(string option)
+        {
+            int idx = args.IndexOf("-" + option);
+            if (idx >= 0)
+            {
+                args.RemoveAt(idx);
+                if (idx <= Count - 1)
+                {
+                    var value = args[idx];
+                    args.RemoveAt(idx);
+
+                    return new OptionValue(value);
+                }
+            }
+            return OptionValue.Unset;
         }
 
         public IEnumerable<string> GetAssignments()
@@ -38,6 +80,13 @@ namespace Harthoorn.Shell.Routing
         public bool HasOption(string option)
         {
             int idx = args.IndexOf("-" + option);
+            return (idx >= 0);
+        }
+
+        public bool TakeOption(string option)
+        {
+            int idx = args.IndexOf("-" + option);
+            if (idx > 0) args.RemoveAt(idx);
             return (idx >= 0);
         }
 

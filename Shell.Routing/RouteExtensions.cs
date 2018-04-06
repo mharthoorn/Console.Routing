@@ -61,14 +61,20 @@ namespace Harthoorn.Shell.Routing
             var count  = route.Method.GetParameters().Count();
             values = new object[count];
             int i = 0;
+            int used = 0; // arguments used;
 
             foreach (var param in route.GetRoutingParameters())
             {
                 if (param.Type == typeof(string))
                 {
-                    if (arguments.TryTakeHeadValue(out string value) || param.Optional)
+                    if (arguments.TryGetValue(i, out string value))
                     {
                         values[i++] = value;
+                        used++;
+                    }
+                    else if (param.Optional)
+                    {
+                        values[i++] = null;
                     }
                     else
                     {
@@ -79,24 +85,37 @@ namespace Harthoorn.Shell.Routing
                 {
                     var hasoption = arguments.HasOption(param.Name);
                     values[i++] = new Option(hasoption);
+                    if (hasoption) used++;
                 }
                 else if (param.Type == typeof(OptionValue))
                 {
-                    var option = arguments.GetOptionValue(param.Name);
-                    values[i++] = option;
+                    if (arguments.TryGetOptionValue(param.Name, out OptionValue option))
+                    {
+                        if (!option.Provided) return false;
+                        // invalid option
+
+                        values[i++] = option;
+                        used += 2;
+                    }
+                    else
+                    {
+                        values[i++] = OptionValue.Unset;
+                    }
+                    
                 }
                 else if (param.Type == typeof(Arguments))
                 {
                     values[i++] = arguments;
+                    return true;
                 }
                 else
                 {
                     // this method has a signature with wrong types.
                     return false;
                 }
-                
             }
-            return true;
+            return (arguments.Count == used);
+            
         }
 
     }

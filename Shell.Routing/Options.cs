@@ -5,9 +5,9 @@ namespace Harthoorn.Shell.Routing
 
     public class Optional : Attribute { }
 
-    
-    public class Option
+    public class Option 
     {
+        public string Name;
         public bool Set;
         public Option(bool set)
         {
@@ -25,25 +25,21 @@ namespace Harthoorn.Shell.Routing
         }
     }
 
-    public class OptionValue
+    public class OptionValue 
     {
+        public string Name;
         public bool Set;
         public bool Provided;
-        public string Value;
-
+        string value;
 
         public OptionValue(string value, bool provided = true)
         {
             this.Provided = provided;
             this.Set = provided && !string.IsNullOrEmpty(value);
-            this.Value = value;
+            this.value = value;
         }
-        
 
-        public static OptionValue Unset()
-        {
-            return new OptionValue(null, false);
-        }
+        public static OptionValue Unset => new OptionValue(null, false);
 
         public static implicit operator bool(OptionValue option)
         {
@@ -52,12 +48,12 @@ namespace Harthoorn.Shell.Routing
 
         public static implicit operator string(OptionValue option)
         {
-            return option.Value;
+            return option.value;
         }
 
         public override string ToString()
         {
-            return Value;
+            return value;
         }
     }
 

@@ -5,41 +5,85 @@ using System.Reflection;
 
 namespace Harthoorn.Shell.Routing
 {
+    public enum RoutingStatus
+    {
+        Ok,
+        NoCommands,
+        NoMatchingParameters,
+        AmbigousParameters,
+    }
+
+    public class RoutingResult
+    {
+        public RoutingStatus Status;
+        public List<Route> CommandRoutes;
+        public List<Bind> Binds;
+    }
+
+    //public class RouterException : Exception
+    //{
+    //}
+
+    //public class NoMatchingCommandsException : RouterException
+    //{
+
+    //}
+
+    //public class AmbiguousParametersException : RouterException
+    //{
+
+    //}
+
+    //public class NoMatchingParametersException : RouterException
+    //{
+    //    public List<Bind> Binds;
+    //}
 
     public class Router
     {
         public List<Route> Routes { get; }
-
-        public Router() : this(Assembly.GetCallingAssembly())
-        {
-        }
 
         public Router(Assembly assembly)
         {
             this.Routes = GetRoutes(assembly).ToList();
         }
 
-        public IEnumerable<Bind> GetBoundRoutes(Arguments arguments)
+        public RoutingResult Route(Arguments arguments)
         {
-            var routes = GetCommandRoutes(arguments);
-            var binds = BindRoutes(routes, arguments);
-            return binds;
-        }
+            var result = new RoutingResult();
+            result.CommandRoutes = GetCommandRoutes(arguments).ToList();
 
-        public void Handle(Arguments arguments)
-        {
-            bool ok = false;
-            var binds = GetBoundRoutes(arguments).ToList();
-            int count = binds.Count();
-            
-            if (count == 1)
+            if (result.CommandRoutes.Count == 0)
             {
-                Run(binds.First());
+                result.Status = RoutingStatus.NoCommands;
+                return result;
+            }
+
+            result.Binds = Bind(result.CommandRoutes, arguments).ToList();
+
+            if (result.Binds.Count == 0)
+            {
+                result.Status = RoutingStatus.NoMatchingParameters;
+            }
+            else if (result.Binds.Count == 1)
+            {
+                result.Status = RoutingStatus.Ok;
             }
             else
             {
-                //onfail(binds);
+                result.Status = RoutingStatus.AmbigousParameters;
             }
+            return result;
+        }
+
+        public RoutingResult Handle(Arguments arguments)
+        {
+            RoutingResult result = Route(arguments);
+            if (result.Status == RoutingStatus.Ok)
+            {
+                Run(result.Binds.First());
+            }
+            return result;
         }
 
         public void DefaultOnFail(List<Bind> binds)
@@ -83,9 +127,9 @@ namespace Harthoorn.Shell.Routing
                     {
                         var routes = selection.FindMethod(method).ToList();
                         if (routes.Any())
-                        { 
+                        {
                             arguments.RemoveHead();
-                            return routes; 
+                            return routes;
                         }
                     }
                     else
@@ -104,7 +148,7 @@ namespace Harthoorn.Shell.Routing
                 }
             }
 
-            return Enumerable.Empty<Route>(); 
+            return Enumerable.Empty<Route>();
         }
 
         public void Run(MethodInfo method, Arguments arguments)
@@ -118,7 +162,7 @@ namespace Harthoorn.Shell.Routing
             Run(route.Method, arguments);
         }
 
-        public IEnumerable<Bind> BindRoutes(IEnumerable<Route> routes, Arguments arguments)
+        public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
             foreach (var route in routes)
             {
@@ -131,10 +175,10 @@ namespace Harthoorn.Shell.Routing
 
         private bool BindAndRun(IEnumerable<Route> routes, Arguments arguments)
         {
-            var binds = BindRoutes(routes, arguments).ToList();
+            var binds = Bind(routes, arguments).ToList();
             if (binds.Count == 0)
             {
-                
+
             }
             if (binds.Count == 1)
             {
@@ -155,11 +199,11 @@ namespace Harthoorn.Shell.Routing
                 }
             }
             return false;
-        } 
+        }
 
         public void Run(MethodInfo method, object[] arguments)
         {
-            
+
             var instance = Activator.CreateInstance(method.DeclaringType);
             method.Invoke(instance, arguments);
         }
@@ -175,6 +219,6 @@ namespace Harthoorn.Shell.Routing
             BindAndRun(routes, arguments);
         }
     }
-   
+
 
 }
