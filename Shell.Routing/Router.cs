@@ -15,6 +15,8 @@ namespace Harthoorn.Shell.Routing
 
     public class RoutingResult
     {
+        public bool Ok => Status == RoutingStatus.Ok;
+        public Bind Match => Binds.FirstOrDefault(); // todo: condition on ok.
         public RoutingStatus Status;
         public List<Route> CommandRoutes;
         public List<Bind> Binds;
@@ -79,10 +81,8 @@ namespace Harthoorn.Shell.Routing
         public RoutingResult Handle(Arguments arguments)
         {
             RoutingResult result = Route(arguments);
-            if (result.Status == RoutingStatus.Ok)
-            {
-                Run(result.Binds.First());
-            }
+            if (result.Ok) Run(result.Match);
+            
             return result;
         }
 
@@ -125,11 +125,19 @@ namespace Harthoorn.Shell.Routing
                     arguments.RemoveHead();
                     if (arguments.TryGetHead(out string method))
                     {
-                        var routes = selection.FindMethod(method).ToList();
+                        var routes = selection.FindMethod(method);
                         if (routes.Any())
                         {
                             arguments.RemoveHead();
                             return routes;
+                        }
+                        else
+                        {
+                            routes = selection.FindMethod(group);
+                            if (routes.Any())
+                            {
+                                return routes;
+                            }
                         }
                     }
                     else
