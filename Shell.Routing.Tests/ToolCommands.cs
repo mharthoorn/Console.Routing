@@ -16,9 +16,14 @@ namespace Shell.Routing.Tests
         }
 
         [Command]
-        public int Single(string name)
+        public void Action(string name)
+        { 
+        }
+
+        [Command] 
+        public void Action(string name, string alias, Option foo, OptionValue bar)
         {
-            return name.GetHashCode();
+            
         }
     }
 }
