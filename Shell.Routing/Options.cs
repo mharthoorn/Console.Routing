@@ -30,13 +30,13 @@ namespace Shell.Routing
         public string Name;
         public bool Set;
         public bool Provided;
-        string value;
+        public string Value;
 
         public OptionValue(string value, bool provided = true)
         {
             this.Provided = provided;
             this.Set = provided && !string.IsNullOrEmpty(value);
-            this.value = value;
+            this.Value = value;
         }
 
         public static OptionValue Unset => new OptionValue(null, false);
@@ -48,12 +48,12 @@ namespace Shell.Routing
 
         public static implicit operator string(OptionValue option)
         {
-            return option.value;
+            return option.Value;
         }
 
         public override string ToString()
         {
-            return value;
+            return Value;
         }
     }
 
