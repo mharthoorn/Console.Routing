@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.2.0</Version>
+    <Title>Shell Routing</Title>
+    <Description>Framework for routing command line parameters</Description>
+    <Authors>M. Harthoorn</Authors>
+    <RepositoryUrl>https://github.com/mharthoorn/Shell.Routing</RepositoryUrl>
+    
   </PropertyGroup>
 
 </Project>
