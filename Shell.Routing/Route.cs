@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Harthoorn.Shell.Routing
+namespace Shell.Routing
 {
     public class Route
     {

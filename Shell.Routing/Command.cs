@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Harthoorn.Shell.Routing
+namespace Shell.Routing
 {
 
     public class Command : Attribute

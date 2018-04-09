@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Harthoorn.Shell.Routing 
+namespace Shell.Routing 
 {
     
     public class Arguments 
