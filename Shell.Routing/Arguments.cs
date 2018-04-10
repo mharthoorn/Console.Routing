@@ -8,9 +8,10 @@ namespace Shell.Routing
     {
         List<string> args;
 
-        public Arguments(string[] parameters)
+        public Arguments(string[] parameters, params string[] defaults)
         {
-            this.args = parameters.ToList();
+            this.args = (parameters.Length > 0) ? parameters.ToList(): defaults.ToList();
+
         }
         
         public IEnumerable<string> GetAll() => args;

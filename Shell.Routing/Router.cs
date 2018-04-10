@@ -211,9 +211,15 @@ namespace Shell.Routing
 
         public void Run(MethodInfo method, object[] arguments)
         {
-
-            var instance = Activator.CreateInstance(method.DeclaringType);
-            method.Invoke(instance, arguments);
+            try
+            {
+                var instance = Activator.CreateInstance(method.DeclaringType);
+                method.Invoke(instance, arguments);
+            }
+            catch (Exception e)
+            {
+                if (e is TargetInvocationException) throw e.InnerException;
+            }
         }
 
         public void Run(Bind bind)
