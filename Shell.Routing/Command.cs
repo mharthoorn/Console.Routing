@@ -7,21 +7,14 @@ namespace Shell.Routing
     {
         public string Description { get; }
 
-        public Command(string description = null)
-        {
-            this.Description = description;
-            
-        }
+        public Command(string description = null) => this.Description = description;
     }
 
-    public class Section: Attribute
+    public class Module: Attribute
     {
         public string Name { get; }
 
-        public Section(string name)
-        { 
-            this.Name = name;
-        }
+        public Module(string name) => this.Name = name;
     }
 
 

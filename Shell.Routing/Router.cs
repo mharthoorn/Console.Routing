@@ -104,7 +104,7 @@ namespace Shell.Routing
 
         private static IEnumerable<Route> GetRoutes(Assembly assembly)
         {
-            var groups = assembly.GetAttributeTypes<Section>().ToList();
+            var groups = assembly.GetAttributeTypes<Module>().ToList();
 
             foreach (var (type, group) in groups)
             {

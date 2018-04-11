@@ -6,12 +6,12 @@ namespace Shell.Routing
 {
     public class Route
     {
-        public Section Section { get; }
+        public Module Section { get; }
         public Command Command { get; }
         public Type Type { get; }
         public MethodInfo Method { get; }
 
-        public Route(Section section, Command command, Type type, MethodInfo method)
+        public Route(Module section, Command command, Type type, MethodInfo method)
         {
             Section = section;
             Command = command;

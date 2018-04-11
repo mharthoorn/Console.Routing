@@ -6,7 +6,7 @@ using System.Text;
 namespace Shell.Routing.Tests
 {
 
-    [Section("Tool")]
+    [Module("Tool")]
     public class ToolCommands
     {
         [Command]
