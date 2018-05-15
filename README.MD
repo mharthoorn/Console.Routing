@@ -4,7 +4,7 @@ It supports method overloading and optional parameters.
 By default it binds any method with a [Command] attribute in a class with [Module] attribute.
 This allows automatic documenting.
 
-```
+```csharp
  class Program
  {
     static void Main(params string[] args)
@@ -16,8 +16,8 @@ This allows automatic documenting.
 
  ...
 
-[Section]
-public class Tool
+[Module("tool")]
+public class ToolCommands
 {
     // Allows the following usage on the command line:
     // > tool name -upper
