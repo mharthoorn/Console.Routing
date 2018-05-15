@@ -67,6 +67,24 @@ namespace Shell.Routing.Tests
             Assert.AreEqual("fubar", ((OptionValue)bind.Arguments[3])); // -bar fubar
         }
 
+        [TestMethod]
+        public void TestAliases()
+        {
+            // ToolCommands.Single(string name) // 1 matching bind
+
+            var arguments = Utils.ParseArguments("-t");
+
+            var routes = router.GetCommandRoutes(arguments);
+            Assert.AreEqual(routes.Count(), 1);
+
+            var binds = router.Bind(routes, arguments).ToList();
+            Assert.AreEqual(binds.Count, 1);
+
+            var bind = binds.First();
+            Assert.AreEqual(bind.Route.Method.Name, "Tool");
+        
+        }
+
 
     }
 }

@@ -22,25 +22,6 @@ namespace Shell.Routing
         public List<Bind> Binds;
     }
 
-    //public class RouterException : Exception
-    //{
-    //}
-
-    //public class NoMatchingCommandsException : RouterException
-    //{
-
-    //}
-
-    //public class AmbiguousParametersException : RouterException
-    //{
-
-    //}
-
-    //public class NoMatchingParametersException : RouterException
-    //{
-    //    public List<Bind> Binds;
-    //}
-
     public class Router
     {
         public List<Route> Routes { get; }

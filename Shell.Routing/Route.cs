@@ -19,25 +19,11 @@ namespace Shell.Routing
             Method = method;
         }
 
-
         public override string ToString()
         {
             var pars = this.ParametersDescription();
             return $"{Section.Name.ToLower()} {Method.Name.ToLower()} {pars}";
         }
-    }
-
-    public class Bind
-    {
-        public Route Route;
-        public object[] Arguments;
-
-        public Bind(Route route, object[] arguments)
-        {
-            this.Route = route;
-            this.Arguments = arguments;
-        }
-
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -17,16 +18,29 @@ namespace Shell.Routing
             var m = methodName.ToLower();
             if (Arguments.IsOption(m, out string abbrev))
             {
-
-                return routes.Where(r => r.Method.Name.ToLower().StartsWith(abbrev));
+                return routes.Where(r => MatchAbbrev(r, abbrev));
             }
             else
             {
-                return routes.Where(r => string.Compare(r.Method.Name, m, ignoreCase: true) == 0);
+                return routes.Where(r => MatchName(r, m));
             }
 
         }
 
+        public static bool MatchName(Route route, string name)
+        {
+            return 
+                string.Compare(route.Method.Name, name, ignoreCase: true) == 0 
+                || route.Command.Aliases.Contains(name);
+        }
+
+        public static bool MatchAbbrev(Route route, string abbrev)
+        {
+            return 
+                route.Method.Name.StartsWith(abbrev, StringComparison.OrdinalIgnoreCase) 
+                || route.Command.Aliases.Contains(abbrev);
+        }
+       
         public static IEnumerable<RoutingParameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
             foreach (var parameter in parameters)
@@ -53,7 +67,6 @@ namespace Shell.Routing
             return string.Join(" ", parameters.Select(p => p.AsString));
             
         }
-
 
         public static bool TryBind(this Route route, Arguments arguments, out object[] values)
         {

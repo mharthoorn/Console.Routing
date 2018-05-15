@@ -6,8 +6,12 @@ namespace Shell.Routing
     public class Command : Attribute
     {
         public string Description { get; }
-
-        public Command(string description = null) => this.Description = description;
+        public string[] Aliases { get; }
+        public Command(string description = null, params string[] aliases)
+        {
+            this.Description = description;
+            this.Aliases = aliases;
+        }
     }
 
     public class Module: Attribute

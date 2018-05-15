@@ -9,7 +9,7 @@ namespace Shell.Routing.Tests
     [Module("Tool")]
     public class ToolCommands
     {
-        [Command]
+        [Command(aliases: "-t")]
         public void Tool()
         {
 
