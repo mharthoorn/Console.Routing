@@ -1,6 +1,7 @@
 # Shell.Routing
 Shell.Routing is a routing framework for command line parameters. It can be enabled with minimal overhead.
-It supports method overloading and optional parameters. By default it binds any method with a [Command] attribute in a class with [Section] attribute.
+It supports method overloading and optional parameters. 
+By default it binds any method with a [Command] attribute in a class with [Module] attribute.
 This allows automatic documenting.
 
 ```
