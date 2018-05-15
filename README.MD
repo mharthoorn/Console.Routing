@@ -9,8 +9,9 @@ This allows automatic documenting.
  {
     static void Main(params string[] args)
     {
+		var router = new Router(Assembly.GetExecutingAssembly());
         var arguments = new Arguments(args);
-        var result = Router.Handle(arguments);
+        var result = router.Handle(arguments);
     }  
  }
 
