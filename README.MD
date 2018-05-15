@@ -3,6 +3,7 @@ Shell.Routing is a routing framework for command line parameters. It can be enab
 It supports method overloading and optional parameters. By default it binds any method with a [Command] attribute in a class with [Section] attribute.
 This allows automatic documenting.
 
+```
  class Program
  {
     static void Main(params string[] args)
@@ -12,6 +13,7 @@ This allows automatic documenting.
     }  
  }
 
+ ...
 
 [Section]
 public class Tool
@@ -25,4 +27,4 @@ public class Tool
         Console.Writeline(name);
     }
 }
-
+```
