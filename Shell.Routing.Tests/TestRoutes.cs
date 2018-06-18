@@ -82,7 +82,20 @@ namespace Shell.Routing.Tests
 
             var bind = binds.First();
             Assert.AreEqual(bind.Route.Method.Name, "Tool");
-        
+        }
+
+        [TestMethod]
+        public void TestOptionValue()
+        {
+            var args1 = Utils.ParseArguments("-a -b -test true");
+            args1.TryGetOptionValue("test", out var option1);
+            Assert.AreEqual(option1.Value, "true");
+
+            var args2 = Utils.ParseArguments("-a -b -test:true");
+            args2.TryGetOptionValue("test", out var option2);
+            Assert.AreEqual(option2.Value, "true");
+
+
         }
 
 

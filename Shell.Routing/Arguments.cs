@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Shell.Routing 
@@ -31,6 +32,7 @@ namespace Shell.Routing
 
         public bool TryGetOptionValue(string name, out OptionValue option)
         {
+            // format: -option (space) value
             var i = args.IndexOf("-" + name);
             if (i >= 0)
             {
@@ -45,11 +47,23 @@ namespace Shell.Routing
                     return false;
                 }
             }
-            else
+            else // format: -option:value
             {
-                option = OptionValue.Unset;
-                return false;
+                var parameter = "-" + name + ":";
+                foreach (var arg in args)
+                {
+                    if (arg.StartsWith(parameter, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        var l = parameter.Length;
+                        string value = arg.Substring(l);
+                        option = new OptionValue(value);
+                        return true;
+                    }
+                }
             }
+
+            option = OptionValue.Unset;
+            return false;
                 
         }
 
