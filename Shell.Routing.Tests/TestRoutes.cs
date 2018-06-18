@@ -87,15 +87,13 @@ namespace Shell.Routing.Tests
         [TestMethod]
         public void TestOptionValue()
         {
-            var args1 = Utils.ParseArguments("-a -b -test true");
+            var args1 = Utils.ParseArguments("-a -b -test abc");
             args1.TryGetOptionValue("test", out var option1);
-            Assert.AreEqual(option1.Value, "true");
+            Assert.AreEqual(option1.Value, "abc");
 
-            var args2 = Utils.ParseArguments("-a -b -test:true");
+            var args2 = Utils.ParseArguments("-a -b -test:efg");
             args2.TryGetOptionValue("test", out var option2);
-            Assert.AreEqual(option2.Value, "true");
-
-
+            Assert.AreEqual(option2.Value, "efg");
         }
 
 

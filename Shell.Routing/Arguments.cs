@@ -31,34 +31,54 @@ namespace Shell.Routing
             }
         }
 
-        public bool TryGetOptionValue(string name, out OptionValue option)
+        public static bool TryParseOptionValue(string arg, string name, out string value)
         {
-            // format: -option (space) value
-            var i = args.IndexOf("-" + name);
-            if (i >= 0)
+            if (arg.StartsWith("-") || arg.StartsWith("/"))
             {
-                if (i + 1 <= args.Count)
+                arg = arg.Substring(1);
+
+                if (arg.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    option = new OptionValue(args[i+1], 2);
+                    arg = arg.Substring(name.Length);
+                    if (arg.StartsWith(":"))
+                    {
+                        value = arg.Substring(1);
+                    }
+                    else
+                    {
+                        value = null;
+                    }
                     return true;
                 }
-                else
-                {
-                    option = new OptionValue(null, 1, provided: false);
-                    return false;
-                }
             }
-            else // format: -option:value
+
+            value = null;
+            return false;
+        }
+
+        public bool TryGetOptionValue(string name, out OptionValue option)
+        {
+            for(int i = 0; i < args.Count; i++)
             {
-                var parameter = "-" + name + ":";
-                foreach (var arg in args)
+                if (TryParseOptionValue(args[i], name, out string value))
                 {
-                    if (arg.StartsWith(parameter, StringComparison.InvariantCultureIgnoreCase))
+                    if (value != null)
                     {
-                        var l = parameter.Length;
-                        string value = arg.Substring(l);
                         option = new OptionValue(value, 1);
                         return true;
+                    }
+                    else
+                    {
+                        if (i + 1 <= args.Count)
+                        {
+                            option = new OptionValue(args[i + 1], 2);
+                            return true;
+                        }
+                        else
+                        {
+                            option = new OptionValue(null, 1, provided: false);
+                            return false;
+                        }
                     }
                 }
             }
