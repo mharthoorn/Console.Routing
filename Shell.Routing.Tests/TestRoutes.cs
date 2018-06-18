@@ -94,6 +94,11 @@ namespace Shell.Routing.Tests
             var args2 = Utils.ParseArguments("-a -b -test:efg");
             args2.TryGetOptionValue("test", out var option2);
             Assert.AreEqual(option2.Value, "efg");
+
+
+            var args3 = Utils.ParseArguments("-a -b -test: hij");
+            args3.TryGetOptionValue("test", out var option3);
+            Assert.AreEqual(option3.Value, "hij");
         }
 
 

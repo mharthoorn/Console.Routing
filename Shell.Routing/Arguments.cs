@@ -60,9 +60,10 @@ namespace Shell.Routing
         {
             for(int i = 0; i < args.Count; i++)
             {
-                if (TryParseOptionValue(args[i], name, out string value))
+                string arg = args[i];
+                if (TryParseOptionValue(arg, name, out string value))
                 {
-                    if (value != null)
+                    if (string.IsNullOrEmpty(value))
                     {
                         option = new OptionValue(value, 1);
                         return true;
