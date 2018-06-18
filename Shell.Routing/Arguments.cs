@@ -19,15 +19,16 @@ namespace Shell.Routing
 
         public int Count => args.Count;
 
-        public OptionValue GetOptionValue(string option)
+        public OptionValue GetOptionValue(string name)
         {
-            int idx = args.IndexOf("-" + option);
-            if (idx >= 0)
+            if (TryGetOptionValue(name, out var option))
             {
-                idx++;
-                if (idx <= Count - 1) return new OptionValue(args[idx]);
+                return option;
             }
-            return OptionValue.Unset;
+            else
+            {
+                return OptionValue.Unset;
+            }
         }
 
         public bool TryGetOptionValue(string name, out OptionValue option)
@@ -38,12 +39,12 @@ namespace Shell.Routing
             {
                 if (i + 1 <= args.Count)
                 {
-                    option = new OptionValue(args[i+1]);
+                    option = new OptionValue(args[i+1], 2);
                     return true;
                 }
                 else
                 {
-                    option = new OptionValue(null, provided: false);
+                    option = new OptionValue(null, 1, provided: false);
                     return false;
                 }
             }
@@ -56,7 +57,7 @@ namespace Shell.Routing
                     {
                         var l = parameter.Length;
                         string value = arg.Substring(l);
-                        option = new OptionValue(value);
+                        option = new OptionValue(value, 1);
                         return true;
                     }
                 }
@@ -67,22 +68,22 @@ namespace Shell.Routing
                 
         }
 
-        public OptionValue TakeOptionValue(string option)
-        {
-            int idx = args.IndexOf("-" + option);
-            if (idx >= 0)
-            {
-                args.RemoveAt(idx);
-                if (idx <= Count - 1)
-                {
-                    var value = args[idx];
-                    args.RemoveAt(idx);
+        //public OptionValue TakeOptionValue(string option)
+        //{
+        //    int idx = args.IndexOf("-" + option);
+        //    if (idx >= 0)
+        //    {
+        //        args.RemoveAt(idx);
+        //        if (idx <= Count - 1)
+        //        {
+        //            var value = args[idx];
+        //            args.RemoveAt(idx);
 
-                    return new OptionValue(value);
-                }
-            }
-            return OptionValue.Unset;
-        }
+        //            return new OptionValue(value);
+        //        }
+        //    }
+        //    return OptionValue.Unset;
+        //}
 
         public IEnumerable<string> GetAssignments()
         {

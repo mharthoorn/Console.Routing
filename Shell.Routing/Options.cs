@@ -31,15 +31,17 @@ namespace Shell.Routing
         public bool Set;
         public bool Provided;
         public string Value;
+        public int Count;
 
-        public OptionValue(string value, bool provided = true)
+        public OptionValue(string value, int count, bool provided = true)
         {
             this.Provided = provided;
             this.Set = provided && !string.IsNullOrEmpty(value);
             this.Value = value;
+            this.Count = count;
         }
 
-        public static OptionValue Unset => new OptionValue(null, false);
+        public static OptionValue Unset => new OptionValue(null, 0, false);
 
         public static implicit operator bool(OptionValue option)
         {

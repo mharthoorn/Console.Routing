@@ -108,7 +108,7 @@ namespace Shell.Routing
                         // invalid option
 
                         values[i++] = option;
-                        used += 2;
+                        used += option.Count;
                     }
                     else
                     {
