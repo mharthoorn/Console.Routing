@@ -63,7 +63,7 @@ namespace Shell.Routing
                 string arg = args[i];
                 if (TryParseOptionValue(arg, name, out string value))
                 {
-                    if (string.IsNullOrEmpty(value))
+                    if (!string.IsNullOrEmpty(value))
                     {
                         option = new OptionValue(value, 1);
                         return true;

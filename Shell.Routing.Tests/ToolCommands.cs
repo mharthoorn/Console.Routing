@@ -25,5 +25,13 @@ namespace Shell.Routing.Tests
         {
             
         }
+
+        [Command]
+        public void Save([Optional]string filename, Option all, Option json, Option xml, OptionValue pattern)
+        {
+            Console.WriteLine("Saving");
+        }
     }
+
+    
 }

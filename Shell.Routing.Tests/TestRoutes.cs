@@ -101,6 +101,17 @@ namespace Shell.Routing.Tests
             Assert.AreEqual(option3.Value, "hij");
         }
 
+        [TestMethod]
+        public void TestOpionValues()
+        {
+            var line = "save -all -pattern '{id}-{id}'";
+            var args = Utils.ParseArguments(line);
+            var routes = router.GetCommandRoutes(args);
+            var binds = router.Bind(routes, args).ToList();
+            Assert.AreEqual(1, binds.Count);
+
+        }
+
 
     }
 }
