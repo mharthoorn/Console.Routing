@@ -213,7 +213,9 @@ namespace Shell.Routing
             var routes = GetCommandRoutes(arguments);
             BindAndRun(routes, arguments);
         }
+
     }
 
-
 }
+
+
