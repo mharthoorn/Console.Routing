@@ -17,9 +17,14 @@
             return string.Compare(this.Name, name, ignoreCase: true) == 0;
         }
 
-        public static implicit operator bool (Assignment assignment)
+        public static implicit operator bool(Assignment assignment)
         {
             return assignment.Provided;
+        }
+
+        public static implicit operator string(Assignment assignment)
+        {
+            return assignment.Value;
         }
 
         public override string ToString()

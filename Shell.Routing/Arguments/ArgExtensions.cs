@@ -37,6 +37,53 @@ namespace Shell.Routing
             return items.Count == 1;
         }
 
+        public static bool TryGet<T>(this Arguments args, int i, out T arg) where T: IArgument
+        {
+            if (i < args.Items.Count)
+            {
+                var item = args.Items[i];
+                if (item is T)
+                {
+                    arg = (T)item;
+                    return true;
+                }
+            }
+
+            arg = default;
+            return false;
+        }
+
+        public static bool TryGetFollowing<T>(this Arguments args, IArgument arg, out T item) where T: IArgument
+        {
+            int index = args.Items.IndexOf(arg);
+            if (index >= 0)
+            {
+                if (args.TryGet(index+1, out item))
+                {
+                    return true;
+                }
+                    
+            }
+
+            item = default;
+            return false;
+        }
+
+        public static bool TryGetFlagValue(this Arguments args, string name, out string value)
+        {
+            if (args.TryGet(name, out Flag flag))
+            {
+                if (args.TryGetFollowing(flag, out Literal literal))
+                {
+                    value = literal.Value;
+                    return true;
+                }
+            }
+
+            value = null;
+            return false;
+        }
+
         public static IEnumerable<T> OfType<T>(this Arguments args)
         {
             return args.items.OfType<T>();

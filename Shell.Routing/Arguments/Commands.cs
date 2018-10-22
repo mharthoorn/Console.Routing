@@ -15,6 +15,9 @@ namespace Shell.Routing
             commands = BuildCommands(args.items);
         }
 
+        public bool Empty => commands.Count == 0;
+
+
         private static List<Literal> BuildCommands(IEnumerable<IArgument> args)
         {
             var commands = new List<Literal>();

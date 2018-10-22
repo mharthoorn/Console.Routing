@@ -16,7 +16,7 @@ namespace Shell.Routing
             items.AddRange(arguments);
         }
 
-        public IEnumerable<IArgument> Items => items;
+        public IList<IArgument> Items => items;
 
         public IList<T> Match<T>(string name) where T: IArgument
         {
@@ -27,13 +27,17 @@ namespace Shell.Routing
 
         public ArgResult<T> TryGetHead<T>(int offset = 0) where T: IArgument
         {
-            var matches = items.OfType<T>().ToList();
-            if (offset < matches.Count)
+            //var matches = items.OfType<T>().ToList();
+            if (offset < items.Count)
             {
-                var match = matches[offset];
-                return match;
+                var item = items[offset];
+                if (item is T result)
+                {
+                    return result;
+                }
             }
-            else return ArgResult<T>.Fail($"Index {offset} Out of bounds");
+
+            return ArgResult<T>.Fail($"Index {offset} Out of bounds");
         }
 
 

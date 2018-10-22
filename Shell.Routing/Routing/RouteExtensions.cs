@@ -27,7 +27,7 @@ namespace Shell.Routing
                 {
                     Name = parameter.Name.ToLower(),
                     Type = parameter.ParameterType,
-                    Optional = (parameter.GetCustomAttribute<Optional>() != null)
+                    Optional = parameter.HasAttribute<Optional>(),
                 };
             }
         }
@@ -46,9 +46,10 @@ namespace Shell.Routing
             
         }
 
-        public static bool TryBind(this Route route, Arguments arguments, out object[] values)
+        private static bool TryBuildParameters(this Route route, Arguments arguments, out object[] values)
         {
             // group command value value -dev -all -special:souce -route C:\temp
+
             var count  = route.Method.GetParameters().Count();
             values = new object[count];
             int i = 0;
@@ -56,6 +57,7 @@ namespace Shell.Routing
 
             foreach (var param in route.GetRoutingParameters())
             {
+
                 if (param.Type == typeof(string))
                 {
                     if (arguments.TryGetLiteral(i, out string value))
@@ -63,6 +65,7 @@ namespace Shell.Routing
                         values[i++] = value;
                         used++;
                     }
+                   
                     else if (param.Optional)
                     {
                         values[i++] = null;
@@ -72,28 +75,38 @@ namespace Shell.Routing
                         return false;
                     }
                 }
-                else if (param.Type == typeof(Flag))
-                {
-                    var hasoption = arguments.HasFlag(param.Name);
-                    values[i++] = new Option(hasoption);
-                    if (hasoption) used++;
-                }
+
                 else if (param.Type == typeof(Assignment))
                 {
-                    if (arguments.TryGetAssignment(param.Name, out Assignment option))
+                    if (arguments.TryGet(param.Name, out Assignment assignment))
                     {
-                        if (!option.Provided) return false;
-                        // invalid option
+                        values[i++] = assignment;
+                        used++;
+                    }
+                }
 
-                        values[i++] = option;
-                        used ++;
+                else if (param.Type == typeof(FlagValue))
+                {
+                    if (arguments.TryGetFlagValue(param.Name, out string value))
+                    {
+                        values[i++] = new FlagValue(value, 2);
+                        used += 2;
+                    }
+                }
+
+                else if (param.Type == typeof(Flag))
+                {
+                    if (arguments.TryGet(param.Name, out Flag flag))
+                    {
+                        values[i++] = flag;
+                        used++;
                     }
                     else
                     {
-                        values[i++] = FlagValue.Unset;
+                        values[i++] = new Flag(param.Name, set: false);
                     }
-                    
                 }
+
                 else if (param.Type == typeof(Arguments))
                 {
                     values[i++] = arguments;
@@ -101,12 +114,26 @@ namespace Shell.Routing
                 }
                 else
                 {
-                    // this method has a signature with wrong types.
+                    // this method has a signature with an unknown type.
                     return false;
                 }
             }
             return (arguments.Count == used);
             
+        }
+
+        public static bool TryBind(this Route route, Arguments arguments, out Bind bind)
+        {
+            if (route.TryBuildParameters(arguments, out var values))
+            {
+                bind = new Bind(route, values);
+                return true;
+            }
+            else
+            {
+                bind = null;
+                return false;
+            }
         }
     }
 

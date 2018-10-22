@@ -34,6 +34,13 @@ namespace Shell.Routing
             Run(bind.Route.Method, bind.Arguments);
         }
 
+        public static void Run(RoutingResult result)
+        {
+            if (result.Ok)
+            {
+                Run(result.Match);
+            }
+        }
     }
 
 }

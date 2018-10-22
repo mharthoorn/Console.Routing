@@ -8,45 +8,18 @@ namespace Shell.Routing
     public class Router
     {
         List<Route> routes { get; }
-
+        Route defaultRoute;
+         
         public Router(Assembly assembly)
         {
             this.routes = GetRoutes(assembly).ToList();
         }
 
-        public RoutingResult Route(Arguments arguments)
-        {
-            var result = new RoutingResult();
-            ConsumeCommands(arguments, out var routes);
-
-            result.CommandRoutes = routes.ToList();
-
-            if (result.CommandRoutes.Count == 0)
-            {
-                result.Status = RoutingStatus.NoCommands;
-                return result;
-            }
-
-            result.Binds = Bind(result.CommandRoutes, arguments).ToList();
-
-            if (result.Binds.Count == 0)
-            {
-                result.Status = RoutingStatus.NoMatchingParameters;
-            }
-            else if (result.Binds.Count == 1)
-            {
-                result.Status = RoutingStatus.Ok;
-            }
-            else
-            {
-                result.Status = RoutingStatus.AmbigousParameters;
-            }
-            return result;
-        }
+        public IList<Route> Routes => routes;
 
         public RoutingResult Handle(Arguments arguments)
         {
-            RoutingResult result = Route(arguments);
+            RoutingResult result = Bind(arguments);
 
             if (result.Ok)
                 Invoker.Run(result.Match);
@@ -70,8 +43,16 @@ namespace Shell.Routing
         public void ConsumeCommands(Arguments arguments, out IEnumerable<Route> routes)
         {
             var commands = new Commands(arguments);
-            routes = GetCommandRoutes(commands);
-            commands.Consume();
+            if (commands.Empty)
+            {
+                routes = Routes.Where(r => r.Default);
+            }
+            else
+            {
+                routes = GetCommandRoutes(commands);
+                commands.Consume();
+            }
+            
         }
 
         public IEnumerable<Route> GetCommandRoutes(Commands commands)
@@ -122,12 +103,43 @@ namespace Shell.Routing
         {
             foreach (var route in routes)
             {
-                if (route.TryBind(arguments, out var values))
+                if (route.TryBind(arguments, out var bind))
                 {
-                    yield return new Bind(route, values);
+                    yield return bind;
                 }
             }
         }
+
+        public RoutingResult Bind(Arguments arguments)
+        {
+            var result = new RoutingResult();
+            ConsumeCommands(arguments, out var routes);
+
+            result.CommandRoutes = routes.ToList();
+
+            if (result.CommandRoutes.Count == 0)
+            {
+                result.Status = RoutingStatus.NoCommands;
+                return result;
+            }
+
+            result.Binds = Bind(result.CommandRoutes, arguments).ToList();
+
+            if (result.Binds.Count == 0)
+            {
+                result.Status = RoutingStatus.NoMatchingParameters;
+            }
+            else if (result.Binds.Count == 1)
+            {
+                result.Status = RoutingStatus.Ok;
+            }
+            else
+            {
+                result.Status = RoutingStatus.AmbigousParameters;
+            }
+            return result;
+        }
+
 
     }
 

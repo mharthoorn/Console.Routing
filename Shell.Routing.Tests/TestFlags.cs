@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using System.Reflection;
 
 namespace Shell.Routing.Tests
@@ -102,6 +103,22 @@ namespace Shell.Routing.Tests
             found = args.TryGet<Flag>("q", out test);
             Assert.AreEqual(false, found);
             Assert.AreEqual(null, test); 
+        }
+
+        [TestMethod]
+        public void FlagValues_GitCommit()
+        {
+            var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git
+            
+            router.ConsumeCommands(arguments, out var routes);
+            var route = routes.First();
+            Assert.AreEqual(route.Method.Name, "Commit");
+
+
+            var binds = router.Bind(routes, arguments).ToList();
+            Assert.AreEqual(1, binds.Count);
+            
+
         }
 
     }

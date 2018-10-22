@@ -40,17 +40,7 @@ namespace Shell.Routing.Tests
             Assert.AreEqual(bind.Arguments[0], "Foo");
         }
 
-        [TestMethod]
-        public void FlagValues_Git()
-        {
-            var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git
-            router.ConsumeCommands(arguments, out var routes);
-            var binds = router.Bind(routes, arguments).ToList();
-            var route = routes.First();
-            Assert.AreEqual(route.Method.Name, "Commit");
-
-        }
-
+    
         [TestMethod]
         public void Binding()
         {
@@ -75,7 +65,7 @@ namespace Shell.Routing.Tests
 
             Assert.AreEqual(bind.Arguments[0], "William");
             Assert.AreEqual(bind.Arguments[1], "will");
-            Assert.AreEqual(((Option)bind.Arguments[2]).Set, true); // -foo
+            Assert.AreEqual(((Flag)bind.Arguments[2]).Set, true); // -foo
 
             Assert.AreEqual("fubar", ((FlagValue)bind.Arguments[3])); // -bar fubar
         }
@@ -84,22 +74,16 @@ namespace Shell.Routing.Tests
         public void TestOptionValue()
         {
             var args1 = Utils.ParseArguments("-a -b --test abc");
-            args1.TryGet<Flag>("test", out var option1);
-            Assert.AreEqual(option1, "abc"); // broken
-
-            var args2 = Utils.ParseArguments("-a -b -test:efg");
-            args2.TryGet<Assignment>("test", out var option2); // TryGetOptionValue("test", out var option2);
-            Assert.AreEqual(option2.Value, "efg"); // broken
-
-            var args3 = Utils.ParseArguments("-a -b -test: hij");
-            args3.TryGet<Assignment>("test", out var option3);
-            Assert.AreEqual(option3.Value, "hij");
+            args1.TryGet("test", out Flag option1);
+            Assert.AreEqual("test",  option1.Name);
+            args1.TryGetFlagValue("test", out var value);
+            Assert.AreEqual("abc", value);
         }
 
         [TestMethod]
         public void TestOpionValues()
         {
-            var line = "save -all -pattern '{id}-{id}'";
+            var line = "save --all --pattern '{id}-{id}'";
             var args = Utils.ParseArguments(line);
             router.ConsumeCommands(args, out var routes);
             var binds = router.Bind(routes, args).ToList();

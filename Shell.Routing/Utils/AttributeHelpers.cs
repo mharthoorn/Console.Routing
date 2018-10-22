@@ -52,6 +52,16 @@ namespace Shell.Routing
         {
             return type.SelectMany(t => t.GetAttributeMethods<T>());
         }
+
+        public static bool HasAttribute<T>(this ParameterInfo parameter) where T : Attribute
+        {
+            return parameter.GetCustomAttribute<T>() != null;
+        }
+
+        public static bool HasAttribute<T>(this MethodInfo parameter) where T : Attribute
+        {
+            return parameter.GetCustomAttribute<T>() != null;
+        }
     }
 
 }

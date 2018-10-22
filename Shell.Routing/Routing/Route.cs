@@ -10,6 +10,7 @@ namespace Shell.Routing
         public Command Command { get; }
         public Type Type { get; }
         public MethodInfo Method { get; }
+        public bool Default { get; }
 
         public Route(Module section, Command command, Type type, MethodInfo method)
         {
@@ -17,6 +18,7 @@ namespace Shell.Routing
             Command = command;
             Type = type;
             Method = method;
+            Default = method.HasAttribute<Default>();
         }
 
         public override string ToString()
@@ -31,8 +33,6 @@ namespace Shell.Routing
                 string.Compare(Method.Name, name, ignoreCase: true) == 0
                 || Command.Aliases.Contains(name);
         }
-
-        
     }
 
 }
