@@ -20,7 +20,7 @@ namespace Shell.Routing
 
         public int Count => args.Count;
 
-        public OptionValue GetOptionValue(string name)
+        public FlagValue GetOptionValue(string name)
         {
             if (TryGetOptionValue(name, out var option))
             {
@@ -28,7 +28,7 @@ namespace Shell.Routing
             }
             else
             {
-                return OptionValue.Unset;
+                return FlagValue.Unset;
             }
         }
 
@@ -57,7 +57,7 @@ namespace Shell.Routing
             return false;
         }
 
-        public bool TryGetOptionValue(string name, out OptionValue option)
+        public bool TryGetOptionValue(string name, out FlagValue option)
         {
             for(int i = 0; i < args.Count; i++)
             {
@@ -66,26 +66,26 @@ namespace Shell.Routing
                 {
                     if (!string.IsNullOrEmpty(value))
                     {
-                        option = new OptionValue(value, 1);
+                        option = new FlagValue(value, 1);
                         return true;
                     }
                     else
                     {
                         if (i + 1 <= args.Count)
                         {
-                            option = new OptionValue(args[i + 1], 2);
+                            option = new FlagValue(args[i + 1], 2);
                             return true;
                         }
                         else
                         {
-                            option = new OptionValue(null, 1, provided: false);
+                            option = new FlagValue(null, 1, provided: false);
                             return false;
                         }
                     }
                 }
             }
 
-            option = OptionValue.Unset;
+            option = FlagValue.Unset;
             return false;
                 
         }

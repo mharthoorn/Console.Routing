@@ -1,6 +1,0 @@
-﻿namespace Harthoorn.Shell.Routing
-{
-    
-   
-
-}

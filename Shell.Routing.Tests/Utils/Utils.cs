@@ -11,8 +11,11 @@ namespace Shell.Routing.Tests
         {
             var args = s.Split(' ');
             return new Arguments(args);
-            
-            
+        }
+
+        public static Arguments CreateArguments(params string[] args)
+        {
+            return new Arguments(args);
         }
     }
 }

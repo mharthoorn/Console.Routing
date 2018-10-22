@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Shell.Routing.Tests
 {
-
+     
     [Module("Tool")]
-    public class ToolCommands
+    public class ToolModule
     {
         [Command(aliases: "-t")]
         public void Tool()
@@ -21,13 +21,13 @@ namespace Shell.Routing.Tests
         }
 
         [Command] 
-        public void Action(string name, string alias, Option foo, OptionValue bar)
+        public void Action(string name, string alias, Option foo, FlagValue bar)
         {
             
         }
 
         [Command]
-        public void Save([Optional]string filename, Option all, Option json, Option xml, OptionValue pattern)
+        public void Save([Optional]string filename, Option all, Option json, Option xml, FlagValue pattern)
         {
             Console.WriteLine("Saving");
         }

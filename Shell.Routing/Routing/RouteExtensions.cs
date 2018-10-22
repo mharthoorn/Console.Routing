@@ -19,11 +19,11 @@ namespace Shell.Routing
             return routes.Where(route => route.MatchName(method));
         }
 
-        public static IEnumerable<RoutingParameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
+        public static IEnumerable<Parameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
             foreach (var parameter in parameters)
             {
-                yield return new RoutingParameter
+                yield return new Parameter
                 {
                     Name = parameter.Name.ToLower(),
                     Type = parameter.ParameterType,
@@ -32,7 +32,7 @@ namespace Shell.Routing
             }
         }
 
-        public static IEnumerable<RoutingParameter> GetRoutingParameters(this Route route)
+        public static IEnumerable<Parameter> GetRoutingParameters(this Route route)
         {
             var parameters = route.Method.GetParameters();
             return GetRoutingParameters(parameters);
@@ -90,7 +90,7 @@ namespace Shell.Routing
                     }
                     else
                     {
-                        values[i++] = OptionValue.Unset;
+                        values[i++] = FlagValue.Unset;
                     }
                     
                 }
