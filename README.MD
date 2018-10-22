@@ -21,7 +21,7 @@ public class ToolCommands
     // Allows the following usage on the command line:
     // > tool hello John 
     // > tool hello John --upper
-	// > tool hello John -u
+    // > tool hello John -u
     [Command("Says Hello to the given name")]
     public void Hello(string name, Flag upper)
     {
@@ -39,26 +39,27 @@ public class ToolCommands
     }
 	
 	
-	// > tool greet
-	// > tool greet John
-	[Command("Says hello")]
+    // > tool greet
+    // > tool greet John
+    [Command("Says hello")]
     public void Greet([Optional]string name)
     {
-		if (name is null)
-		{
-			Console.WriteLine("Hello");
-		}
-		else 
-		{
-			Console.Writeline("Hello " + name);
-		}
+        if (name is null)
+        {
+            Console.WriteLine("Hello");
+        }
+        else 
+        {
+            Console.Writeline("Hello " + name);
+        }
     }
-	
-	// > tool login user=john password=secret
-	[Command("Logs in to the system with user/password")]
+
+
+    // > tool login user=john password=secret
+    [Command("Logs in to the system with user/password")]
     public void Login(Assignment user, Assignment password)
     {
-		//...
+        //...
     }
 }
 ```
