@@ -29,9 +29,9 @@ public class ToolCommands
         Console.Writeline("Hello " + name);
     }
 	
-	// > tool commit --message "First commit"
-	// > tool commit -m "First commit"
-	[Command]
+    // > tool commit --message "First commit"
+    // > tool commit -m "First commit"
+    [Command]
     public void Commit(FlagValue message)
     {
         if (upper) name = name.ToUpper();
