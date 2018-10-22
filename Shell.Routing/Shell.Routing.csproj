@@ -7,7 +7,11 @@
     <Description>Framework for routing command line parameters</Description>
     <Authors>M. Harthoorn</Authors>
     <RepositoryUrl>https://github.com/mharthoorn/Shell.Routing</RepositoryUrl>
-	<PackageProjectUrl>https://github.com/mharthoorn/Shell.Routing</PackageProjectUrl>
+  	<PackageProjectUrl>https://github.com/mharthoorn/Shell.Routing</PackageProjectUrl>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.1" />
+  </ItemGroup>
 </Project>

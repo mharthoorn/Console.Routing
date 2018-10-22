@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Shell.Routing 
+namespace Shell.Routing
 {
-    
-    public class Arguments 
+
+
+    public class XArguments 
     {
         List<string> args;
-
-        public Arguments(string[] parameters, params string[] defaults)
+ 
+        public XArguments(string[] parameters, params string[] defaults)
         {
             this.args = (parameters.Length > 0) ? parameters.ToList(): defaults.ToList();
 

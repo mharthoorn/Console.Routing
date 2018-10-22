@@ -24,6 +24,15 @@ namespace Shell.Routing
             var pars = this.ParametersDescription();
             return $"{Section.Name.ToLower()} {Method.Name.ToLower()} {pars}";
         }
+
+        public bool MatchName(string name)
+        {
+            return
+                string.Compare(Method.Name, name, ignoreCase: true) == 0
+                || Command.Aliases.Contains(name);
+        }
+
+        
     }
 
 }

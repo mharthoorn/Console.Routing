@@ -34,7 +34,9 @@ namespace Shell.Routing
         public RoutingResult Route(Arguments arguments)
         {
             var result = new RoutingResult();
-            result.CommandRoutes = GetCommandRoutes(arguments).ToList();
+            ConsumeCommands(arguments, out var routes);
+
+            result.CommandRoutes = routes.ToList();
 
             if (result.CommandRoutes.Count == 0)
             {
@@ -96,20 +98,27 @@ namespace Shell.Routing
             }
         }
 
-        public IEnumerable<Route> GetCommandRoutes(Arguments arguments)
+        public void ConsumeCommands(Arguments arguments, out IEnumerable<Route> routes)
         {
-            if (arguments.TryGetHead(out string group))
+            var commands = new Commands(arguments);
+            routes = GetCommandRoutes(commands);
+            commands.Consume();
+        }
+
+        public IEnumerable<Route> GetCommandRoutes(Commands commands)
+        {
+            if (commands.TryGetHead(out string group))
             {
                 var selection = Routes.FindGroup(group).ToList();
                 if (selection.Any())
                 {
-                    arguments.RemoveHead();
-                    if (arguments.TryGetHead(out string method))
+                    commands.UseHead();
+                    if (commands.TryGetHead(out string method))
                     {
                         var routes = selection.FindMethod(method);
                         if (routes.Any())
                         {
-                            arguments.RemoveHead();
+                            commands.UseHead();
                             return routes;
                         }
                         else
@@ -131,7 +140,7 @@ namespace Shell.Routing
                     var routes = Routes.FindMethod(group).ToList();
                     if (routes != null)
                     {
-                        arguments.RemoveHead();
+                        commands.UseHead();
                         return routes;
                     }
                 }
@@ -210,7 +219,7 @@ namespace Shell.Routing
 
         public void Test(Arguments arguments)
         {
-            var routes = GetCommandRoutes(arguments);
+            ConsumeCommands(arguments, out var routes);
             BindAndRun(routes, arguments);
         }
 

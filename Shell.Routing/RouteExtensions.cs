@@ -15,32 +15,10 @@ namespace Shell.Routing
 
         public static IEnumerable<Route> FindMethod(this IEnumerable<Route> routes, string methodName)
         {
-            var m = methodName.ToLower();
-            if (Arguments.IsOption(m, out string abbrev))
-            {
-                return routes.Where(r => MatchAbbrev(r, abbrev));
-            }
-            else
-            {
-                return routes.Where(r => MatchName(r, m));
-            }
-
+            var method = methodName.ToLower();
+            return routes.Where(route => route.MatchName(method));
         }
 
-        public static bool MatchName(Route route, string name)
-        {
-            return 
-                string.Compare(route.Method.Name, name, ignoreCase: true) == 0 
-                || route.Command.Aliases.Contains(name);
-        }
-
-        public static bool MatchAbbrev(Route route, string abbrev)
-        {
-            return 
-                route.Method.Name.StartsWith(abbrev, StringComparison.OrdinalIgnoreCase) 
-                || route.Command.Aliases.Contains(abbrev);
-        }
-       
         public static IEnumerable<RoutingParameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
             foreach (var parameter in parameters)
@@ -80,7 +58,7 @@ namespace Shell.Routing
             {
                 if (param.Type == typeof(string))
                 {
-                    if (arguments.TryGetValue(i, out string value))
+                    if (arguments.TryGetLiteral(i, out string value))
                     {
                         values[i++] = value;
                         used++;
@@ -94,21 +72,21 @@ namespace Shell.Routing
                         return false;
                     }
                 }
-                else if (param.Type == typeof(Option))
+                else if (param.Type == typeof(Flag))
                 {
-                    var hasoption = arguments.HasOption(param.Name);
+                    var hasoption = arguments.HasFlag(param.Name);
                     values[i++] = new Option(hasoption);
                     if (hasoption) used++;
                 }
-                else if (param.Type == typeof(OptionValue))
+                else if (param.Type == typeof(Assignment))
                 {
-                    if (arguments.TryGetOptionValue(param.Name, out OptionValue option))
+                    if (arguments.TryGetAssignment(param.Name, out Assignment option))
                     {
                         if (!option.Provided) return false;
                         // invalid option
 
                         values[i++] = option;
-                        used += option.Count;
+                        used ++;
                     }
                     else
                     {
@@ -130,7 +108,6 @@ namespace Shell.Routing
             return (arguments.Count == used);
             
         }
-
     }
 
 }
