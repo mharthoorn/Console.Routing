@@ -42,9 +42,40 @@ namespace Shell.Routing
         {
             var paraminfo = route.Method.GetParameters();
             var parameters = GetRoutingParameters(paraminfo);
-            return string.Join(" ", parameters.Select(p => p.AsString));
+            return string.Join(" ", parameters.Select(p => ParameterDescription(p)));
             
         }
+
+        public static string ParameterDescription(Parameter parameter)
+        {
+            Type type = parameter.Type;
+            string name = parameter.Name;
+
+            if (type == typeof(string))
+            {
+                return parameter.Optional ? "(<" + name + ">)" : "<" + name + ">";
+            }
+            else if (type == typeof(Flag))
+            {
+                return $"--{parameter.Name}";
+            }
+            else if (type == typeof(Assignment))
+            {
+                return $"{name}=<value>";
+            }
+            else if (type == typeof(FlagValue))
+            {
+                return $"--{name} <value>";
+            }
+            else if (type == typeof(Arguments))
+            {
+                return $"({name}...)";
+            }
+            else return $"--- unknown: {name} ---"; // shouldn't get here.
+            
+        }
+
+
 
         private static bool TryBuildParameters(this Route route, Arguments arguments, out object[] values)
         {
