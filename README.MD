@@ -1,9 +1,9 @@
 # Shell.Routing
-Shell.Routing is a C# / .net core framework for routing command line parameters. It can be used with minimal overhead.
+Shell.Routing is a C#/netstandard 2.0 framework for routing command line parameters. It can be used with minimal overhead.
 It supports method overloading, flags, keyvalues, flag values and optional parameters. 
 
-By default it binds any method with a [Command] attribute in a class with a [Module] attribute.
-A command can have a description, which allows automatic documenting.
+You can bind any method with a [Command] attribute in a class with a [Module] attribute.
+A command can have a description for automatic documenting.
 
 ```csharp
  class Program
