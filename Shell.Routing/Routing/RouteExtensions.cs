@@ -92,6 +92,10 @@ namespace Shell.Routing
                         values[i++] = new FlagValue(value, 2);
                         used += 2;
                     }
+                    else
+                    {
+                        values[i++] = new FlagValue(null, 0, provided: false);
+                    }
                 }
 
                 else if (param.Type == typeof(Flag))
