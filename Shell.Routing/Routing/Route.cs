@@ -11,6 +11,7 @@ namespace Shell.Routing
         public Type Type { get; }
         public MethodInfo Method { get; }
         public bool Default { get; }
+        public bool Hidden { get; }
 
         public Route(Module section, Command command, Type type, MethodInfo method)
         {
@@ -19,6 +20,7 @@ namespace Shell.Routing
             Type = type;
             Method = method;
             Default = method.HasAttribute<Default>();
+            Hidden = method.HasAttribute<Hidden>();
         }
 
         public override string ToString()

@@ -19,5 +19,10 @@ namespace Shell.Routing
 
     }
 
+    public class Hidden : Attribute
+    {
+
+    }
+
 
 }

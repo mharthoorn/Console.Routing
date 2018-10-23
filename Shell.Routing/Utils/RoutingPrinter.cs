@@ -42,6 +42,7 @@ namespace Shell.Routing
 
                 foreach (var route in group)
                 {
+                    if (route.Hidden) continue;
                     var name = route.Method.Name.ToLower();
 
                     var parameters = route.ParametersDescription().Trim();
