@@ -12,7 +12,7 @@ namespace Shell.Routing
          
         public Router(Assembly assembly)
         {
-            this.routes = GetRoutes(assembly).ToList();
+            this.routes = DiscoverRoutes(assembly).ToList();
         }
 
         public IList<Route> Routes => routes;
@@ -27,7 +27,7 @@ namespace Shell.Routing
             return result;
         }
 
-        private static IEnumerable<Route> GetRoutes(Assembly assembly)
+        private static IEnumerable<Route> DiscoverRoutes(Assembly assembly)
         {
             var groups = assembly.GetAttributeTypes<Module>().ToList();
 

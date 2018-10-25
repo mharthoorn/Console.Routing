@@ -37,24 +37,24 @@ namespace Shell.Routing
 
             foreach (var group in routes.GroupBy(r => r.Section))
             {
-                Console.WriteLine();
                 Console.WriteLine($"{group.Key.Name}:");
 
                 foreach (var route in group)
                 {
                     if (route.Hidden) continue;
-                    var name = route.Method.Name.ToLower();
+                    var name = route.Name;
 
                     var parameters = route.ParametersDescription().Trim();
-                    var description = route.Command.Description?.Trim();
+                    var description = route.Description?.Trim();
 
                     var text = parameters;
                     if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
                     text += description;
 
 
-                    Console.WriteLine($"  {name,-10} {text}");
+                    Console.WriteLine($"  {name,-12} {text}");
                 }
+                Console.WriteLine();
             }
         }
 

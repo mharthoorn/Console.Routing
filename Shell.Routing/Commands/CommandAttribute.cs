@@ -5,12 +5,10 @@ namespace Shell.Routing
 
     public class Command : Attribute
     {
-        public string Description { get; }
-        public string[] Aliases { get; }
-        public Command(string description = null, params string[] aliases)
+        public string[] Names { get; }
+        public Command(params string[] names)
         {
-            this.Description = description;
-            this.Aliases = aliases;
+            this.Names = names;
         }
     }
 
@@ -22,6 +20,19 @@ namespace Shell.Routing
     public class Hidden : Attribute
     {
 
+    }
+
+    public class Help : Attribute
+    {
+        public string Description { get; }
+
+        public Help(string description = null)
+        {
+            this.Description = description;
+            
+        }
+
+        
     }
 
 

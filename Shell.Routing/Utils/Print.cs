@@ -27,17 +27,17 @@ namespace Shell.Routing
 
                 foreach (var route in group)
                 {
-                    var name = route.Method.Name.ToLower();
+                    
 
                     var parameters = route.ParametersDescription().Trim();
-                    var description = route.Command.Description?.Trim();
+                    var description = route.Description?.Trim();
 
                     var text = parameters;
                     if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
                     text += description;
 
 
-                    Console.WriteLine($"  {name,-10} {text}");
+                    Console.WriteLine($"  {route.Name,-10} {text}");
                 }
             }
         }
