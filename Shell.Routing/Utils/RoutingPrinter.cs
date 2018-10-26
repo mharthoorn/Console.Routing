@@ -69,11 +69,21 @@ namespace Shell.Routing
 
         public static void Write(Exception e, bool stacktrace = false)
         {
-            Console.WriteLine(e.Message);
-            if (stacktrace) Console.WriteLine("\n" + e.ToString());
-            if (e.InnerException != null)
+            string message = GetErrorMessage(e);
+            Console.Write($"Error: {message}");
+
+            if (stacktrace) Console.WriteLine(e.StackTrace);
+        }
+
+        public static string GetErrorMessage(Exception exception)
+        {
+            if (exception.InnerException is null)
             {
-                Write(e, stacktrace);
+                return exception.Message;
+            }
+            else             
+            {
+                return GetErrorMessage(exception.InnerException);
             }
 
         }
