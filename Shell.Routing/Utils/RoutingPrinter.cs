@@ -1,5 +1,4 @@
-﻿using Shell.Routing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,28 +15,28 @@ namespace Shell.Routing
             else if (result.Status == RoutingStatus.AmbigousParameters)
             {
                 Console.WriteLine("There is more than one command that matches these parameters:");
-                DidYouMean(result.CommandRoutes);
+                DidYouMean(result.Candindates);
 
             }
             else if (result.Status == RoutingStatus.NoMatchingParameters)
             {
                 Console.WriteLine("There is no command that matches these parameters");
-                DidYouMean(result.CommandRoutes);
+                DidYouMean(result.Candindates);
             }
         }
 
-        public static void DidYouMean(List<Route> commandRoutes)
+        public static void DidYouMean(IList<Route> commandRoutes)
         {
             Console.WriteLine("Did you mean:");
             foreach (var route in commandRoutes) Console.WriteLine($"  {route}");
         }
 
-        public static void PrintRoutes(IEnumerable<Route> routes)
+        public static void PrintRoutes(IEnumerable<OldRoute> routes)
         {
 
-            foreach (var group in routes.GroupBy(r => r.Section))
+            foreach (var group in routes.GroupBy(r => r.Module))
             {
-                Console.WriteLine($"{group.Key.Name}:");
+                Console.WriteLine($"{group.Key.Title}:");
 
                 foreach (var route in group)
                 {

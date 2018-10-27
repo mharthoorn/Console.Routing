@@ -14,6 +14,11 @@
             return string.Compare(this.Value, name, ignoreCase: true) == 0;
         }
 
+        public static implicit operator string (Literal literal)
+        {
+            return literal.Value;
+        }
+
         public override string ToString()
         {
             return $"{Value}";

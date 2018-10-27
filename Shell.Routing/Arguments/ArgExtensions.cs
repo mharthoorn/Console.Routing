@@ -7,7 +7,7 @@ namespace Shell.Routing
     {
         public static bool TryGetLiteral(this Arguments args, int offset, out string literal)  
         {
-            var result = args.TryGetHead<Literal>(offset);
+            var result = args.GetHead<Literal>(offset);
             literal = (result.Success) ? result.Arg.Value : null;
             return result.Success;
         }

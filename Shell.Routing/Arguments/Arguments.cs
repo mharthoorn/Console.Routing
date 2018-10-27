@@ -25,21 +25,36 @@ namespace Shell.Routing
             return matches;
         }
 
-        public ArgResult<T> TryGetHead<T>(int offset = 0) where T: IArgument
+        public ArgResult<T> GetHead<T>(int i = 0) where T: IArgument
         {
             //var matches = items.OfType<T>().ToList();
-            if (offset < items.Count)
+            if (i < items.Count)
             {
-                var item = items[offset];
+                var item = items[i];
                 if (item is T result)
                 {
                     return result;
                 }
             }
 
-            return ArgResult<T>.Fail($"Index {offset} Out of bounds");
+            return ArgResult<T>.Fail($"Index {i} Out of bounds");
+        }
+         
+        public bool TryGetHead<T>(int i, out T result) where T: IArgument
+        {
+            if (i < items.Count && items[i] is T item)
+            {
+                result = item;
+                return true;
+            }
+            result = default;
+            return false;
         }
 
+        public bool TryGetHead<T>(out T result) where T : IArgument
+        {
+            return TryGetHead(0, out result);
+        }
 
         public static IEnumerable<IArgument> Parse(string[] args)
         {

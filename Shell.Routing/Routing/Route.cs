@@ -4,9 +4,10 @@ using System.Reflection;
 
 namespace Shell.Routing
 {
-    public class Route
+
+    public class OldRoute
     {
-        public Module Section { get; }
+        public Module Module { get; }
         //public Command Command { get; }
         public Type Type { get; }
         public MethodInfo Method { get; }
@@ -15,10 +16,9 @@ namespace Shell.Routing
         public bool Default { get; }
         public bool Hidden { get; }
 
-        public Route(Module section, Command command, Type type, MethodInfo method)
+        public OldRoute(Module section, Command command, Type type, MethodInfo method)
         {
-            Section = section;
-            //Command = command;
+            Module = section;
             Type = type;
             Method = method;
             Default = method.HasAttribute<Default>();
@@ -34,7 +34,7 @@ namespace Shell.Routing
         public override string ToString()
         {
             var pars = this.ParametersDescription();
-            return $"{Section.Name.ToLower()} {Name} {pars}";
+            return $"{Module} {Name} {pars}";
         }
 
         public bool MatchName(string name)

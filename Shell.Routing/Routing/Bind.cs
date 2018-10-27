@@ -2,12 +2,12 @@
 {
     public class Bind
     {
-        public Route Route;
+        public Route Endpoint;
         public object[] Arguments;
-
-        public Bind(Route route, object[] arguments)
+         
+        public Bind(Route endpoint, object[] arguments)
         {
-            this.Route = route;
+            this.Endpoint = endpoint;
             this.Arguments = arguments;
         }
 

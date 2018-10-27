@@ -4,9 +4,16 @@ namespace Shell.Routing
 {
     public class Module: Attribute
     {
-        public string Name { get; }
+        public string Title { get; }
 
-        public Module(string name) => this.Name = name;
+        public Module(string title)
+        {
+            this.Title = title;
+        }
+        public Module()
+        {
+
+        }
     }
 
 

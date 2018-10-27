@@ -5,16 +5,10 @@ namespace Shell.Routing
 {
     public static class Routing<T>
     {
-        public static Router Router;
-
-        static Routing()
-        {
-            var assembly = Assembly.GetAssembly(typeof(T));
-            Router = new Router(assembly);
-        }
-
+        public static Router Router = CreateRouter();
+         
         public static void Handle(string[] args)
-        { 
+        {
             var arguments = new Arguments(args);
             try
             {
@@ -27,6 +21,20 @@ namespace Shell.Routing
             }
 
         }
+
+        public static Router CreateRouter()
+        {
+            var assembly = Assembly.GetAssembly(typeof(T));
+            return CreateRouter(assembly);
+        }
+
+        public static Router CreateRouter(Assembly assembly)
+        {
+            var builder = new RouteBuilder();
+            builder.DiscoverAssembly(assembly);
+            return new Router(builder.Endpoints);
+        }
+
     }
     
 }

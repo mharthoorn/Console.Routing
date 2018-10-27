@@ -6,9 +6,24 @@ namespace Shell.Routing
     public class Command : Attribute
     {
         public string[] Names { get; }
+        public bool IsGeneric;
+
         public Command(params string[] names)
         {
+            IsGeneric = (names.Length == 0);
             this.Names = names;
+        }
+
+        public override string ToString()
+        {
+            if (Names.Length > 0)
+            {
+                return "Command: " + string.Join(" | ", Names);
+            }
+            else
+            {
+                return "Generic Command";
+            }
         }
     }
 

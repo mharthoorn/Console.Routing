@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Shell.Routing
 {
     public class Print
     {
-        public static void DidYouMean(List<Route> routes)
+        public static void DidYouMean(List<OldRoute> routes)
         {
             Console.WriteLine("Did you mean:");
             foreach (var route in routes) Console.WriteLine($"  {route}");
@@ -17,27 +16,26 @@ namespace Shell.Routing
         /// <summary>
         /// Prints all (registered) routes grouped by Module. Useable as a help output or auto documentation
         /// </summary>
-        public static void PrintRoutes(IEnumerable<Route> routes)
+        public static void PrintRoutes(IEnumerable<OldRoute> routes)
         {
 
-            foreach (var group in routes.GroupBy(r => r.Section))
+            foreach (var module in routes.GroupBy(r => r.Module))
             {
                 Console.WriteLine();
-                Console.WriteLine($"{group.Key.Name}:");
+                Console.WriteLine($"{module.Key.Title}:");
 
-                foreach (var route in group)
+                foreach (var route in module)
                 {
-                    
-
                     var parameters = route.ParametersDescription().Trim();
                     var description = route.Description?.Trim();
 
+    
                     var text = parameters;
                     if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
                     text += description;
 
 
-                    Console.WriteLine($"  {route.Name,-10} {text}");
+                    //Console.WriteLine($"  {route.co,-10} {text}");
                 }
             }
         }

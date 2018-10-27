@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Shell.Routing.Tests
 {
-     
-    [Module("Tool")]
+
+    [Module]
     public class ToolModule
     {
-        [Command(aliases: "-t")]
+        [Command]
         public void Tool()
         {
 

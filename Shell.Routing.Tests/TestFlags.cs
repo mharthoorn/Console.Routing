@@ -7,7 +7,7 @@ namespace Shell.Routing.Tests
     [TestClass]
     public class TestFlags
     {
-        Router router = new Router(Assembly.GetAssembly(typeof(ToolModule)));
+        Router router = Routing<TestFlags>.Router;
 
         [TestMethod]
         public void BaseFlags()
@@ -109,14 +109,10 @@ namespace Shell.Routing.Tests
         public void FlagValues_GitCommit()
         {
             var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git
-            
-            router.ConsumeCommands(arguments, out var routes);
-            var route = routes.First();
-            Assert.AreEqual(route.Method.Name, "Commit");
 
-
-            var binds = router.Bind(routes, arguments).ToList();
-            Assert.AreEqual(1, binds.Count);
+            var result = router.Bind(arguments);
+            Assert.AreEqual(result.Bind.Endpoint.Method.Name, "Commit");
+            Assert.AreEqual(1, result.Count);
             
 
         }

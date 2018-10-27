@@ -6,11 +6,21 @@ namespace Shell.Routing
     public class RoutingResult
     {
         public bool Ok => Status == RoutingStatus.Ok;
-        public Bind Match => Binds.FirstOrDefault(); // todo: condition on ok.
+        public Bind Bind => Binds.SingleOrDefault();
+        public Route Route => Bind.Endpoint;
+
+        public int Count => Binds.Count;
+        public IEnumerable<Route> Routes => Binds.Select(b => b.Endpoint);
+
         public RoutingStatus Status;
-        public List<Route> CommandRoutes;
+        public IList<Route> Candindates; //where the commands match, but not necessarily the parameters
         public List<Bind> Binds;
+
+
+        
     }
+
+
 
 }
 

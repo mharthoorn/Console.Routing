@@ -8,15 +8,15 @@ namespace Shell.Routing
     public static class AttributeHelpers
     {
 
-        public static IEnumerable<(Type type, T attribute)> GetAttributeTypes<T>(this Assembly assembly) where T : Attribute
+        public static IEnumerable<Type> GetAttributeTypes<T>(this Assembly assembly) where T : Attribute
         {
-            var types = assembly.GetTypes();
+            var types = assembly.GetTypes().Where(t => !t.IsNested);
             foreach (var type in types)
             {
                 var attribute = type.GetCustomAttribute<T>();
                 if (attribute != null)
                 {
-                    yield return (type, attribute);
+                    yield return type;
                 }
             }
         }
@@ -61,6 +61,11 @@ namespace Shell.Routing
         public static bool HasAttribute<T>(this MethodInfo parameter) where T : Attribute
         {
             return parameter.GetCustomAttribute<T>() != null;
+        }
+
+        public static bool HasAttribute<T>(this Type type) where T : Attribute
+        {
+            return type.GetCustomAttribute<T>() != null;
         }
     }
 

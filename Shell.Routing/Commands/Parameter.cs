@@ -11,7 +11,7 @@ namespace Shell.Routing
     public override string ToString()
         {
             string optional = Optional ? "(optional) " : "";
-            return $"{optional} {Type.Name} {Name}";
+            return $"{optional}{Type.Name} {Name}";
         }
     }
 

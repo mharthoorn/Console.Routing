@@ -24,21 +24,21 @@ namespace Shell.Routing
             }
         }
 
-        public static void Run(Route route, Arguments arguments)
+        public static void Run(OldRoute route, Arguments arguments)
         {
             Run(route.Method, arguments);
         }
 
         public static void Run(Bind bind)
         {
-            Run(bind.Route.Method, bind.Arguments);
+            Run(bind.Endpoint.Method, bind.Arguments);
         }
 
         public static void Run(RoutingResult result)
         {
             if (result.Ok)
             {
-                Run(result.Match);
+                Run(result.Bind);
             }
         }
     }
