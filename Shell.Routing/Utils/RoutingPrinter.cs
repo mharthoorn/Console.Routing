@@ -8,50 +8,61 @@ namespace Shell.Routing
     {
         public static void Write(RoutingResult result)
         {
-            if (result.Status == RoutingStatus.NoCommands)
+            if (result.Status == RoutingStatus.NoMatchingCommands)
             {
-                Console.WriteLine("Unknown command.");
-            }
-            else if (result.Status == RoutingStatus.AmbigousParameters)
-            {
-                Console.WriteLine("There is more than one command that matches these parameters:");
-                DidYouMean(result.Candindates);
-
+                string command = result.Arguments.items.First().ToString();
+                Console.WriteLine($"Unknown command: {command}.");
             }
             else if (result.Status == RoutingStatus.NoMatchingParameters)
             {
                 Console.WriteLine("There is no command that matches these parameters");
-                DidYouMean(result.Candindates);
+                var candidates = result.Candidates.NonDefault();
+                if (candidates.Count() > 0)
+                    DidYouMean(candidates);
             }
+            else if (result.Status == RoutingStatus.AmbigousParameters)
+            {
+                Console.WriteLine("There is more than one command that matches these parameters:");
+                DidYouMean(result.Routes);
+            }
+            
         }
 
-        public static void DidYouMean(IList<Route> commandRoutes)
+        public static void DidYouMean(IEnumerable<Route> routes)
         {
             Console.WriteLine("Did you mean:");
-            foreach (var route in commandRoutes) Console.WriteLine($"  {route}");
+            foreach (var route in routes) Console.WriteLine($"  {route}");
         }
 
-        public static void PrintRoutes(IEnumerable<OldRoute> routes)
+        public static void PrintRoutes(IEnumerable<Route> routes)
         {
 
             foreach (var group in routes.GroupBy(r => r.Module))
             {
-                Console.WriteLine($"{group.Key.Title}:");
+                var title = group.Key.Title; // Module.Title
+                Console.WriteLine($"{title}:");
 
                 foreach (var route in group)
                 {
                     if (route.Hidden) continue;
-                    var name = route.Name;
 
                     var parameters = route.ParametersDescription().Trim();
-                    var description = route.Description?.Trim();
-
+                    var command = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
+                    var description = route.Description;
                     var text = parameters;
                     if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
                     text += description;
 
-
-                    Console.WriteLine($"  {name,-12} {text}");
+                    if (command.Length > 15)
+                    {
+                        Console.WriteLine($"  {command,-15}");
+                        Console.WriteLine($"  {"",-12}{text}");
+                        
+                    }
+                    else
+                    {
+                        Console.WriteLine($"  {command,-15} {text}");
+                    }
                 }
                 Console.WriteLine();
             }

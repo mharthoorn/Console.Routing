@@ -7,17 +7,21 @@ namespace Shell.Routing
 {
     public static class RouteExtensions
     {
-        public static IEnumerable<OldRoute> FindGroup(this IEnumerable<OldRoute> routes, string group)
+        public static IEnumerable<Route> NonDefault(this IEnumerable<Route> routes)
         {
-            string g = group.ToLower();
-            return routes.Where(r => string.Compare(r.Module.Title, g, ignoreCase: true) == 0);
+            return routes.Where(r => !r.Default);
         }
+        //public static IEnumerable<OldRoute> FindGroup(this IEnumerable<OldRoute> routes, string group)
+        //{
+        //    string g = group.ToLower();
+        //    return routes.Where(r => string.Compare(r.Module.Title, g, ignoreCase: true) == 0);
+        //}
 
-        public static IEnumerable<OldRoute> FindMethod(this IEnumerable<OldRoute> routes, string methodName)
-        {
-            var method = methodName.ToLower();
-            return routes.Where(route => route.MatchName(method));
-        }
+        //public static IEnumerable<OldRoute> FindMethod(this IEnumerable<OldRoute> routes, string methodName)
+        //{
+        //    var method = methodName.ToLower();
+        //    return routes.Where(route => route.MatchName(method));
+        //}
 
         public static IEnumerable<Parameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
@@ -38,7 +42,7 @@ namespace Shell.Routing
             return GetRoutingParameters(parameters);
         }
 
-        public static string ParametersDescription(this OldRoute route)
+        public static string ParametersDescription(this Route route)
         {
             var paraminfo = route.Method.GetParameters();
             var parameters = GetRoutingParameters(paraminfo);

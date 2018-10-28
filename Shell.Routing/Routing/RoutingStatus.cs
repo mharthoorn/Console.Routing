@@ -3,7 +3,7 @@
     public enum RoutingStatus
     {
         Ok,
-        NoCommands,
+        NoMatchingCommands,
         NoMatchingParameters,
         AmbigousParameters,
     }

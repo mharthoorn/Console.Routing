@@ -19,41 +19,43 @@ namespace Shell.Routing
         {
             List<Node> trail = new List<Node>();
             var types = assembly.GetAttributeTypes<Module>().ToList();
-            DiscoverTypes(types, trail);
+            DiscoverTypes(null, types, trail);
         }
 
-        public void DiscoverTypes(IEnumerable<Type> types, in List<Node> trail)
+        public void DiscoverTypes(Module module, IEnumerable<Type> types, in List<Node> trail)
         {
-            foreach (var type in types) DiscoverType(type, trail);
+            foreach (var type in types) DiscoverType(module, type, trail);
         }
 
-        public void DiscoverType(Type type, in List<Node> trail)
+        public void DiscoverType(Module module, Type type, in List<Node> trail)
         {
+            if (module is null) module = type.GetCustomAttribute<Module>();
             var command = type.GetCustomAttribute<Command>();
             var t = trail.Retail(command);
-            DiscoverTypesOf(type, t);
-            DiscoverCommands(type, t);
+            DiscoverTypesOf(module, type, t);
+            DiscoverCommands(module, type, t);
         }
 
-        public void DiscoverTypesOf(Type type, in List<Node> trail)
+        public void DiscoverTypesOf(Module module, Type type, in List<Node> trail)
         {
-            var nestedTypes = type.GetNestedTypes().Where(t => t.HasAttribute<Module>());
-            DiscoverTypes(nestedTypes, trail);
+            var nestedTypes = type.GetNestedTypes().Where(t => t.HasAttribute<Command>());
+            DiscoverTypes(module, nestedTypes, trail);
         }
 
-        public void DiscoverCommands(Type type, in List<Node> trail)
+        public void DiscoverCommands(Module module, Type type, in List<Node> trail)
         {
             var methods = type.GetAttributeMethods<Command>();
-            foreach (var method in methods) DiscoverCommand(method, trail);
+            foreach (var method in methods) DiscoverCommand(module, method, trail);
         }
 
-        public void DiscoverCommand(MethodInfo method, in List<Node> trail)
+        public void DiscoverCommand(Module module, MethodInfo method, in List<Node> trail)
         {
             var isdefault = method.HasAttribute<Default>();
             var help = method.GetCustomAttribute<Help>();
+            var hidden = method.GetCustomAttribute<Hidden>();
             var t = isdefault ? trail : trail.Retail(method);
-            var endpoint = new Route(t, method, help);
-            Register(endpoint);
+            var route = new Route(module, t, method, help, hidden, isdefault);
+            Register(route);
 
         }
 

@@ -7,11 +7,11 @@ namespace Shell.Routing
 
     public class Router
     {
-        IList<Route> endpoints;
+        public IList<Route> Routes;
 
-        public Router(IList<Route> endpoints)
+        public Router(IList<Route> routes)
         {
-            this.endpoints = endpoints;
+            this.Routes = routes;
         }
 
         public RoutingResult Handle(Arguments arguments)
@@ -26,7 +26,7 @@ namespace Shell.Routing
 
         public IEnumerable<Route> BindCommands(Arguments arguments)
         {
-            foreach(var endpoint in endpoints)
+            foreach(var endpoint in Routes)
             {
                 if (TryMatchCommands(endpoint, arguments))
                 {
@@ -35,16 +35,16 @@ namespace Shell.Routing
             }
         }
 
-        public bool TryMatchCommands(Route endpoint, Arguments arguments)
+        public bool TryMatchCommands(Route route, Arguments arguments)
         {
             int index = 0;
-            int length = endpoint.Nodes.Count;
+            int length = route.Nodes.Count;
 
             while (index < length)
             {
                 if (arguments.TryGetHead(index, out Literal literal))
                 {
-                    if (endpoint.Nodes[index].Matches(literal))
+                    if (route.Nodes[index].Matches(literal))
                     {
                         index++;
                         //if (index == length) return true;
@@ -57,10 +57,10 @@ namespace Shell.Routing
             return true;
         }
 
-        private static bool TryBuildParameters(Route endpoint, Arguments arguments, out object[] values)
+        private static bool TryBuildParameters(Route route, Arguments arguments, out object[] values)
         {
-            var parameters = endpoint.Method.GetRoutingParameters().ToArray();
-            var offset = endpoint.Nodes.Count(); // amount of parameters to skip, because they are commands.
+            var parameters = route.Method.GetRoutingParameters().ToArray();
+            var offset = route.Nodes.Count(); // amount of parameters to skip, because they are commands.
             var argcount = arguments.Count - offset;
             var count = parameters.Length;
 
@@ -139,9 +139,9 @@ namespace Shell.Routing
 
         }
 
-        public IEnumerable<Bind> Bind(IEnumerable<Route> endpoints, Arguments arguments)
+        public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
-            foreach (var endpoint in endpoints)
+            foreach (var endpoint in routes)
             {
                 if (TryBind(endpoint, arguments, out var bind))
                 {
@@ -150,11 +150,11 @@ namespace Shell.Routing
             }
         }
 
-        public static bool TryBind(Route endpoint, Arguments arguments, out Bind bind)
+        public static bool TryBind(Route route, Arguments arguments, out Bind bind)
         {
-            if (TryBuildParameters(endpoint, arguments, out var values))
+            if (TryBuildParameters(route, arguments, out var values))
             {
-                bind = new Bind(endpoint, values);
+                bind = new Bind(route, values);
                 return true;
             }
             else
@@ -166,29 +166,10 @@ namespace Shell.Routing
 
         public RoutingResult Bind(Arguments arguments)
         {
-            var result = new RoutingResult();
-            result.Candindates = BindCommands(arguments).ToList();
-            
-            if (result.Candindates.Count == 0)
-            {
-                result.Status = RoutingStatus.NoCommands;
-                return result;
-            }
+            var candidates = BindCommands(arguments).ToList();
+            var binds = Bind(candidates, arguments).ToList();
 
-            result.Binds = Bind(result.Candindates, arguments).ToList();
-
-            if (result.Binds.Count == 0)
-            {
-                result.Status = RoutingStatus.NoMatchingParameters;
-            }
-            else if (result.Binds.Count == 1)
-            {
-                result.Status = RoutingStatus.Ok;
-            }
-            else
-            {
-                result.Status = RoutingStatus.AmbigousParameters;
-            }
+            var result = new RoutingResult(arguments, candidates, binds);
 
             return result;
         }

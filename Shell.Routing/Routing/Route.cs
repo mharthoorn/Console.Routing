@@ -1,45 +1,36 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Shell.Routing
 {
-
-    public class OldRoute
+    public class Route
     {
-        public Module Module { get; }
-        //public Command Command { get; }
-        public Type Type { get; }
-        public MethodInfo Method { get; }
-        public string[] Names;
-        public string Description;
-        public bool Default { get; }
-        public bool Hidden { get; }
+        public Module Module;
+        public bool Hidden;
+        public bool Default;
+        public List<Node> Nodes;
+        public Help Help; 
+        public MethodInfo Method;
 
-        public OldRoute(Module section, Command command, Type type, MethodInfo method)
+        public Route(Module module, IEnumerable<Node> nodes, MethodInfo method, Help help, Hidden hidden, bool isdefault)
         {
-            Module = section;
-            Type = type;
-            Method = method;
-            Default = method.HasAttribute<Default>();
-            Hidden = method.HasAttribute<Hidden>();
-            var help = method.GetCustomAttribute<Help>();
-            Description = help?.Description;
-
-            if (command.Names.Any()) { Names = command.Names; } else { Names = new string[] { Method.Name }; }
+            this.Module = module;
+            this.Nodes = nodes.ToList();
+            this.Method = method;
+            this.Help = help;
+            this.Hidden = !(hidden is null);
+            this.Default = isdefault;
         }
 
-        public string Name => Names.FirstOrDefault();
+        public string Description => Help?.Description;
 
         public override string ToString()
         {
-            var pars = this.ParametersDescription();
-            return $"{Module} {Name} {pars}";
-        }
+            string commands = string.Join(" ", Nodes);
+            var parameters = Method.ParametersDescription();
+            return $"{commands} {parameters}";
 
-        public bool MatchName(string name)
-        {
-            return Names.Any(n => string.Compare(n, name, ignoreCase: true) == 0);
         }
     }
 

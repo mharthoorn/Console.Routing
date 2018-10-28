@@ -24,14 +24,9 @@ namespace Shell.Routing
             }
         }
 
-        public static void Run(OldRoute route, Arguments arguments)
-        {
-            Run(route.Method, arguments);
-        }
-
         public static void Run(Bind bind)
         {
-            Run(bind.Endpoint.Method, bind.Arguments);
+            Run(bind.Route.Method, bind.Arguments);
         }
 
         public static void Run(RoutingResult result)
