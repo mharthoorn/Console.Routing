@@ -3,35 +3,15 @@ using System.Linq;
 
 namespace Shell.Routing
 {
+    
     public class RoutingResult
     {
-        public RoutingResult(Arguments arguments, IList<Route> candidates, IList<Bind> binds)
+        public RoutingResult(Arguments arguments, RoutingStatus status, IList<Bind> binds, IList<Route> candidates)
         {
             this.Arguments = arguments;
             this.Candidates = candidates;
             this.Binds = binds;
-            this.Status = SetStatus();
-        }
-
-        private RoutingStatus SetStatus()
-        {
-            if (Binds.Count == 1) return RoutingStatus.Ok;
-
-            if (Candidates.Count == 0) return RoutingStatus.NoMatchingCommands;
-
-            if (Candidates.Count == 1)
-            {
-                if (Binds.Count == 0) return RoutingStatus.NoMatchingParameters;
-                if (Binds.Count > 1) return RoutingStatus.AmbigousParameters;
-            }
-
-            if (Candidates.Count > 1)
-            {
-                if (Binds.Count == 0) return RoutingStatus.NoMatchingParameters;
-                if (Binds.Count > 1) return RoutingStatus.AmbigousParameters;
-            }
-
-            return RoutingStatus.NoMatchingCommands; // shouldn't be possible.
+            this.Status = status;
         }
 
         public bool Ok => Status == RoutingStatus.Ok;

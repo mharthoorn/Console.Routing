@@ -7,7 +7,7 @@ namespace Shell.Routing
 
     public class Router
     {
-        public IList<Route> Routes;
+        public IList<Route> Routes { get; }
 
         public Router(IList<Route> routes)
         {
@@ -26,11 +26,11 @@ namespace Shell.Routing
 
         public IEnumerable<Route> BindCommands(Arguments arguments)
         {
-            foreach(var endpoint in Routes)
+            foreach(var route in Routes)
             {
-                if (TryMatchCommands(endpoint, arguments))
+                if (TryMatchCommands(route, arguments))
                 {
-                    yield return endpoint;
+                    yield return route;
                 }
             }
         }
@@ -141,9 +141,9 @@ namespace Shell.Routing
 
         public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
-            foreach (var endpoint in routes)
+            foreach (var route in routes)
             {
-                if (TryBind(endpoint, arguments, out var bind))
+                if (TryBind(route, arguments, out var bind))
                 {
                     yield return bind;
                 }
@@ -169,11 +169,31 @@ namespace Shell.Routing
             var candidates = BindCommands(arguments).ToList();
             var binds = Bind(candidates, arguments).ToList();
 
-            var result = new RoutingResult(arguments, candidates, binds);
-
-            return result;
+            return CreateResult(arguments, candidates, binds);
         }
 
+        private static RoutingResult CreateResult(Arguments arguments, IList<Route> commandscandidates, IList<Bind> binds)
+        {
+            IList<Route> candidates = null;
+            RoutingStatus status;
+
+            if (binds.Count == 1)
+            {
+                status = RoutingStatus.Ok;
+            }
+            else if (binds.Count == 0)
+            {
+                candidates = commandscandidates.NonDefault().ToList();
+                status = (candidates.Count > 0) ? RoutingStatus.NoMatchingParameters : RoutingStatus.NoMatchingCommands;
+            }
+            else // if (binds.Count > 1)
+            {
+                candidates = binds.Select(b => b.Route).NonDefault().ToList();
+                status = (candidates.Count > 0) ? RoutingStatus.AmbigousParameters : RoutingStatus.NoMatchingCommands;
+            }
+            return new RoutingResult(arguments, status, binds, candidates);
+
+        }
 
     }
 

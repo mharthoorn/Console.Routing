@@ -4,6 +4,12 @@ using System.Linq;
 
 namespace Shell.Routing
 {
+    public class RoutingError
+    {
+        public string Message;
+        public IList<Route> Candidates;
+    }
+
     public static class RoutingPrinter
     {
         public static void Write(RoutingResult result)
@@ -13,17 +19,19 @@ namespace Shell.Routing
                 string command = result.Arguments.items.First().ToString();
                 Console.WriteLine($"Unknown command: {command}.");
             }
-            else if (result.Status == RoutingStatus.NoMatchingParameters)
+            else
             {
-                Console.WriteLine("There is no command that matches these parameters");
-                var candidates = result.Candidates.NonDefault();
-                if (candidates.Count() > 0)
-                    DidYouMean(candidates);
-            }
-            else if (result.Status == RoutingStatus.AmbigousParameters)
-            {
-                Console.WriteLine("There is more than one command that matches these parameters:");
-                DidYouMean(result.Routes);
+                Console.WriteLine("You did not supply correct arguments.");
+
+                if (result.Status == RoutingStatus.NoMatchingParameters)
+                {
+                    var candidates = result.Candidates.NonDefault();
+                    if (candidates.Count() > 0) DidYouMean(candidates);
+                }
+                else if (result.Status == RoutingStatus.AmbigousParameters)
+                {
+                    DidYouMean(result.Routes);
+                }
             }
             
         }
