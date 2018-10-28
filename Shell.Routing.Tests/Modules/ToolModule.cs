@@ -9,6 +9,12 @@ namespace Shell.Routing.Tests
     [Module]
     public class ToolModule
     {
+        [Command, Default]
+        public void Info()
+        {
+            Console.WriteLine("Info");
+        }
+
         [Command]
         public void Tool()
         {

@@ -58,9 +58,9 @@ namespace Shell.Routing
             return parameter.GetCustomAttribute<T>() != null;
         }
 
-        public static bool HasAttribute<T>(this MethodInfo parameter) where T : Attribute
+        public static bool HasAttribute<T>(this MethodInfo method) where T : Attribute
         {
-            return parameter.GetCustomAttribute<T>() != null;
+            return method.GetCustomAttribute<T>() != null;
         }
 
         public static bool HasAttribute<T>(this Type type) where T : Attribute

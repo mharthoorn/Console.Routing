@@ -9,7 +9,7 @@ namespace Shell.Routing.Tests
     {
         public static Arguments ParseArguments(string s)
         {
-            var args = s.Split(' ');
+            var args = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return new Arguments(args);
         }
 

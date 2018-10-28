@@ -40,20 +40,21 @@ namespace Shell.Routing
             int index = 0;
             int length = endpoint.Nodes.Count;
 
-            while (true)
+            while (index < length)
             {
                 if (arguments.TryGetHead(index, out Literal literal))
                 {
                     if (endpoint.Nodes[index].Matches(literal))
                     {
                         index++;
-                        if (index == length) return true;
+                        //if (index == length) return true;
                     }
                     else return false;
                     
                 }
                 else return false;
             }
+            return true;
         }
 
         private static bool TryBuildParameters(Route endpoint, Arguments arguments, out object[] values)

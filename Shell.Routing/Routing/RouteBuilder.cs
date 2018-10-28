@@ -49,8 +49,9 @@ namespace Shell.Routing
 
         public void DiscoverCommand(MethodInfo method, in List<Node> trail)
         {
-            var t = trail.Retail(method);
+            var isdefault = method.HasAttribute<Default>();
             var help = method.GetCustomAttribute<Help>();
+            var t = isdefault ? trail : trail.Retail(method);
             var endpoint = new Route(t, method, help);
             Register(endpoint);
 

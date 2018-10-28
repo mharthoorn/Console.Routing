@@ -64,6 +64,7 @@ namespace Shell.Routing
             result.AddRange(nodes);
             return result;
         }
+
         public static List<Node> Retail(this List<Node> nodes, Node tail)
         {
             var list = new List<Node>();

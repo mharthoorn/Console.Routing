@@ -5,6 +5,12 @@ namespace Shell.Routing.Tests
     [Module, Command("main")]
     public class NestModule
     {
+        [Command] 
+        public void Action(string message)
+        {
+            Console.WriteLine(message);
+        }
+
         [Module, Command("sub")]
         public class SubModule
         {
@@ -13,6 +19,7 @@ namespace Shell.Routing.Tests
             {
                 Console.WriteLine(message);
             }
+
             
         }
     }

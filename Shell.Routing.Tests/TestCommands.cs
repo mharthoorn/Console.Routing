@@ -10,36 +10,28 @@ namespace Shell.Routing.Tests
         Router router = Routing<ToolModule>.Router;
 
         [TestMethod]
-        public void TestSectionDefault()
+        public void PlainCommandAttribute()
         {
             var arguments = Utils.ParseArguments("tool");
             var result = router.Bind(arguments);
 
-            var route = result.Candindates.First();
-            Assert.AreEqual(route.Method.Name, "Tool");
+            Assert.IsTrue(result.Candindates.Count >= 2);
+            Assert.AreEqual("Tool", result.Route.Method.Name);
         }
 
         [TestMethod]
-        public void SingleLiteral()
+        public void DefaultCommand()
         {
-            // ToolCommands.Single(string name) // 1 matching bind
-
-            var arguments = Utils.ParseArguments("action Foo");
+            var arguments = Utils.ParseArguments("");
             var result = router.Bind(arguments);
-            
-            Assert.AreEqual(result.Candindates.Count, 2);
-            Assert.AreEqual(result.Count, 1);
 
-            var bind = result.Bind;
-            Assert.AreEqual(bind.Endpoint.Method.Name, "Action");
+            Assert.AreEqual("Info", result.Candindates.SingleOrDefault().Method.Name);
 
-            var routingparams = bind.Endpoint.Method.GetRoutingParameters();
-            Assert.AreEqual(routingparams.Count(), 1);
+            Assert.AreEqual("Info", result.Route.Method.Name);
 
-            Assert.AreEqual(bind.Arguments[0], "Foo");
         }
 
-    
+
         [TestMethod]
         public void Binding()
         {
@@ -48,7 +40,7 @@ namespace Shell.Routing.Tests
             var arguments = Utils.ParseArguments("action William will --foo --bar fubar");
             var result = router.Bind(arguments);
             
-            Assert.AreEqual(result.Candindates.Count, 2);
+            Assert.AreEqual(result.Candindates.Count, 3);
                 // action(name) 
                 // action(name, alias, foo, bar)
 
@@ -69,31 +61,21 @@ namespace Shell.Routing.Tests
         }
 
         [TestMethod]
-        public void TestOptionValue()
-        {
-            var args1 = Utils.ParseArguments("-a -b --test abc");
-            args1.TryGet("test", out Flag option1);
-            Assert.AreEqual("test",  option1.Name);
-            args1.TryGetFlagValue("test", out var value);
-            Assert.AreEqual("abc", value);
-        }
-
-        [TestMethod]
-        public void TestOpionValues()
-        {
-            var line = "save --all --pattern '{id}-{id}'";
-            var args = Utils.ParseArguments(line);
-            var result = router.Bind(args);
-            Assert.AreEqual(1, result.Count);
-
-        }
-
-        [TestMethod]
         public void Nesting()
         {
-            var line = "main sub detail hello";
-            var args = Utils.ParseArguments(line);
-            var result = router.Bind(args);
+            var arguments = Utils.ParseArguments("main action hello");
+            var result = router.Bind(arguments);
+            Assert.AreEqual("Action", result.Route.Method.Name);
+            Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
+            Assert.AreEqual("Action", result.Route.Nodes.Skip(1).First().Names.First());
+            Assert.AreEqual(1, result.Count);
+
+            arguments = Utils.ParseArguments("main sub detail hello");
+            result = router.Bind(arguments);
+            Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
+            Assert.AreEqual("Detail", result.Route.Method.Name);
+            Assert.AreEqual("sub", result.Route.Nodes.Skip(1).First().Names.First());
+            Assert.AreEqual("Detail", result.Route.Nodes.Skip(2).First().Names.First());
             Assert.AreEqual(1, result.Count);
         }
     }

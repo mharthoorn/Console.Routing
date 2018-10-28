@@ -6,6 +6,11 @@ namespace Shell.Routing.Tests
     [TestClass]
     public class TestReferences
     {
+        // This class tests commands as they are used in known (reference) tools
+        // Like git
+        // Work in progress. Some plans to implement other parameter styles later,
+        // like single dash flags (windows), and slash flags, like msdos.
+
         Router router = Routing<ToolModule>.Router;
 
         [TestMethod]
