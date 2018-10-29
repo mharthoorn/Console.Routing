@@ -16,14 +16,14 @@ A command can have a description for automatic documenting.
 
  ...
 
-[Module("tool")]
+[Module("Tools")]
 public class ToolCommands
 {
     // Allows the following usage on the command line:
     // > tool hello John 
     // > tool hello John --upper
     // > tool hello John -u
-    [Command("Says Hello to the given name")]
+    [Command, Help(("Says Hello to the given name")]
     public void Hello(string name, Flag upper)
     {
         if (upper) name = name.ToUpper();
@@ -42,7 +42,9 @@ public class ToolCommands
 	
     // > tool greet
     // > tool greet John
-    [Command("Says hello")]
+	// > tool greeting 
+	// > tool greeting John
+    [Command("greet", "greeting")]
     public void Greet([Optional]string name)
     {
         if (name is null)
@@ -57,7 +59,7 @@ public class ToolCommands
 
 
     // > tool login user=john password=secret
-    [Command("Logs in to the system with user/password")]
+    [Command, Help("Logs in to the system with user/password")]
     public void Login(Assignment user, Assignment password)
     {
         //...
