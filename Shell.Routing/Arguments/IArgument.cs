@@ -24,6 +24,7 @@
     public interface IArgument
     {
         bool Match(string name);
+        string Value { get; }
     }
 
 

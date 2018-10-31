@@ -24,6 +24,14 @@ namespace Shell.Routing
         public Arguments Arguments;
         public IList<Route> Candidates; //where the commands match, but not necessarily the parameters
         public IList<Bind> Binds;
+
+        public override string ToString()
+        {
+            string okstr = Ok ? "Ok" : "Failed";
+            string nrs = (Count == 1) ? "" : $" {Count}";
+            if (!(Candidates is null)) nrs += $"/{Candidates?.Count}";
+            return $" {okstr} {nrs}";
+        }
     }
 
 

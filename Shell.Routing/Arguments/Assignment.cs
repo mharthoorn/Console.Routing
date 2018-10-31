@@ -3,7 +3,7 @@
     public class Assignment : IArgument
     {
         public string Name;
-        public string Value;
+        public string Value { get; }
         public bool Provided { get; private set; }
 
         public Assignment(string name, string value)

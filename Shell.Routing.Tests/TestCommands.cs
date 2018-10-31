@@ -15,7 +15,7 @@ namespace Shell.Routing.Tests
             var arguments = Utils.ParseArguments("tool");
             var result = router.Bind(arguments);
 
-            Assert.IsTrue(result.Candindates.Count >= 2);
+            Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Tool", result.Route.Method.Name);
         }
 
@@ -25,10 +25,7 @@ namespace Shell.Routing.Tests
             var arguments = Utils.ParseArguments("");
             var result = router.Bind(arguments);
 
-            Assert.AreEqual("Info", result.Candindates.SingleOrDefault().Method.Name);
-
             Assert.AreEqual("Info", result.Route.Method.Name);
-
         }
 
 
@@ -39,18 +36,17 @@ namespace Shell.Routing.Tests
 
             var arguments = Utils.ParseArguments("action William will --foo --bar fubar");
             var result = router.Bind(arguments);
-            
-            Assert.AreEqual(result.Candindates.Count, 3);
-                // action(name) 
-                // action(name, alias, foo, bar)
 
+            Assert.AreEqual(true, result.Ok);
             Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(null, result.Candidates);
+            Assert.AreEqual(4, result.Bind.Arguments.Count());
             // action(name, alias, foo, bar)
 
             var bind = result.Bind;
-            Assert.AreEqual(bind.Endpoint.Method.Name, "Action");
+            Assert.AreEqual(bind.Route.Method.Name, "Action");
 
-            var routingparams = bind.Endpoint.Method.GetRoutingParameters();
+            var routingparams = bind.Route.Method.GetRoutingParameters();
             Assert.AreEqual(routingparams.Count(), 4);
 
             Assert.AreEqual(bind.Arguments[0], "William");

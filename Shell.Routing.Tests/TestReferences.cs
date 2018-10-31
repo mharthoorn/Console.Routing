@@ -18,7 +18,7 @@ namespace Shell.Routing.Tests
         {
             var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git
             var result = router.Bind(arguments);
-            Assert.AreEqual(result.Bind.Endpoint.Method.Name, "Commit");
+            Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");
         }
 
     }

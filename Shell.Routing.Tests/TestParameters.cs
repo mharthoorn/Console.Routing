@@ -16,15 +16,15 @@ namespace Shell.Routing.Tests
             var arguments = Utils.ParseArguments("action Foo");
             var result = router.Bind(arguments);
 
-            Assert.IsTrue(result.Candindates.Count > 2);
             Assert.AreEqual(result.Count, 1);
 
             var bind = result.Bind;
-            Assert.AreEqual(bind.Endpoint.Method.Name, "Action");
+            Assert.AreEqual(bind.Route.Method.Name, "Action");
 
-            var parameters = bind.Endpoint.Method.GetRoutingParameters();
+            var parameters = bind.Route.Method.GetRoutingParameters();
             Assert.AreEqual(parameters.Count(), 1);
 
+            Assert.AreEqual(1, bind.Arguments.Length);
             Assert.AreEqual(bind.Arguments[0], "Foo");
         }
 

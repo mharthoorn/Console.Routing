@@ -2,7 +2,7 @@
 {
     public class Literal : IArgument
     {
-        public string Value;
+        public string Value { get; }
 
         public Literal(string value)
         {

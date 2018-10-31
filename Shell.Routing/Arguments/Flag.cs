@@ -8,6 +8,8 @@ namespace Shell.Routing
         public string Name { get; private set; }
         public bool Set { get; private set; }
 
+        public string Value { get => Set.ToString(); }
+
         public Flag(string name)
         {
             this.Name = name;
