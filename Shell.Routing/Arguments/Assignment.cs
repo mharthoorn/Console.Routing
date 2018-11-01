@@ -10,6 +10,14 @@
         {
             this.Name = name;
             this.Value = value;
+            Provided = true;
+        }
+
+        private Assignment() { }
+
+        public static Assignment NotProvided()
+        {
+            return new Assignment { Name = null, Value = null, Provided = false };
         }
 
         public bool Match(string name)
@@ -29,6 +37,7 @@
 
         public override string ToString()
         {
+            if (!Provided) return "(Not provided)";
             return $"{Name}={Value}";
         }
     }

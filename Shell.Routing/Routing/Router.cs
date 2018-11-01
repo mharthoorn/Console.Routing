@@ -96,6 +96,10 @@ namespace Shell.Routing
                         values[ip++] = assignment;
                         used++;
                     }
+                    else
+                    {
+                        values[ip++] = Assignment.NotProvided();
+                    }
                 }
 
                 else if (param.Type == typeof(FlagValue))
