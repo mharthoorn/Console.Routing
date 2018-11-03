@@ -60,6 +60,7 @@ And the following attributes control discovery:
 ```
  
 # Examples 
+```csharp
 [Module("Tools")]
 public class ToolCommands
 {
