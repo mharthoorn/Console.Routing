@@ -1,9 +1,8 @@
 # Shell.Routing
-Shell.Routing is a C#/netstandard 2.0 framework for routing command line parameters. It can be used with minimal overhead.
-It supports method overloading, flags, keyvalues, flag values and optional parameters. 
+Shell.Routing is a C#/netstandard 2.0 framework for commands and parameters to methods in C#.  You can implement it with minimal setup overhead.
 
-You can bind any method with a [Command] attribute in a class with a [Module] attribute.
-A command can have a description for automatic documenting.
+# Setup
+You only have to add one line of code to the ``Program.Main`` to enable Routing discovery and handling of arguments:
 
 ```csharp
  class Program
@@ -13,9 +12,53 @@ A command can have a description for automatic documenting.
         Routing<Program>.Handle(args);
     }  
  }
+```
 
- ...
+# Discovery
 
+You can bind any method with a [Command] attribute in a class with a [Module] attribute.
+A command can have a Help attribute for description for automatic documenting.
+
+Shell.Routing supports method overloading, and the following out-of-the-box C# types as parameters:
+```
+    string 
+        any literal value 
+    
+    [Optional]string 
+        optional parameter
+
+    Flag version
+        --version
+        -s
+
+    Assignment key
+        key=value
+
+    FlagValue message
+        --message 'hello'
+        -m 'hello'
+
+```
+And the following attributes control discovery:
+```
+    [Module("One line description")]
+        Any class with the Module attribute creates a group commands for the methods inside
+
+    [Command]
+    [Command("commit")]
+        Any method with this attribute will become a command.
+
+    [Default]
+        In combination with the Command attribute. Allows the method to be discovered and used without any command parameter. Good for default options like
+        --help, --version etc.
+
+    [Hidden]
+        In combination with Command, the method will become a command, but is not listed.
+    
+
+```
+ 
+# Examples 
 [Module("Tools")]
 public class ToolCommands
 {
