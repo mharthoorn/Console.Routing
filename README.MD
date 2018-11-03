@@ -49,7 +49,8 @@ And the following attributes control discovery:
         Any method with this attribute will become a command.
 
     [Default]
-        In combination with the Command attribute. Allows the method to be discovered and used without any command parameter. Good for default options like
+        In combination with the Command attribute. Allows the method to be discovered and 
+        used without any command parameter. Good for default options like
         --help, --version etc.
 
     [Hidden]
@@ -107,5 +108,14 @@ public class ToolCommands
     {
         //...
     }
+
+    // > tool login user=john password=secret
+    [Default, Hidden]
+    public void Info(Flag help, Flag version)
+    {
+        if (help.Set) ShowHelp();
+        if (version.Set) ShowVersion();
+    }
+
 }
 ```
