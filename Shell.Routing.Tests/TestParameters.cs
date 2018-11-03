@@ -43,6 +43,7 @@ namespace Shell.Routing.Tests
         public void FlagValueBinding()
         {
             // since we match on used parameter count, flag vaues are a special case
+            // one FlagValue consumes 2 command line arguments
             var arguments = Utils.ParseArguments("save --all --pattern '{id}-{id}'");
             var result = router.Bind(arguments);
             Assert.AreEqual(1, result.Count);
