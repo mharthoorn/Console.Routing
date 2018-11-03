@@ -60,8 +60,9 @@ And the following attributes control discovery:
 ```
  
 # Examples 
+The examples below describe commands for a fictitious tool named ``tool``.
 ```csharp
-[Module("Tools")]
+[Module("Example tools commands")]
 public class ToolCommands
 {
     // Allows the following usage on the command line:
@@ -75,20 +76,19 @@ public class ToolCommands
         Console.Writeline("Hello " + name);
     }
 	
-    // > tool commit --message "First commit"
-    // > tool commit -m "First commit"
+    // > tool log --message "First commit"
+    // > tool log -m "First commit"
     [Command]
-    public void Commit(FlagValue message)
+    public void Log(FlagValue message)
     {
-        if (upper) name = name.ToUpper();
-        Console.Writeline("Hello " + name);
+        Logger.Log(message.Value);
     }
 	
 	
     // > tool greet
     // > tool greet John
-	// > tool greeting 
-	// > tool greeting John
+    // > tool greeting 
+    // > tool greeting John
     [Command("greet", "greeting")]
     public void Greet([Optional]string name)
     {
@@ -110,7 +110,8 @@ public class ToolCommands
         //...
     }
 
-    // > tool login user=john password=secret
+    // > tool --help
+    // > tool --info
     [Default, Hidden]
     public void Info(Flag help, Flag version)
     {
