@@ -86,7 +86,7 @@ namespace Shell.Routing
 
         public static IEnumerable<T> OfType<T>(this Arguments args)
         {
-            return args.items.OfType<T>();
+            return args.Items.OfType<T>();
         }
     }
 

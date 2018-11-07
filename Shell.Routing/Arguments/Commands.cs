@@ -12,7 +12,7 @@ namespace Shell.Routing
         public Commands(Arguments args)
         {
             this.arguments = args;
-            commands = BuildCommands(args.items);
+            commands = BuildCommands(args.Items);
         }
 
         public bool Empty => commands.Count == 0;
@@ -62,7 +62,7 @@ namespace Shell.Routing
         public void Consume()
         {
             foreach (var item in used)
-                arguments.items.Remove(item);
+                arguments.Items.Remove(item);
         }
 
         //public ArgResult<T> TryUseHead<T>() where T: IArgument

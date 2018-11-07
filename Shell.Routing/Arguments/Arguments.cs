@@ -6,7 +6,7 @@ namespace Shell.Routing
 
     public class Arguments 
     { 
-        internal List<IArgument> items = new List<IArgument>();
+        private List<IArgument> items = new List<IArgument>();
         
         public int Count => items.Count;
 

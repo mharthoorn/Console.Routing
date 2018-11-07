@@ -14,28 +14,51 @@ namespace Shell.Routing
             this.Routes = routes;
         }
 
-        public RoutingResult Handle(Arguments arguments)
+        public RoutingResult Bind(Arguments arguments)
         {
-            RoutingResult result = Bind(arguments);
+            var candidates = ElectCandidates(arguments).ToList();
+            var routes = candidates.Routes(CommandMatch.Full, CommandMatch.Default);
+            var binds = Bind(routes, arguments).ToList();
 
-            if (result.Ok)
-                Invoker.Run(result.Bind);
-            
-            return result;
+            return CreateResult(arguments, candidates, binds);
         }
 
-        public IEnumerable<Route> BindCommands(Arguments arguments)
+        public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
-            foreach(var route in Routes)
+            foreach (var route in routes)
             {
-                if (TryMatchCommands(route, arguments))
+                if (TryBind(route, arguments, out var bind))
                 {
-                    yield return route;
+                    yield return bind;
                 }
             }
         }
 
-        public bool TryMatchCommands(Route route, Arguments arguments)
+        public IEnumerable<Candidate> ElectCandidates(Arguments arguments)
+        {
+            foreach (var route in Routes)
+            {
+                var match = TryMatchCommands(route, arguments);
+                if (match == CommandMatch.Not) continue;
+                else yield return new Candidate(match, route);
+            }
+        }
+
+        private static bool TryBind(Route route, Arguments arguments, out Bind bind)
+        {
+            if (TryBuildParameters(route, arguments, out var values))
+            {
+                bind = new Bind(route, values);
+                return true;
+            }
+            else
+            {
+                bind = null;
+                return false;
+            }
+        }
+
+        private CommandMatch TryMatchCommands(Route route, Arguments arguments)
         {
             int index = 0;
             int length = route.Nodes.Count;
@@ -49,12 +72,20 @@ namespace Shell.Routing
                         index++;
                         //if (index == length) return true;
                     }
-                    else return false;
-                    
+                    else break;
+
                 }
-                else return false;
+                else break;
             }
-            return true;
+            return ComputeCommandMatch(length, index);
+        }
+
+        private static CommandMatch ComputeCommandMatch(int nodeCount, int index)
+        {
+            if (nodeCount == 0) return CommandMatch.Default;
+            if (index == 0) return CommandMatch.Not;
+            if (index > 0 && index == nodeCount) return CommandMatch.Full;
+            return CommandMatch.Partial;
         }
 
         private static bool TryBuildParameters(Route route, Arguments arguments, out object[] values)
@@ -143,62 +174,45 @@ namespace Shell.Routing
 
         }
 
-        public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
+        
+        private static RoutingResult CreateResult(Arguments arguments, IList<Candidate> candidates, IList<Bind> bindings)
         {
-            foreach (var route in routes)
-            {
-                if (TryBind(route, arguments, out var bind))
-                {
-                    yield return bind;
-                }
-            }
+            (int partial, int def, int full) = Count(candidates);
+            int binds = bindings.Count;
+            var status = CalcStatus(binds, partial, def, full);
+
+            return new RoutingResult(arguments, status, bindings, candidates);
+
         }
 
-        public static bool TryBind(Route route, Arguments arguments, out Bind bind)
+        private static RoutingStatus CalcStatus(int binds, int partial, int def, int full)
         {
-            if (TryBuildParameters(route, arguments, out var values))
+            if (binds == 1)
             {
-                bind = new Bind(route, values);
-                return true;
+                return RoutingStatus.Ok;
             }
-            else
+            else if (binds == 0)
             {
-                bind = null;
-                return false;
-            }
-        }
-
-        public RoutingResult Bind(Arguments arguments)
-        {
-            var candidates = BindCommands(arguments).ToList();
-            var binds = Bind(candidates, arguments).ToList();
-
-            return CreateResult(arguments, candidates, binds);
-        }
-
-        private static RoutingResult CreateResult(Arguments arguments, IList<Route> commandscandidates, IList<Bind> binds)
-        {
-            IList<Route> candidates = null;
-            RoutingStatus status;
-
-            if (binds.Count == 1)
-            {
-                status = RoutingStatus.Ok;
-            }
-            else if (binds.Count == 0)
-            {
-                candidates = commandscandidates.NonDefault().ToList();
-                status = (candidates.Count > 0) ? RoutingStatus.NoMatchingParameters : RoutingStatus.NoMatchingCommands;
+                if (full > 0) return RoutingStatus.InvalidParameters;
+                if (partial > 0) return RoutingStatus.PartialCommand;
+                //if (def > 0) return RoutingStatus.InvalidDefault;
+                return RoutingStatus.UnknownCommand;
             }
             else // if (binds.Count > 1)
             {
-                candidates = binds.Select(b => b.Route).NonDefault().ToList();
-                status = (candidates.Count > 0) ? RoutingStatus.AmbigousParameters : RoutingStatus.NoMatchingCommands;
+                return RoutingStatus.AmbigousParameters;
             }
-            return new RoutingResult(arguments, status, binds, candidates);
 
+            throw new System.Exception("Invalid status");
         }
 
+        private static (int partial, int def, int full) Count(IEnumerable<Candidate> candidates)
+        {
+            int partial = candidates.Count(CommandMatch.Partial);
+            int def = candidates.Count(CommandMatch.Default);
+            int full = candidates.Count(CommandMatch.Full);
+            return (partial, def, full);
+        }
     }
 
 }

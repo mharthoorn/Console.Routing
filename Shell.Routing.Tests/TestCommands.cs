@@ -74,5 +74,14 @@ namespace Shell.Routing.Tests
             Assert.AreEqual("Detail", result.Route.Nodes.Skip(2).First().Names.First());
             Assert.AreEqual(1, result.Count);
         }
+
+        [TestMethod]
+        public void ForgetSubCommand()
+        {
+            var arguments = Utils.ParseArguments("mainfirst");
+            var result = router.Bind(arguments);
+            var count = result.Candidates.Count(CommandMatch.Partial);
+            Assert.AreEqual(2, count);
+        }
     }
 }

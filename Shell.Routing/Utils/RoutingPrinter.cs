@@ -14,31 +14,52 @@ namespace Shell.Routing
     {
         public static void Write(RoutingResult result)
         {
-            if (result.Status == RoutingStatus.NoMatchingCommands)
+            switch(result.Status)
             {
-                string command = result.Arguments.items.First().ToString();
-                Console.WriteLine($"Unknown command: {command}.");
-            }
-            else
-            {
-                Console.WriteLine("You did not supply correct arguments.");
+                case RoutingStatus.Ok:
+                    Console.WriteLine("The command was found and understood.");
+                    break;
 
-                if (result.Status == RoutingStatus.NoMatchingParameters)
-                {
-                    var candidates = result.Candidates.NonDefault();
-                    if (candidates.Count() > 0) DidYouMean(candidates);
-                }
-                else if (result.Status == RoutingStatus.AmbigousParameters)
-                {
-                    DidYouMean(result.Routes);
-                }
+                case RoutingStatus.UnknownCommand:
+                    var arg = result.Arguments.Items.FirstOrDefault();
+                    if (arg is Literal)
+                    {
+                        Console.WriteLine($"Unknown command: {arg}.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Invalid parameter(s). These are your options:");
+                        PrintCandidates(result.Candidates.Routes(CommandMatch.Default));
+                    }
+                    
+                    break;
+
+                case RoutingStatus.PartialCommand:
+                    Console.WriteLine("Did you mean:");
+                    PrintCandidates(result.Candidates.Routes(CommandMatch.Partial));
+                    break;
+
+                case RoutingStatus.InvalidParameters:
+                    Console.WriteLine("Invalid parameter(s). These are your options:");
+                    PrintCandidates(result.Candidates.Routes(CommandMatch.Full));
+                    break;
+
+                case RoutingStatus.AmbigousParameters:
+                    Console.WriteLine("Ambigous parameter(s). These are your options:");
+                    PrintCandidates(result.Routes);
+                    break;
+
+                case RoutingStatus.InvalidDefault:
+                    Console.WriteLine("Invalid parameter(s). These are your options:");
+                    PrintCandidates(result.Candidates.Routes(CommandMatch.Default));
+                    break;
             }
-            
+           
         }
 
-        public static void DidYouMean(IEnumerable<Route> routes)
+        public static void PrintCandidates(IEnumerable<Route> routes)
         {
-            Console.WriteLine("Did you mean:");
+            
             foreach (var route in routes) Console.WriteLine($"  {route}");
         }
 

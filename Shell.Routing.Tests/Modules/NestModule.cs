@@ -19,10 +19,7 @@ namespace Shell.Routing.Tests
             {
                 Console.WriteLine(message);
             }
-
-            
+   
         }
     }
-
-    
 }
