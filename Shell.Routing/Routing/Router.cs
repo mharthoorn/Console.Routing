@@ -77,10 +77,10 @@ namespace Shell.Routing
                 }
                 else break;
             }
-            return ComputeCommandMatch(length, index);
+            return MapCommandMatch(length, index);
         }
 
-        private static CommandMatch ComputeCommandMatch(int nodeCount, int index)
+        private static CommandMatch MapCommandMatch(int nodeCount, int index)
         {
             if (nodeCount == 0) return CommandMatch.Default;
             if (index == 0) return CommandMatch.Not;
@@ -174,18 +174,17 @@ namespace Shell.Routing
 
         }
 
-        
         private static RoutingResult CreateResult(Arguments arguments, IList<Candidate> candidates, IList<Bind> bindings)
         {
             (int partial, int def, int full) = Count(candidates);
             int binds = bindings.Count;
-            var status = CalcStatus(binds, partial, def, full);
+            var status = MapRoutingStatus(binds, partial, def, full);
 
             return new RoutingResult(arguments, status, bindings, candidates);
 
         }
 
-        private static RoutingStatus CalcStatus(int binds, int partial, int def, int full)
+        private static RoutingStatus MapRoutingStatus(int binds, int partial, int def, int full)
         {
             if (binds == 1)
             {
