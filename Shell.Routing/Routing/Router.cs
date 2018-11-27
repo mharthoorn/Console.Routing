@@ -122,7 +122,7 @@ namespace Shell.Routing
 
                 else if (param.Type == typeof(Assignment))
                 {
-                    if (arguments.TryGet(param.Name, out Assignment assignment))
+                    if (arguments.TryGet(param, out Assignment assignment))
                     {
                         values[ip++] = assignment;
                         used++;
@@ -135,7 +135,7 @@ namespace Shell.Routing
 
                 else if (param.Type == typeof(FlagValue))
                 {
-                    if (arguments.TryGetFlagValue(param.Name, out string value))
+                    if (arguments.TryGetFlagValue(param, out string value))
                     {
                         values[ip++] = new FlagValue(value, 2);
                         used += 2;
@@ -148,7 +148,7 @@ namespace Shell.Routing
 
                 else if (param.Type == typeof(Flag))
                 {
-                    if (arguments.TryGet(param.Name, out Flag flag))
+                    if (arguments.TryGet(param, out Flag flag))
                     {
                         values[ip++] = flag;
                         used++;

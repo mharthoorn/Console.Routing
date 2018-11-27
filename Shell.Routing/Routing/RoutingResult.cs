@@ -31,10 +31,15 @@ namespace Shell.Routing
         
         public override string ToString()
         {
-            string okstr = Ok ? "Ok" : "Failed";
-            string nrs = (Count == 1) ? "" : $" {Count}";
-            if (!(Candidates is null)) nrs += $"/{Candidates?.Count}";
-            return $" {okstr} {nrs}";
+            if (Ok)
+            {
+                return "Ok";
+            }
+            else
+            {
+                return $"Failed: {Count}/{Candidates?.Count ?? 0}";
+            }
+            
         }
     }
 

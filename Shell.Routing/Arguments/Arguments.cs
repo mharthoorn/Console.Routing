@@ -25,6 +25,13 @@ namespace Shell.Routing
             return matches;
         }
 
+        public IList<T> Match<T>(Parameter parameter) where T : IArgument
+        {
+            var oftype = items.OfType<T>();
+            var matches = oftype.Where(a => a.Match(parameter)).ToList();
+            return matches;
+        }
+
         public ArgResult<T> GetHead<T>(int i = 0) where T: IArgument
         {
             //var matches = items.OfType<T>().ToList();

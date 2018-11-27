@@ -32,7 +32,7 @@ namespace Shell.Routing
         {
             var builder = new RouteBuilder();
             builder.DiscoverAssembly(assembly);
-            return new Router(builder.Endpoints);
+            return new Router(builder.Routes);
         }
 
     }

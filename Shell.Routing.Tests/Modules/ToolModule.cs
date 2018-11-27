@@ -10,7 +10,7 @@ namespace Shell.Routing.Tests
     public class ToolModule
     {
         [Command, Default]
-        public void Info()
+        public void Info([Alt("?")] Flag help)
         {
             Console.WriteLine("Info");
         }
@@ -37,6 +37,7 @@ namespace Shell.Routing.Tests
         {
             Console.WriteLine("Saving");
         }
+
     }
 
     

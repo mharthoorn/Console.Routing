@@ -32,17 +32,14 @@ namespace Shell.Routing.Tests
         [TestMethod]
         public void Binding()
         {
-            // ToolCommands.Single(string name) // 1 matching bind
-
             var arguments = Utils.ParseArguments("action William will --foo --bar fubar");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(true, result.Ok);
             Assert.AreEqual(result.Count, 1);
-            Assert.AreEqual(null, result.Candidates);
             Assert.AreEqual(4, result.Bind.Arguments.Count());
-            // action(name, alias, foo, bar)
-
+            Assert.IsTrue(result.Candidates.Count > 1);
+            
             var bind = result.Bind;
             Assert.AreEqual(bind.Route.Method.Name, "Action");
 

@@ -8,11 +8,11 @@ namespace Shell.Routing
 {
     public class RouteBuilder
     {
-        public List<Route> Endpoints { get;  }
+        public List<Route> Routes { get;  }
 
         public RouteBuilder()
         {
-            Endpoints = new List<Route>();
+            Routes = new List<Route>();
         }
 
         public void DiscoverAssembly(Assembly assembly)
@@ -61,7 +61,7 @@ namespace Shell.Routing
 
         public void Register(Route endpoint)
         {
-            Endpoints.Add(endpoint);
+            Routes.Add(endpoint);
         }
     }
     

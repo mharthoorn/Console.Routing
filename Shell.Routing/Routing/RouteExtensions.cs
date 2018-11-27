@@ -27,10 +27,12 @@ namespace Shell.Routing
         {
             foreach (var parameter in parameters)
             {
+                
                 yield return new Parameter
                 {
                     Name = parameter.Name.ToLower(),
                     Type = parameter.ParameterType,
+                    AltName = parameter.GetCustomAttribute<Alt>()?.Name,
                     Optional = parameter.HasAttribute<Optional>(),
                 };
             }

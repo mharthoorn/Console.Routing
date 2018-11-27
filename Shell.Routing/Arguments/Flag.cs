@@ -26,6 +26,8 @@ namespace Shell.Routing
 
         public bool Match(string name)
         {
+            if (name is null) return false;
+
             if (Short) // short flag
             {
                 return name.StartsWith(this.Name, StringComparison.OrdinalIgnoreCase);

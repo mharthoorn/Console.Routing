@@ -33,9 +33,11 @@ namespace Shell.Routing.Tests
         public void FlagValue()
         {
             var arguments = Utils.ParseArguments("-a -b --test abc");
-            arguments.TryGet("test", out Flag flag);
+            var parameter = Parameters.Create<Flag>("test");
+
+            arguments.TryGet(parameter, out Flag flag);
             Assert.AreEqual("test", flag.Name);
-            arguments.TryGetFlagValue("test", out var value);
+            arguments.TryGetFlagValue(parameter, out var value);
             Assert.AreEqual("abc", value);
         }
 
@@ -50,5 +52,15 @@ namespace Shell.Routing.Tests
 
         }
 
+
+        [TestMethod]
+        public void AlternateParamNames()
+        {
+            var arguments = Utils.ParseArguments("-?"); // should route to ToolModule.Info
+            var result = router.Bind(arguments);
+            string s = result.ToString();
+            Assert.AreEqual(1, result.Count);
+
+        }
     }
 }

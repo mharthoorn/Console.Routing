@@ -30,9 +30,16 @@ namespace Shell.Routing
             return matches.Count == 1;
         }
 
-        public static bool TryGet<T>(this Arguments args, string name, out T item) where T: IArgument
+        public static bool TryGet<T>(this Arguments args, string name, out T item) where T : IArgument
         {
             var items = args.Match<T>(name);
+            item = items.FirstOrDefault();
+            return items.Count == 1;
+        }
+
+        public static bool TryGet<T>(this Arguments args, Parameter parameter, out T item) where T: IArgument
+        {
+            var items = args.Match<T>(parameter);
             item = items.FirstOrDefault();
             return items.Count == 1;
         }
@@ -69,9 +76,9 @@ namespace Shell.Routing
             return false;
         }
 
-        public static bool TryGetFlagValue(this Arguments args, string name, out string value)
-        {
-            if (args.TryGet(name, out Flag flag))
+        public static bool TryGetFlagValue(this Arguments args, Parameter parameter, out string value)
+        { 
+            if (args.TryGet(parameter, out Flag flag))
             {
                 if (args.TryGetFollowing(flag, out Literal literal))
                 {
@@ -83,6 +90,8 @@ namespace Shell.Routing
             value = null;
             return false;
         }
+
+        
 
         public static IEnumerable<T> OfType<T>(this Arguments args)
         {
