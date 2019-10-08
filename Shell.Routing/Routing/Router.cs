@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -65,7 +66,7 @@ namespace Shell.Routing
 
             while (index < length)
             {
-                if (arguments.TryGetHead(index, out Literal literal))
+                if (arguments.TryGet(index, out Literal literal))
                 {
                     if (route.Nodes[index].Matches(literal))
                     {
@@ -118,6 +119,20 @@ namespace Shell.Routing
                     {
                         return false;
                     }
+                }
+
+                else if (param.Type.IsEnum)
+                {
+                    if (arguments.TryGetEnum(ia, param, out object value))
+                    {
+                        values[ip++] = value;
+                        used++;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
                 }
 
                 else if (param.Type == typeof(Assignment))

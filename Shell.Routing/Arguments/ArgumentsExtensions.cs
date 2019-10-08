@@ -1,16 +1,48 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Shell.Routing
 {
-    public static class ArgExtensions
-    {
+    public static class ArgumentsExtensions
+    { 
         public static bool TryGetLiteral(this Arguments args, int offset, out string literal)  
         {
             var result = args.GetHead<Literal>(offset);
             literal = (result.Success) ? result.Arg.Value : null;
             return result.Success;
         }
+
+        public static bool TryGetEnum(this Arguments args, int offset, Parameter param, out object value)
+        {
+            if (args.TryGetLiteral(offset, out string literal))
+            {
+                try
+                {
+                    value = Enum.Parse(param.Type, literal, ignoreCase: true);
+                    return true;
+                }
+                catch
+                {
+                    value = null;
+                    return false;
+                }
+
+
+                //var array = Enum.GetNames(param.Type);
+                //if (array.Contains(literal))
+                //{/
+                //    value = Enum.Parse(param.Type, literal);
+                //    return true;
+                //}
+            }
+            else
+            {
+                value = null;
+                return false;
+            }
+        }
+
 
         public static bool TryGetLiteral(this Arguments args, out string literal)
         {
@@ -65,7 +97,7 @@ namespace Shell.Routing
             int index = args.Items.IndexOf(arg);
             if (index >= 0)
             {
-                if (args.TryGet(index+1, out item))
+                if (TryGet(args, index + 1, out item))
                 {
                     return true;
                 }

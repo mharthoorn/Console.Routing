@@ -10,10 +10,6 @@ namespace Shell.Routing
         {
             this.Title = title;
         }
-        public Module()
-        {
-
-        }
     }
 
 

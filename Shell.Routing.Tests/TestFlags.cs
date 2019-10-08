@@ -1,9 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Reflection;
 
 namespace Shell.Routing.Tests
-{ 
+{
     [TestClass]
     public class TestFlags
     {
@@ -108,12 +106,11 @@ namespace Shell.Routing.Tests
         [TestMethod]
         public void FlagValues_GitCommit()
         {
-            var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git
+            var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git parameters
 
             var result = router.Bind(arguments);
             Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");
             Assert.AreEqual(1, result.Count);
-            
 
         }
 

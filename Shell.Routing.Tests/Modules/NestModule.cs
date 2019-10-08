@@ -2,7 +2,7 @@
 
 namespace Shell.Routing.Tests
 {
-    [Module, Command("main")]
+    [Module("Nest"), Command("main")]
     public class NestModule
     {
         [Command] 
@@ -11,7 +11,7 @@ namespace Shell.Routing.Tests
             Console.WriteLine(message);
         }
 
-        [Module, Command("sub")]
+        [Module("Sub"), Command("sub")]
         public class SubModule
         {
             [Command]

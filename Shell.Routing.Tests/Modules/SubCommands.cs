@@ -1,6 +1,6 @@
 ﻿namespace Shell.Routing.Tests
 {
-    [Module, Command("mainfirst")]
+    [Module("Sub commands"), Command("mainfirst")]
     public class SubCommands
     {
         // this class is here to test giving the user feedback about the options he has

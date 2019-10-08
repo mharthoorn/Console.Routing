@@ -47,7 +47,7 @@ namespace Shell.Routing
             return ArgResult<T>.Fail($"Index {i} Out of bounds");
         }
          
-        public bool TryGetHead<T>(int i, out T result) where T: IArgument
+        public bool TryGet<T>(int i, out T result) where T: IArgument
         {
             if (i < items.Count && items[i] is T item)
             {
@@ -60,7 +60,7 @@ namespace Shell.Routing
 
         public bool TryGetHead<T>(out T result) where T : IArgument
         {
-            return TryGetHead(0, out result);
+            return TryGet(0, out result);
         }
 
         public static IEnumerable<IArgument> Parse(string[] args)
