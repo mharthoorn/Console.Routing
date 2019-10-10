@@ -174,6 +174,15 @@ namespace Shell.Routing
                     }
                 }
 
+                else if (param.Type == typeof(bool))
+                {
+                    if (arguments.TryGet(param, out Flag flag))
+                    {
+                        values[ip++] = flag.Set;
+                        used++;
+                    }
+                }
+
                 else if (param.Type == typeof(Arguments))
                 {
                     values[ip++] = arguments;

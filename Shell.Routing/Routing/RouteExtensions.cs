@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Shell.Routing
 {
@@ -44,23 +45,23 @@ namespace Shell.Routing
             return GetRoutingParameters(parameters);
         }
 
-        public static string ParametersDescription(this Route route)
+        public static string Representation(this Route route)
         {
             var paraminfo = route.Method.GetParameters();
             var parameters = GetRoutingParameters(paraminfo);
-            return string.Join(" ", parameters.Select(p => ParameterDescription(p)));
+            return string.Join(" ", parameters.Select(p => Representation(p)));
             
         }
 
-        public static string ParametersDescription(this MethodInfo method)
+        public static string Representation(this MethodInfo method)
         {
             var paraminfo = method.GetParameters();
             var parameters = GetRoutingParameters(paraminfo);
-            return string.Join(" ", parameters.Select(p => ParameterDescription(p)));
+            return string.Join(" ", parameters.Select(p => Representation(p)));
 
         }
 
-        public static string ParameterDescription(Parameter parameter)
+        public static string Representation(this Parameter parameter)
         {
             Type type = parameter.Type;
             string name = parameter.Name;
@@ -69,7 +70,7 @@ namespace Shell.Routing
             {
                 return parameter.Optional ? "(<" + name + ">)" : "<" + name + ">";
             }
-            else if (type == typeof(Flag))
+            else if (type == typeof(Flag) || type == typeof(bool))
             {
                 return $"--{parameter.Name}";
             }
@@ -77,7 +78,7 @@ namespace Shell.Routing
             {
                 return $"{name}=<value>";
             }
-            else if (type == typeof(FlagValue))
+            else if (type == typeof(FlagValue) || type == typeof(bool))
             {
                 return $"--{name} <value>";
             }

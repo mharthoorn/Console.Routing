@@ -75,7 +75,7 @@ namespace Shell.Routing
                 {
                     if (route.Hidden) continue;
 
-                    var parameters = route.ParametersDescription().Trim();
+                    var parameters = route.Representation().Trim();
                     var command = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
                     var description = route.Description;
                     var text = parameters;

@@ -28,7 +28,7 @@ namespace Shell.Routing
         public override string ToString()
         {
             string commands = string.Join(" ", Nodes);
-            var parameters = Method.ParametersDescription();
+            var parameters = Method.Representation();
             return $"{commands} {parameters}";
 
         }
