@@ -152,12 +152,12 @@ namespace Shell.Routing
                 {
                     if (arguments.TryGetFlagValue(param, out string value))
                     {
-                        values[ip++] = new FlagValue(value, 2);
+                        values[ip++] = new FlagValue(value);
                         used += 2;
                     }
                     else
                     {
-                        values[ip++] = new FlagValue(null, 0, provided: false);
+                        values[ip++] = new FlagValue(null, provided: false);
                     }
                 }
 

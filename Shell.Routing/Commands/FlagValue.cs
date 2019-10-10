@@ -8,17 +8,15 @@
         public bool Set;
         public bool Provided;
         public string Value;
-        public int Count;
 
-        public FlagValue(string value, int count, bool provided = true)
+        public FlagValue(string value, bool provided = true)
         {
             this.Provided = provided;
             this.Set = provided && !string.IsNullOrEmpty(value);
             this.Value = value;
-            this.Count = count;
         }
 
-        public static FlagValue Unset => new FlagValue(null, 0, false);
+        public static FlagValue Unset => new FlagValue(null, false);
 
         public static implicit operator bool(FlagValue option)
         {

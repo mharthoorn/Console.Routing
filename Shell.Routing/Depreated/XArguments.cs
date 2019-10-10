@@ -66,19 +66,19 @@ namespace Shell.Routing
                 {
                     if (!string.IsNullOrEmpty(value))
                     {
-                        option = new FlagValue(value, 1);
+                        option = new FlagValue(value);
                         return true;
                     }
                     else
                     {
                         if (i + 1 <= args.Count)
                         {
-                            option = new FlagValue(args[i + 1], 2);
+                            option = new FlagValue(args[i + 1]);
                             return true;
                         }
                         else
                         {
-                            option = new FlagValue(null, 1, provided: false);
+                            option = new FlagValue(null, provided: false);
                             return false;
                         }
                     }
