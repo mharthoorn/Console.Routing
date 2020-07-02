@@ -1,18 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>3.0.0-beta1</Version>
-    <Title>Console Routing</Title>
-    <Description>Framework for routing command line parameters</Description>
-    <Authors>M. Harthoorn</Authors>
-    <RepositoryUrl>https://github.com/mharthoorn/Console.Routing</RepositoryUrl>
-  	<PackageProjectUrl>https://github.com/mharthoorn/Console.Routing</PackageProjectUrl>
-    <LangVersion>8.0</LangVersion>
-    <PackageReleaseNotes>
-      * Rename from Shell.Routing to Console.Routing
-      * Added (beta) global settings 
-    </PackageReleaseNotes>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Version>3.0.0-beta1</Version>
+		<LangVersion>8.0</LangVersion>
+	</PropertyGroup>
 
+	<PropertyGroup>
+		<Title>Console Routing</Title>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>Framework for routing command line parameters</Description>
+		<Authors>M. Harthoorn</Authors>
+		<RepositoryUrl>https://github.com/mharthoorn/Console.Routing</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/mharthoorn/Console.Routing</PackageProjectUrl>
+		<PackageReleaseNotes>
+			* Rename from Shell.Routing to Console.Routing
+			* Added (beta) global settings
+		</PackageReleaseNotes>
+	</PropertyGroup>
 </Project>

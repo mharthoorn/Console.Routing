@@ -1,8 +1,9 @@
-# Shell.Routing
-Shell.Routing is a C#/netstandard 2.0 framework for commands and parameters to methods in C#.  You can implement it with minimal setup overhead.
+# Console.Routing
+Console.Routing is a C#/netstandard 2.0 framework routes command line arguments to a specific C# method, while filling all method parameters.  It's power is that you can implement it with minimal overhead.
 
 # Setup
 You only have to add one line of code to the ``Program.Main`` to enable Routing discovery and handling of arguments:
+The generic  parameter tells the router in which assembly (the one of the type) to find matching methods.
 
 ```csharp
  class Program
@@ -17,7 +18,7 @@ You only have to add one line of code to the ``Program.Main`` to enable Routing 
 # Discovery
 
 You can bind any method with a [Command] attribute in a class with a [Module] attribute.
-A command can have a Help attribute for description for automatic documenting.
+A command can have an additional [Help] attribute for description for automatic documenting.
 
 Shell.Routing supports method overloading, and the following out-of-the-box C# types as parameters:
 ```
@@ -39,7 +40,7 @@ Shell.Routing supports method overloading, and the following out-of-the-box C# t
         -m 'hello'
 
 ```
-And the following attributes control discovery:
+The following attributes control discovery:
 ```
     [Module("One line description")]
         Any class with the Module attribute creates a group commands for the methods inside
