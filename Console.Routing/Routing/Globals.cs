@@ -10,7 +10,7 @@ namespace ConsoleRouting
         public static void Bind(Assembly assembly, Arguments arguments)
         {
             var type = assembly.GetTypes().Where(t => t.HasAttribute<Global>()).FirstOrDefault();
-            Bind(type, arguments);
+            if (type is object) Bind(type, arguments);
         }
 
         private static bool IsStatic(this Type type)
