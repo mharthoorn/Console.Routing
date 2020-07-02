@@ -5,11 +5,14 @@ namespace ConsoleRouting
 {
     public static class Routing<T>
     {
+        public static Assembly Assembly => Assembly.GetAssembly(typeof(T));
+
         public static Router Router = CreateRouter();
          
         public static void Handle(string[] args)
         {
             var arguments = new Arguments(args);
+            Globals.Bind(Assembly, arguments);
             try
             {
                 var result = Router.Handle(arguments);
@@ -24,8 +27,7 @@ namespace ConsoleRouting
 
         public static Router CreateRouter()
         {
-            var assembly = Assembly.GetAssembly(typeof(T));
-            return CreateRouter(assembly);
+            return CreateRouter(Assembly);
         }
 
         public static Router CreateRouter(Assembly assembly)

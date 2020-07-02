@@ -13,7 +13,6 @@ namespace ConsoleRouting
             this.AddRange(arguments);
         }
 
-
         public IList<T> Match<T>(string name) where T: IArgument
         {
             var oftype = this.OfType<T>();

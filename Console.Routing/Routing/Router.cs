@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace ConsoleRouting
 {
@@ -24,6 +22,7 @@ namespace ConsoleRouting
 
             return CreateResult(arguments, candidates, binds);
         }
+
 
         public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
@@ -268,13 +267,8 @@ namespace ConsoleRouting
             return (partial, def, full);
         }
 
-        MethodInfo FindGlobalMethod()
-        {
-            var method = typeof(Router).Assembly.GetTypes().GetAttributeMethods<Global>().FirstOrDefault();
-            return method;
-        }
+        
     }
-
 }
 
 

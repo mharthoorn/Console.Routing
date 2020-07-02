@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace ConsoleRouting 
+namespace ConsoleRouting
 {
     public static class AttributeHelpers
     {
@@ -38,7 +38,7 @@ namespace ConsoleRouting
             return type.GetMethods().Where(m => m.GetCustomAttributes<T>().Any(predicate));
         }
 
-        public static IEnumerable<MethodInfo> GetAttributeMethods<T>(this IEnumerable<Type> type, Func<T, bool> predicate) where T: Attribute
+        public static IEnumerable<MethodInfo> GetAttributeMethods<T>(this IEnumerable<Type> type, Func<T, bool> predicate) where T : Attribute
         {
             return type.SelectMany(t => t.GetAttributeMethods<T>(predicate));
         }
