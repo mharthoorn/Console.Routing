@@ -94,7 +94,7 @@ namespace ConsoleRouting
 
         public static Arguments Parse(string s)
         {
-            var args = s.Split(new char[' '], StringSplitOptions.RemoveEmptyEntries);
+            var args = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             return new Arguments(args);
         }
 
