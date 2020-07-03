@@ -26,7 +26,7 @@ If the executable is called `tool', you can call the following method with ```to
     public void Greet(string name)
     {
         Console.WriteLine($"Hello {name}");
-	}
+    }
 ```
 
 Method overloading is supported, and the following C# types can be mapped to command line arguments:
@@ -133,5 +133,26 @@ public class ToolCommands
         if (version.Set) ShowVersion();
     }
 
+
+    // > tool commit -m "first commit"
+    [Command]
+    public void Commit(FlagValue message)
+    {
+        
+	}
+
 }
+```
+
+## Flag abbreviation
+Aligning with linux style arguments, you can abbreviate flags by using a single dash, and the first letter. 
+And you can group single letter flags:
+
+```csharp
+    // feed -cdr
+    [Command]
+    public void Feed(Flag cat, Flag dog, Flag rabbit)
+    {
+    
+	}
 ```
