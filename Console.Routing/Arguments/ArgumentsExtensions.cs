@@ -6,15 +6,7 @@ namespace ConsoleRouting
 {
     public static class ArgumentsExtensions
     { 
-        public static bool TryGetLiteral(this Arguments args, int offset, out Literal literal)  
-        {
-            var result = args.GetHead<Text>(offset);
-            var ok = result.Success && result.Arg.IsLiteral();
-            
-            literal = (ok) ? new Literal(result.Arg.Value) : null;
-            return result.Success;
-        }
-
+        
         public static bool TryGetText(this Arguments args, int offset, out string literal)
         {
             var result = args.GetHead<Text>(offset);
@@ -53,16 +45,7 @@ namespace ConsoleRouting
         }
 
 
-        public static bool TryGetLiteral(this Arguments args, out Literal literal)
-        {
-            return TryGetLiteral(args, 0, out literal);
-        }
-
-        public static bool HasFlag(this Arguments args, string name)
-        {
-            var result = args.Match<Flag>(name);
-            return result.Count == 1;
-        }
+     
 
         public static bool TryGetAssignment(this Arguments args, string name, out Assignment assignment)
         { 

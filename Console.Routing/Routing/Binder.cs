@@ -72,24 +72,7 @@ namespace ConsoleRouting
             foreach (var param in parameters)
             {
                 int ia = offset + ip; // index of arguments
-                if (param.Type == typeof(Literal))
-                {
-                    if (arguments.TryGetLiteral(ia, out Literal value))
-                    {
-                        values[ip++] = value;
-                        used++;
-                    }
-
-                    else if (param.Optional)
-                    {
-                        values[ip++] = null;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (param.Type == typeof(string))
+                if (param.Type == typeof(string))
                 {
                     if (arguments.TryGetText(ia, out string value))
                     {
