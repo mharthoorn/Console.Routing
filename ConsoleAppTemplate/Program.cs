@@ -3,7 +3,7 @@ using System;
 
 namespace ConsoleAppTemplate
 {
-    [Module("Program")]
+    [Module]
     public class BasicCommands
     {
         [Command]
@@ -15,7 +15,7 @@ namespace ConsoleAppTemplate
         [Command, Default, Hidden]
         public void Default()
         {
-            Console.WriteLine($"Console App template -- If you provide no parameters, you end up here.");
+            Console.WriteLine($"If you provide no parameters, you end up here.");
         }
 
         [Command]

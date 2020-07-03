@@ -20,4 +20,8 @@
 			* Arguments now derives from List`IArgument
 		</PackageReleaseNotes>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\" />
+	</ItemGroup>
 </Project>

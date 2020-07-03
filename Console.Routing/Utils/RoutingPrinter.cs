@@ -63,12 +63,19 @@ namespace ConsoleRouting
             foreach (var route in routes) System.Console.WriteLine($"  {route}");
         }
 
+        private static string GetModuleTitle(Route route)
+        {
+            return route.Method.DeclaringType.Name;
+        }
+
         public static void PrintRoutes(IEnumerable<Route> routes)
         {
 
             foreach (var group in routes.GroupBy(r => r.Module))
             {
-                var title = group.Key.Title; // Module.Title
+                
+                var title = group.Key.Title ?? group.FirstOrDefault()?.Method.DeclaringType.Name ?? "Module";
+
                 System.Console.WriteLine($"{title}:");
 
                 foreach (var route in group)

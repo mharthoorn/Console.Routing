@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace ConsoleRouting
 {
@@ -6,9 +7,11 @@ namespace ConsoleRouting
     {
         public string Title { get; }
 
-        public Module(string title)
+        
+        public Module(string title = null)
         {
             this.Title = title;
+            
         }
     }
 

@@ -17,6 +17,7 @@ namespace ConsoleRouting
 
         public static void Handle(string[] args)
         {
+            Assembly = Assembly.GetCallingAssembly();
             Router = new RouteBuilder().Add(Assembly).Build();
             Router.Handle(args);
         }

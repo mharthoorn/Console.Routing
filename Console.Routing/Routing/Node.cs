@@ -44,7 +44,7 @@ namespace ConsoleRouting
             return nodes.Retail(tail);
         }
 
-        public static List<Node> Retail(this List<Node> nodes, Command command)
+        public static List<Node> Rebase(this List<Node> nodes, Command command)
         {
             if (command is null || command.IsGeneric)
             {
