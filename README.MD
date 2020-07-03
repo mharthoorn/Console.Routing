@@ -30,7 +30,7 @@ If the executable is called `tool', you can call the following method with ```to
 ```
 
 Method overloading is supported, and the following C# types can be mapped to command line arguments:
-```
+```csharp
     string name
     // any text value 
     
@@ -51,7 +51,7 @@ Method overloading is supported, and the following C# types can be mapped to com
 
 ```
 The following attributes control discovery:
-```
+```csharp
     [Module]
     [Module("One line description")]
         Any class with the Module attribute creates a group commands for the methods inside
@@ -139,7 +139,7 @@ public class ToolCommands
     public void Commit(FlagValue message)
     {
         
-	}
+    }
 
 }
 ```
@@ -154,5 +154,5 @@ And you can group single letter flags:
     public void Feed(Flag cat, Flag dog, Flag rabbit)
     {
     
-	}
+    }
 ```
