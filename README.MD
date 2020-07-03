@@ -1,10 +1,10 @@
 # Console.Routing
-Console.Routing is a framework that routes command line arguments to a specific C# method, and fills in all method parameters. 
-You can implement Console.Routing with minimal configuration.
+Console.Routing is a framework makes it easy to build command line tools. 
+It routes command line arguments to a specific C# method, and fills in all method parameters. 
+You can implement it with minimal configuration.
 
 ## Setup
-You only have to add one line of code to the ``Program.Main`` to enable Routing discovery and handling of arguments.
-The generic parameter tells the router in which assembly (the one of the type) to find matching methods (routes).
+You only have to add one line of code to the ``Program.Main`` to enable route discovery and handling of arguments.
 
 ```csharp
  class Program
@@ -17,10 +17,19 @@ The generic parameter tells the router in which assembly (the one of the type) t
 ```
 
 ## Discovery
-You can bind any method with a [Command] attribute in a class with a [Module] attribute.
+You can expose any method to command line argument with the [Command] attribute. The declaring class must be marked with [Module]
 A command can have an additional [Help] attribute for the description in automatic documentation.
 
-Shell.Routing supports method overloading, and the following out-of-the-box C# types as parameters:
+If the executable is called `tool', you can call the following method with ```tool greet John```:
+```csharp
+    [Command]
+    public void Greet(string name)
+    {
+        Console.WriteLine($"Hello {name}");
+	}
+```
+
+Method overloading is supported, and the following C# types can be mapped to command line arguments:
 ```
     string name
     // any text value 
