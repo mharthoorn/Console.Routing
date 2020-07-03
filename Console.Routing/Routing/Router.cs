@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleRouting
@@ -6,83 +7,67 @@ namespace ConsoleRouting
 
     public class Router
     {
-        public IList<Route> Routes { get; }
 
-        public Router(IList<Route> routes)
+        public List<Route> Routes { get; }
+        private List<Type> Globals;
+
+        public Router(List<Route> routes, IEnumerable<Type> globals = null)
         {
+            this.Globals = globals?.ToList();
             this.Routes = routes;
+        }
+
+        public RoutingResult Handle(Arguments arguments)
+        {
+            RoutingResult result = Bind(arguments);
+
+            if (result.Ok)
+                Invoker.Run(result.Bind);
+
+            return result;
         }
 
         public RoutingResult Bind(Arguments arguments)
         {
-            //MarkGlobals(arguments);
+            Binder.Bind(Globals, arguments);
             var candidates = ElectCandidates(arguments).ToList();
-            var routes = candidates.Routes(CommandMatch.Full, CommandMatch.Default);
+            var routes = candidates.Routes(RouteMatch.Full, RouteMatch.Default);
             var binds = Bind(routes, arguments).ToList();
 
             return CreateResult(arguments, candidates, binds);
         }
 
-
-        public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
+        public static IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
             foreach (var route in routes)
             {
-                if (TryBind(route, arguments, out var bind))
+                if (Binder.TryBind(route, arguments, out var bind))
                 {
                     yield return bind;
                 }
             }
         }
 
-        //public void MarkGlobals(Arguments arguments)
-        //{
-        //    var method = FindGlobalMethod();
-        //    foreach(var param in method.GetParameters())
-        //    {
-        //        var item = arguments.Items.FirstOrDefault(i => string.Compare(i.Value, param.Name, ignoreCase: true) == 0);
-        //        if (item is IArgument)
-        //        {
-        //            item.MarkGlobal();
-        //        }
-        //    }
-
-        //}
-
         public IEnumerable<Candidate> ElectCandidates(Arguments arguments)
         {
             foreach (var route in Routes)
             {
                 var match = TryMatchCommands(route, arguments);
-                if (match == CommandMatch.Not) continue;
+                if (match == RouteMatch.Not) continue;
                 else yield return new Candidate(match, route);
             }
         }
 
-        private static bool TryBind(Route route, Arguments arguments, out Bind bind)
-        {
-            if (TryBuildParameters(route, arguments, out var values))
-            {
-                bind = new Bind(route, values);
-                return true;
-            }
-            else
-            {
-                bind = null;
-                return false;
-            }
-        }
-
-        private CommandMatch TryMatchCommands(Route route, Arguments arguments)
+        private RouteMatch TryMatchCommands(Route route, Arguments arguments)
         {
             int index = 0;
             int length = route.Nodes.Count;
 
             while (index < length)
             {
-                if (arguments.TryGet(index, out Text literal))
+                if (arguments.TryGet(index, out Text value))
                 {
-                    if (route.Nodes[index].Matches(literal))
+                    if (route.Nodes[index].Matches(value))
                     {
                         index++;
                         //if (index == length) return true;
@@ -95,137 +80,12 @@ namespace ConsoleRouting
             return MapCommandMatch(length, index);
         }
 
-        private static CommandMatch MapCommandMatch(int nodeCount, int index)
+        private static RouteMatch MapCommandMatch(int nodeCount, int index)
         {
-            if (nodeCount == 0) return CommandMatch.Default;
-            if (index == 0) return CommandMatch.Not;
-            if (index > 0 && index == nodeCount) return CommandMatch.Full;
-            return CommandMatch.Partial;
-        }
-
-        private static bool TryBuildParameters(Route route, Arguments arguments, out object[] values)
-        {
-            var parameters = route.Method.GetRoutingParameters().ToArray();
-            var offset = route.Nodes.Count(); // amount of parameters to skip, because they are commands.
-            var argcount = arguments.Count - offset;
-            var count = parameters.Length;
-
-            values = new object[count];
-            int ip = 0; // index of parameters
-            int used = 0; // arguments used;
-
-            foreach (var param in parameters)
-            {
-                int ia = offset + ip; // index of arguments
-                if (param.Type == typeof(Literal))
-                {
-                    if (arguments.TryGetLiteral(ia, out Literal value))
-                    {
-                        values[ip++] = value;
-                        used++;
-                    }
-
-                    else if (param.Optional)
-                    {
-                        values[ip++] = null;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (param.Type == typeof(string))
-                {
-                    if (arguments.TryGetText(ia, out string value))
-                    {
-                        values[ip++] = value;
-                        used++;
-                    }
-
-                    else if (param.Optional)
-                    {
-                        values[ip++] = null;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (param.Type.IsEnum)
-                {
-                    if (arguments.TryGetEnum(ia, param, out object value))
-                    {
-                        values[ip++] = value;
-                        used++;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
-
-                else if (param.Type == typeof(Assignment))
-                {
-                    if (arguments.TryGetAssignment(param.Name, out Assignment assignment))
-                    { 
-                        values[ip++] = assignment;
-                        used++;
-                    }
-                    else
-                    {
-                        values[ip++] = Assignment.NotProvided();
-                    }
-                }
-
-                else if (param.Type == typeof(FlagValue))
-                {
-                    if (arguments.TryGetFlagValue(param, out string value))
-                    {
-                        values[ip++] = new FlagValue(value);
-                        used += 2;
-                    }
-                    else
-                    {
-                        values[ip++] = new FlagValue(null, provided: false);
-                    }
-                }
-
-                else if (param.Type == typeof(Flag))
-                {
-                    if (arguments.TryGet(param, out Flag flag))
-                    {
-                        values[ip++] = flag;
-                        used++;
-                    }
-                    else
-                    {
-                        values[ip++] = new Flag(param.Name, set: false);
-                    }
-                }
-
-                else if (param.Type == typeof(bool))
-                {
-                    if (arguments.TryGet(param, out Flag flag))
-                    {
-                        values[ip++] = flag.Set;
-                        used++;
-                    }
-                }
-
-                else if (param.Type == typeof(Arguments))
-                {
-                    values[ip++] = arguments;
-                    return true;
-                }
-                else
-                {
-                    // this method has a signature with an unknown type.
-                    return false;
-                }
-            }
-            return (argcount == used);
-
+            if (nodeCount == 0) return RouteMatch.Default;
+            if (index == 0) return RouteMatch.Not;
+            if (index > 0 && index == nodeCount) return RouteMatch.Full;
+            return RouteMatch.Partial;
         }
 
         private static RoutingResult CreateResult(Arguments arguments, IList<Candidate> candidates, IList<Bind> bindings)
@@ -261,9 +121,9 @@ namespace ConsoleRouting
 
         private static (int partial, int def, int full) Count(IEnumerable<Candidate> candidates)
         {
-            int partial = candidates.Count(CommandMatch.Partial);
-            int def = candidates.Count(CommandMatch.Default);
-            int full = candidates.Count(CommandMatch.Full);
+            int partial = candidates.Count(RouteMatch.Partial);
+            int def = candidates.Count(RouteMatch.Default);
+            int full = candidates.Count(RouteMatch.Full);
             return (partial, def, full);
         }
 

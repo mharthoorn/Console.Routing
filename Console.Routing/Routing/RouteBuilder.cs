@@ -8,44 +8,69 @@ namespace ConsoleRouting
 {
     public class RouteBuilder
     {
-        public List<Route> Routes { get;  }
-
+        public List<Route> Routes { get; }
+        public List<Type> Globals { get; }
         public RouteBuilder()
         {
             Routes = new List<Route>();
         }
 
-        public void DiscoverAssembly(Assembly assembly)
+        public RouteBuilder AddAssemblyOf<T>()
+        {
+            return Add(typeof(T).Assembly);
+        }
+
+        public RouteBuilder Add(Assembly assembly)
+        {
+            DiscoverModules(assembly);
+            DiscoverGlobals(assembly);
+            return this;
+        }
+
+        public void DiscoverModules(Assembly assembly)
         {
             List<Node> trail = new List<Node>();
             var types = assembly.GetAttributeTypes<Module>().ToList();
-            DiscoverTypes(null, types, trail);
+            DiscoverModules(null, types, trail);
         }
 
-        public void DiscoverTypes(Module module, IEnumerable<Type> types, in List<Node> trail)
+        private void DiscoverModules(Module module, IEnumerable<Type> types, in List<Node> trail)
         {
-            foreach (var type in types) DiscoverType(module, type, trail);
+            foreach (var type in types) DiscoverModule(module, type, trail);
         }
 
-        public void DiscoverType(Module module, Type type, in List<Node> trail)
+        public void DiscoverModule(Module module, Type type, in List<Node> trail)
         {
             if (module is null) module = type.GetCustomAttribute<Module>();
             var command = type.GetCustomAttribute<Command>();
             var t = trail.Retail(command);
-            DiscoverTypesOf(module, type, t);
+            DiscoverNestedModules(module, type, t);
             DiscoverCommands(module, type, t);
         }
 
-        public void DiscoverTypesOf(Module module, Type type, in List<Node> trail)
+        public void DiscoverNestedModules(Module module, Type type, in List<Node> trail)
         {
             var nestedTypes = type.GetNestedTypes().Where(t => t.HasAttribute<Command>());
-            DiscoverTypes(module, nestedTypes, trail);
+            DiscoverModules(module, nestedTypes, trail);
         }
 
         public void DiscoverCommands(Module module, Type type, in List<Node> trail)
         {
             var methods = type.GetAttributeMethods<Command>();
             foreach (var method in methods) DiscoverCommand(module, method, trail);
+        }
+
+        public IEnumerable<Type> DiscoverGlobals(Assembly assembly)
+        {
+            var types = assembly.GetTypes().Where(t => t.HasAttribute<Global>());
+            foreach (var type in types)
+            {
+                if (type is object)
+                {
+                    if (!type.IsStatic()) throw new ArgumentException("A global settings class must be static");
+                    yield return type;
+                }
+            }
         }
 
         public void DiscoverCommand(Module module, MethodInfo method, in List<Node> trail)
@@ -55,14 +80,21 @@ namespace ConsoleRouting
             var hidden = method.GetCustomAttribute<Hidden>();
             var t = isdefault ? trail : trail.Retail(method);
             var route = new Route(module, t, method, help, hidden, isdefault);
-            Register(route);
+            Add(route);
 
         }
 
-        public void Register(Route endpoint)
+        public void Add(Route route)
         {
-            Routes.Add(endpoint);
+            Routes.Add(route);
         }
+
+        public Router Build()
+        {
+            return new Router(Routes, Globals);
+        }
+
     }
-    
+
+
 }

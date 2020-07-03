@@ -6,14 +6,14 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestParameters
     {
-        Router router = Routing<ToolModule>.Router;
+        Router router = new RouteBuilder().AddAssemblyOf<TestParameters>().Build();
 
         [TestMethod]
         public void SingleLiteral()
         {
             // ToolCommands.Single(string name) // 1 matching bind
 
-            var arguments = Utils.ParseArguments("action Foo");
+            var arguments = Arguments.Parse("action Foo");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(result.Count, 1);
@@ -32,7 +32,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void FlagValue()
         {
-            var arguments = Utils.ParseArguments("-a -b --test abc");
+            var arguments = Arguments.Parse("-a -b --test abc");
             var parameter = Parameters.Create<Flag>("test");
 
             arguments.TryGet(parameter, out Flag flag);
@@ -46,7 +46,7 @@ namespace ConsoleRouting.Tests
         {
             // since we match on used parameter count, flag vaues are a special case
             // one FlagValue consumes 2 command line arguments
-            var arguments = Utils.ParseArguments("save --all --pattern '{id}-{id}'");
+            var arguments = Arguments.Parse("save --all --pattern '{id}-{id}'");
             var result = router.Bind(arguments);
             Assert.AreEqual(1, result.Count);
 
@@ -56,7 +56,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void AlternateParamNames()
         {
-            var arguments = Utils.ParseArguments("-?"); // should route to ToolModule.Info
+            var arguments = Arguments.Parse("-?"); // should route to ToolModule.Info
             var result = router.Bind(arguments);
             string s = result.ToString();
             Assert.AreEqual(1, result.Count);

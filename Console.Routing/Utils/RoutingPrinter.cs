@@ -29,19 +29,19 @@ namespace ConsoleRouting
                     else
                     {
                         System.Console.WriteLine($"Invalid parameter(s). These are your options:");
-                        PrintCandidates(result.Candidates.Routes(CommandMatch.Default));
+                        PrintCandidates(result.Candidates.Routes(RouteMatch.Default));
                     }
                     
                     break;
 
                 case RoutingStatus.PartialCommand:
                     System.Console.WriteLine("Did you mean:");
-                    PrintCandidates(result.Candidates.Routes(CommandMatch.Partial));
+                    PrintCandidates(result.Candidates.Routes(RouteMatch.Partial));
                     break;
 
                 case RoutingStatus.InvalidParameters:
                     System.Console.WriteLine("Invalid parameter(s). These are your options:");
-                    PrintCandidates(result.Candidates.Routes(CommandMatch.Full));
+                    PrintCandidates(result.Candidates.Routes(RouteMatch.Full));
                     break;
 
                 case RoutingStatus.AmbigousParameters:
@@ -51,7 +51,7 @@ namespace ConsoleRouting
 
                 case RoutingStatus.InvalidDefault:
                     System.Console.WriteLine("Invalid parameter(s). These are your options:");
-                    PrintCandidates(result.Candidates.Routes(CommandMatch.Default));
+                    PrintCandidates(result.Candidates.Routes(RouteMatch.Default));
                     break;
             }
            

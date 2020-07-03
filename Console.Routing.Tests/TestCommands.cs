@@ -7,12 +7,12 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestCommands
     {
-        Router router = Routing<ToolModule>.Router;
+        Router router = new RouteBuilder().AddAssemblyOf<TestCommands>().Build();
 
         [TestMethod]
         public void PlainCommandAttribute()
         {
-            var arguments = Utils.ParseArguments("tool");
+            var arguments = Arguments.Parse("tool");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(1, result.Routes.Count());
@@ -22,7 +22,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void DefaultCommand()
         {
-            var arguments = Utils.ParseArguments("");
+            var arguments = Arguments.Parse("");
             var result = router.Bind(arguments);
 
             Assert.AreEqual("Info", result.Route.Method.Name);
@@ -32,7 +32,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Binding()
         {
-            var arguments = Utils.ParseArguments("action William will --foo --bar fubar");
+            var arguments = Arguments.Parse("action William will --foo --bar fubar");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(true, result.Ok);
@@ -56,14 +56,14 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Nesting()
         {
-            var arguments = Utils.ParseArguments("main action hello");
+            var arguments = Arguments.Parse("main action hello");
             var result = router.Bind(arguments);
             Assert.AreEqual("Action", result.Route.Method.Name);
             Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
             Assert.AreEqual("Action", result.Route.Nodes.Skip(1).First().Names.First());
             Assert.AreEqual(1, result.Count);
 
-            arguments = Utils.ParseArguments("main sub detail hello");
+            arguments = Arguments.Parse("main sub detail hello");
             result = router.Bind(arguments);
             Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
             Assert.AreEqual("Detail", result.Route.Method.Name);
@@ -75,9 +75,9 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void ForgetSubCommand()
         {
-            var arguments = Utils.ParseArguments("mainfirst");
+            var arguments = Arguments.Parse("mainfirst");
             var result = router.Bind(arguments);
-            var count = result.Candidates.Count(CommandMatch.Partial);
+            var count = result.Candidates.Count(RouteMatch.Partial);
             Assert.AreEqual(2, count);
         }
     }

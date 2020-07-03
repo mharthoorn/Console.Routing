@@ -11,9 +11,9 @@ namespace ConsoleRouting
             this.Value = value;
         }
 
-        public bool Match(string name)
+        public virtual bool Match(string value)
         {
-            return string.Compare(this.Value, name, ignoreCase: true) == 0;
+            return string.Compare(this.Value, value, ignoreCase: true) == 0;
         }
 
         public bool MatchAssignment(string name) 

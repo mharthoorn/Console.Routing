@@ -1,15 +1,23 @@
-﻿namespace ConsoleRouting
+﻿using System;
+
+namespace ConsoleRouting
 {
     public static class RouterExtensions
     {
-        public static RoutingResult Handle(this Router router, Arguments arguments)
+
+        public static void Handle(this Router router, string[] args)
         {
-            RoutingResult result = router.Bind(arguments);
+            var arguments = new Arguments(args);
+            try
+            {
+                var result = router.Handle(arguments);
+                if (!result.Ok) RoutingPrinter.Write(result);
+            }
+            catch (Exception e)
+            {
+                RoutingPrinter.Write(e, stacktrace: false); //todo: re-enable through parameter later.
+            }
 
-            if (result.Ok)
-                Invoker.Run(result.Bind);
-
-            return result;
         }
     }
 

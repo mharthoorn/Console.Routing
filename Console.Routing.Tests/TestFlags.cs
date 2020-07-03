@@ -5,7 +5,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestFlags
     {
-        Router router = Routing<TestFlags>.Router;
+        Router router = new RouteBuilder().AddAssemblyOf<TestFlags>().Build();
 
         [TestMethod]
         public void BaseFlags()
@@ -13,7 +13,7 @@ namespace ConsoleRouting.Tests
             Arguments args; bool found;
 
             // long flag found
-            args = Utils.ParseArguments("-a -b --test");
+            args = Arguments.Parse("-a -b --test");
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found); // broken
             Assert.AreEqual("test", test.Name); // broken
@@ -33,7 +33,7 @@ namespace ConsoleRouting.Tests
         {
             Arguments args; bool found;
 
-            args = Utils.ParseArguments("-a --test");
+            args = Arguments.Parse("-a --test");
 
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found);
@@ -60,7 +60,7 @@ namespace ConsoleRouting.Tests
         {
             Arguments args; bool found;
 
-            args = Utils.ParseArguments("-a -t");
+            args = Arguments.Parse("-a -t");
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found); 
             Assert.AreEqual("t", test.Name); 
@@ -78,7 +78,7 @@ namespace ConsoleRouting.Tests
         {
             Arguments args; bool found;
 
-            args = Utils.ParseArguments("-a -txy");
+            args = Arguments.Parse("-a -txy");
 
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found);
@@ -106,7 +106,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void FlagValues_GitCommit()
         {
-            var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git parameters
+            var arguments = Arguments.Create("commit", "-m", "\"ux: change layout\""); // git parameters
 
             var result = router.Bind(arguments);
             Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");

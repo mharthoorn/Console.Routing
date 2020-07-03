@@ -1,15 +1,12 @@
 ﻿namespace ConsoleRouting
 {
-    public class Literal : IArgument
+    public class Literal : Text
     {
-        public string Value { get; private set; }
-
-        public Literal(string value)
+        public Literal(string value) : base(value)
         {
-            this.Value = value;
         }
 
-        public bool Match(string name)
+        public override bool Match(string name)
         {
             return string.Compare(this.Value, name, ignoreCase: true) == 0;
         }

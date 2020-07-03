@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.Routing", "Console.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.Routing.Tests", "Console.Routing.Tests\Console.Routing.Tests.csproj", "{4EDE601B-D1B6-436D-BA6A-85CDE0223E62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppTemplate", "ConsoleAppTemplate\ConsoleAppTemplate.csproj", "{A0542A9E-AE64-4D74-88FA-A8AB6164E1B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4EDE601B-D1B6-436D-BA6A-85CDE0223E62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EDE601B-D1B6-436D-BA6A-85CDE0223E62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EDE601B-D1B6-436D-BA6A-85CDE0223E62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0542A9E-AE64-4D74-88FA-A8AB6164E1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0542A9E-AE64-4D74-88FA-A8AB6164E1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0542A9E-AE64-4D74-88FA-A8AB6164E1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0542A9E-AE64-4D74-88FA-A8AB6164E1B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

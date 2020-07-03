@@ -5,40 +5,36 @@ namespace ConsoleRouting
 {
     public static class Routing<T>
     {
-        public static Assembly Assembly => Assembly.GetAssembly(typeof(T));
+        // for backwards compatibility.
+        public static void Handle(string[] args) => Routing.Handle<T>(args);
+    }
 
-        public static Router Router = CreateRouter();
-         
+
+    public static class Routing
+    {
+        internal static Assembly Assembly { get; set; }  
+        private static Router Router;
+
         public static void Handle(string[] args)
         {
-            var arguments = new Arguments(args);
-            Globals.Bind(Assembly, arguments);
-            try
-            {
-                var result = Router.Handle(arguments);
-                if (!result.Ok) RoutingPrinter.Write(result);
-            }
-            catch (Exception e)
-            {
-                RoutingPrinter.Write(e, stacktrace: false); //todo: re-enable through parameter later.
-            }
-
+            Router = new RouteBuilder().Add(Assembly).Build();
+            Router.Handle(args);
         }
 
-        public static Router CreateRouter()
+        public static void Handle<T>(string[] args)
         {
-            return CreateRouter(Assembly);
+            Assembly = typeof(T).Assembly;
+            Handle(args);
         }
 
-        public static Router CreateRouter(Assembly assembly)
+        public static void PrintHelp()
         {
-            var builder = new RouteBuilder();
-            builder.DiscoverAssembly(assembly);
-            return new Router(builder.Routes);
+            RoutingPrinter.PrintRoutes(Router.Routes);
         }
-
+            
     }
-    
+
+
 }
 
 

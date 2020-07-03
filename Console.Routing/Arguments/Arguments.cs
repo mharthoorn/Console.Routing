@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleRouting
@@ -9,7 +10,7 @@ namespace ConsoleRouting
         
         public Arguments(string[] args)
         {
-            var arguments = Parse(args);
+            var arguments = ParseArguments(args);
             this.AddRange(arguments);
         }
 
@@ -58,18 +59,18 @@ namespace ConsoleRouting
             return TryGet(0, out result);
         }
 
-        public static IEnumerable<IArgument> Parse(string[] args)
+        private static IEnumerable<IArgument> ParseArguments(string[] args)
         {
             foreach(var arg in args)
             {
-                foreach(var argument in Parse(arg))
+                foreach(var argument in ParseArgument(arg))
                 {
                     yield return argument;
                 }
             }
         }
 
-        public static IEnumerable<IArgument> Parse(string arg)
+        private static IEnumerable<IArgument> ParseArgument(string arg)
         {
             if (arg.StartsWith("--"))
             {
@@ -89,6 +90,17 @@ namespace ConsoleRouting
             }
 
 
+        }
+
+        public static Arguments Parse(string s)
+        {
+            var args = s.Split(new char[' '], StringSplitOptions.RemoveEmptyEntries);
+            return new Arguments(args);
+        }
+
+        public static Arguments Create(params string[] args)
+        {
+            return new Arguments(args);
         }
 
         public override string ToString()

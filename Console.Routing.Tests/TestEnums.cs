@@ -6,26 +6,26 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestEnums
     {
-        Router router = Routing<ToolModule>.Router;
+        Router router = new RouteBuilder().AddAssemblyOf<TestEnums>().Build();
 
         [TestMethod]
         public void EnumValue()
         {
             // Matching the case sensitivity
-            var args = Utils.ParseArguments("bump Minor");
+            var args = Arguments.Parse("bump Minor");
             var result = router.Bind(args);
             Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Bump", result.Route.Method.Name);
 
             // Case insensitive
-            args = Utils.ParseArguments("bump minor");
+            args = Arguments.Parse("bump minor");
             result = router.Bind(args);
 
             Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Bump", result.Route.Method.Name);
 
             // Not a valid enum value
-            args = Utils.ParseArguments("bump minora");
+            args = Arguments.Parse("bump minora");
             result = router.Bind(args);
 
             Assert.AreEqual(0, result.Routes.Count());

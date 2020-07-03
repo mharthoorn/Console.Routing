@@ -1,9 +1,10 @@
 # Console.Routing
-Console.Routing is a C#/netstandard 2.0 framework routes command line arguments to a specific C# method, while filling all method parameters.  It's power is that you can implement it with minimal overhead.
+Console.Routing is a framework that routes command line arguments to a specific C# method, and fills in all method parameters. 
+You can implement Console.Routing it with minimal overhead.
 
 # Setup
-You only have to add one line of code to the ``Program.Main`` to enable Routing discovery and handling of arguments:
-The generic  parameter tells the router in which assembly (the one of the type) to find matching methods.
+You only have to add one line of code to the ``Program.Main`` to enable Routing discovery and handling of arguments.
+The generic parameter tells the router in which assembly (the one of the type) to find matching methods (routes).
 
 ```csharp
  class Program

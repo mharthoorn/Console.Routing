@@ -11,12 +11,12 @@ namespace ConsoleRouting.Tests
         // Work in progress. Some plans to implement other parameter styles later,
         // like single dash flags (windows), and slash flags, like msdos.
 
-        Router router = Routing<ToolModule>.Router;
+        Router router = new RouteBuilder().AddAssemblyOf<TestReferences>().Build();
 
         [TestMethod]
         public void CommitMessage()
         {
-            var arguments = Utils.CreateArguments("commit", "-m", "\"ux: change layout\""); // git
+            var arguments = Arguments.Create("commit", "-m", "\"ux: change layout\""); // git
             var result = router.Bind(arguments);
             Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");
         }

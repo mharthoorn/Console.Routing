@@ -10,28 +10,28 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestNativeTypes
     {
-        Router router = Routing<NativesModule>.Router;
-         
+        Router router = new RouteBuilder().AddAssemblyOf<TestNativeTypes>().Build();
+
         [TestMethod]
         public void BooleanParams()
         {
             // ActionB should be matched, with '--verbose' set to false.
-            var arguments = Utils.ParseArguments("actionb");
+            var arguments = Arguments.Parse("actionb");
             var result = router.Bind(arguments);
             Assert.AreEqual(1, result.Count);
 
             // ActionB should be matched, with '--verbose' set to true.
-            arguments = Utils.ParseArguments("actionb --verbose");
+            arguments = Arguments.Parse("actionb --verbose");
             result = router.Bind(arguments);
             Assert.AreEqual(1, result.Count);
 
             // ActionB should be matched, with '--verbose' set to true.
-            arguments = Utils.ParseArguments("actionb -v");
+            arguments = Arguments.Parse("actionb -v");
             result = router.Bind(arguments);
             Assert.AreEqual(1, result.Count);
 
             // ActionB should NOT be matched.
-            arguments = Utils.ParseArguments("actionb --alt");
+            arguments = Arguments.Parse("actionb --alt");
             result = router.Bind(arguments);
             Assert.AreEqual(0, result.Count);
 

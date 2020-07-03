@@ -5,15 +5,15 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestGlobals 
     {
-        Router router = Routing<TestGlobals>.Router;
+        Router router = new RouteBuilder().AddAssemblyOf<TestGlobals>().Build();
 
         [TestMethod]
         public void BasicFlagBind()
         {
             Arguments args; 
 
-            args = Utils.ParseArguments("main sub --debug");
-            Globals.Bind(typeof(SomeSettings), args);
+            args = Arguments.Parse("main sub --debug");
+            Binder.Bind(typeof(SomeSettings), args);
 
             Assert.AreEqual("debug", SomeSettings.Debug.Name);
             Assert.IsTrue(SomeSettings.Debug.Set);
@@ -22,8 +22,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void RemovalOfGlobals()
         {
-            var args = Utils.ParseArguments("do --mouse --cat --dog");
-            Globals.Bind(typeof(AnimalSettings), args);
+            var args = Arguments.Parse("do --mouse --cat --dog");
+            Binder.Bind(typeof(AnimalSettings), args);
 
             Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
             Assert.IsTrue(AnimalSettings.Mouse.Set);
@@ -38,8 +38,8 @@ namespace ConsoleRouting.Tests
 
         public void Multiflag()
         {
-            var args = Utils.ParseArguments("do -mcd");
-            Globals.Bind(typeof(AnimalSettings), args);
+            var args = Arguments.Parse("do -mcd");
+            Binder.Bind(typeof(AnimalSettings), args);
 
             Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
             Assert.IsTrue(AnimalSettings.Mouse.Set);

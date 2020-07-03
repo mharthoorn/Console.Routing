@@ -4,21 +4,20 @@ using System.Linq;
 namespace ConsoleRouting
 {
 
-    public enum CommandMatch
+    public enum RouteMatch
     {
         Default,
         Not,
         Partial,
-        Full, // commands match
-
+        Full, 
     }
 
     public class Candidate
     {
-        public CommandMatch Match;
+        public RouteMatch Match;
         public Route Route;
 
-        public Candidate(CommandMatch match, Route route)
+        public Candidate(RouteMatch match, Route route)
         {
             this.Match = match;
             this.Route = route;
@@ -33,12 +32,12 @@ namespace ConsoleRouting
 
     public static class CandidateExtensions
     {
-        public static IEnumerable<Route> Routes(this IEnumerable<Candidate> candidates, params CommandMatch[] matches)
+        public static IEnumerable<Route> Routes(this IEnumerable<Candidate> candidates, params RouteMatch[] matches)
         {
             return candidates.Where(c => matches.Contains(c.Match)).Select(c => c.Route);
         } 
 
-        public static int Count(this IEnumerable<Candidate> candidates, CommandMatch match)
+        public static int Count(this IEnumerable<Candidate> candidates, RouteMatch match)
         {
             return candidates.Count(c => c.Match == match);
         }
