@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleRouting
@@ -25,25 +24,21 @@ namespace ConsoleRouting
                 }
                 catch
                 {
-                    value = null;
-                    return false;
                 }
-
-
-                //var array = Enum.GetNames(param.Type);
-                //if (array.Contains(literal))
-                //{/
-                //    value = Enum.Parse(param.Type, literal);
-                //    return true;
-                //}
             }
-            else
-            {
-                value = null;
-                return false;
-            }
+            value = null;
+            return false;
         }
 
+        public static bool TryGetInt(this Arguments args, int i, out int value)
+        {
+            if (args.TryGetText(i, out string s))
+            {
+                return int.TryParse(s, out value);
+            }
+            value = default;
+            return false;
+        }
 
      
 
@@ -73,19 +68,15 @@ namespace ConsoleRouting
             return items.Count == 1;
         }
 
-        public static bool TryGet<T>(this Arguments args, int i, out T arg) where T: IArgument
+        public static bool TryGet<T>(this Arguments args, int i, out T item) where T: IArgument
         {
-            if (i < args.Count)
+            if (i < args.Count && args[i] is T arg)
             {
-                var item = args[i];
-                if (item is T)
-                {
-                    arg = (T)item;
-                    return true;
-                }
+                item = arg;
+                return true;
             }
 
-            arg = default;
+            item = default;
             return false;
         }
 
@@ -94,11 +85,7 @@ namespace ConsoleRouting
             int index = args.IndexOf(arg);
             if (index >= 0)
             {
-                if (TryGet(args, index + 1, out item))
-                {
-                    return true;
-                }
-                    
+                if (TryGet(args, index + 1, out item)) return true;
             }
 
             item = default;

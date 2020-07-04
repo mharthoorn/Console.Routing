@@ -1,9 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleRouting.Tests
 {
@@ -13,31 +9,40 @@ namespace ConsoleRouting.Tests
         Router router = new RouteBuilder().AddAssemblyOf<TestNativeTypes>().Build();
 
         [TestMethod]
-        public void BooleanParams()
+        public void Booleans()
         {
             // ActionB should be matched, with '--verbose' set to false.
             var arguments = Arguments.Parse("actionb");
             var result = router.Bind(arguments);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
             // ActionB should be matched, with '--verbose' set to true.
             arguments = Arguments.Parse("actionb --verbose");
             result = router.Bind(arguments);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
             // ActionB should be matched, with '--verbose' set to true.
             arguments = Arguments.Parse("actionb -v");
             result = router.Bind(arguments);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
             // ActionB should NOT be matched.
             arguments = Arguments.Parse("actionb --alt");
             result = router.Bind(arguments);
-            Assert.AreEqual(0, result.Count);
+            Assert.AreEqual(0, result.BindCount);
 
             var rep = router.Routes.First(r => r.Method.Name == "ActionB").Representation();
             Assert.AreEqual("--verbose", rep);
         }
         
+        [TestMethod]
+        public void Integers()
+        {
+            var args = Arguments.Parse("add 3 4");
+            var result = router.Bind(args);
+            Assert.AreEqual(1, result.BindCount);
+            Assert.AreEqual(3, result.Bind.Arguments[0]);
+            Assert.AreEqual(4, result.Bind.Arguments[1]);
+        }
     }
 }

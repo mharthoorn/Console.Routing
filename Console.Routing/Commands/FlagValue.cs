@@ -2,7 +2,9 @@
 {
 
 
-    public class FlagValue  
+    
+
+    public class FlagValue
     {
         public string Name;
         public bool Set;

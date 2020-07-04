@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ConsoleRouting
 {
@@ -66,28 +65,28 @@ namespace ConsoleRouting
             Type type = parameter.Type;
             string name = parameter.Name;
 
-            if (type == typeof(string))
+            string rep;
+
+            if (type == typeof(Flag) || type == typeof(bool))
             {
-                return parameter.Optional ? "(<" + name + ">)" : "<" + name + ">";
+                rep = $"--{name}";
             }
-            else if (type == typeof(Flag) || type == typeof(bool))
+            else if (type == typeof(FlagValue))
             {
-                return $"--{parameter.Name}";
-            }
-            else if (type == typeof(Text))
-            {
-                return parameter.Optional ? "(<" + name + ">)" : "<" + name + ">";
-            }
-            else if (type == typeof(FlagValue) || type == typeof(bool))
-            {
-                return $"--{name} <value>";
+                rep = $"--{name} <value>";
             }
             else if (type == typeof(Arguments))
             {
-                return $"({name}...)";
+                rep = $"({name}...)";
             }
-            else return $"--- unknown: {name} ---"; // shouldn't get here.
-            
+            else
+            {
+                rep = $"{name}"; // shouldn't get here.
+            }
+
+            if (parameter.Optional) rep = $"({rep})";
+
+            return rep;
         }
 
      

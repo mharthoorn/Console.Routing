@@ -25,7 +25,7 @@ namespace ConsoleRouting
 
         public Route Route => Bind?.Route;
 
-        public int Count => Binds.Count;
+        public int BindCount => Binds.Count;
 
         public IEnumerable<Route> Routes => Binds.Select(b => b.Route);
         
@@ -37,7 +37,7 @@ namespace ConsoleRouting
             }
             else
             {
-                return $"Failed: {Count}/{Candidates?.Count ?? 0}";
+                return $"Failed: {BindCount}/{Candidates?.Count ?? 0}";
             }
             
         }

@@ -16,7 +16,7 @@ namespace ConsoleRouting.Tests
             var arguments = Arguments.Parse("action Foo");
             var result = router.Bind(arguments);
 
-            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result.BindCount, 1);
 
             var bind = result.Bind;
             Assert.AreEqual(bind.Route.Method.Name, "Action");
@@ -48,7 +48,7 @@ namespace ConsoleRouting.Tests
             // one FlagValue consumes 2 command line arguments
             var arguments = Arguments.Parse("save --all --pattern '{id}-{id}'");
             var result = router.Bind(arguments);
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
         }
 
@@ -59,7 +59,7 @@ namespace ConsoleRouting.Tests
             var arguments = Arguments.Parse("-?"); // should route to ToolModule.Info
             var result = router.Bind(arguments);
             string s = result.ToString();
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
         }
     }

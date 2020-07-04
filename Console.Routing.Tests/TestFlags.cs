@@ -110,7 +110,7 @@ namespace ConsoleRouting.Tests
 
             var result = router.Bind(arguments);
             Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
         }
 

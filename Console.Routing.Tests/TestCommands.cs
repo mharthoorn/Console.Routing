@@ -17,6 +17,7 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Tool", result.Route.Method.Name);
+            Assert.AreEqual(0, result.Bind.Arguments.Length);
         }
 
         [TestMethod]
@@ -36,21 +37,21 @@ namespace ConsoleRouting.Tests
             var result = router.Bind(arguments);
 
             Assert.AreEqual(true, result.Ok);
-            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result.BindCount, 1);
             Assert.AreEqual(4, result.Bind.Arguments.Count());
             Assert.IsTrue(result.Candidates.Count > 1);
             
             var bind = result.Bind;
             Assert.AreEqual(bind.Route.Method.Name, "Action");
 
-            var routingparams = bind.Route.Method.GetRoutingParameters();
-            Assert.AreEqual(routingparams.Count(), 4);
+            var paramlist = bind.Route.Method.GetRoutingParameters();
+            Assert.AreEqual(paramlist.Count(), 4);
 
             Assert.AreEqual(bind.Arguments[0], "William");
             Assert.AreEqual(bind.Arguments[1], "will");
             Assert.AreEqual(((Flag)bind.Arguments[2]).Set, true); // -foo
 
-            Assert.AreEqual("fubar", ((FlagValue)bind.Arguments[3])); // -bar fubar
+            Assert.AreEqual("fubar", (FlagValue)bind.Arguments[3]); // -bar fubar
         }
 
         [TestMethod]
@@ -61,7 +62,7 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual("Action", result.Route.Method.Name);
             Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
             Assert.AreEqual("Action", result.Route.Nodes.Skip(1).First().Names.First());
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
 
             arguments = Arguments.Parse("main sub detail hello");
             result = router.Bind(arguments);
@@ -69,7 +70,7 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual("Detail", result.Route.Method.Name);
             Assert.AreEqual("sub", result.Route.Nodes.Skip(1).First().Names.First());
             Assert.AreEqual("Detail", result.Route.Nodes.Skip(2).First().Names.First());
-            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, result.BindCount);
         }
 
         [TestMethod]

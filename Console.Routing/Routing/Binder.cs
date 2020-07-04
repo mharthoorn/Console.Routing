@@ -103,6 +103,15 @@ namespace ConsoleRouting
 
                 }
 
+                else if (param.Type == typeof(int))
+                {
+                    if (arguments.TryGetInt(ia, out int value))
+                    {
+                        values[ip++] = value;
+                        used++;
+                    }
+                }
+
                 else if (param.Type == typeof(Assignment))
                 {
                     if (arguments.TryGetAssignment(param.Name, out Assignment assignment))
@@ -115,7 +124,7 @@ namespace ConsoleRouting
                         values[ip++] = Assignment.NotProvided();
                     }
                 }
-
+ 
                 else if (param.Type == typeof(FlagValue))
                 {
                     if (arguments.TryGetFlagValue(param, out string value))
@@ -146,8 +155,12 @@ namespace ConsoleRouting
                 {
                     if (arguments.TryGet(param, out Flag flag))
                     {
-                        values[ip++] = flag.Set;
+                        values[ip++] = true;
                         used++;
+                    }
+                    else
+                    {
+                        values[ip++] = false;
                     }
                 }
 

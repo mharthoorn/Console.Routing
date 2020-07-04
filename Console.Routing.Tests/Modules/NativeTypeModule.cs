@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ConsoleRouting.Tests
+﻿namespace ConsoleRouting.Tests
 {
     [Module("native")]
     public class NativesModule
@@ -14,6 +8,12 @@ namespace ConsoleRouting.Tests
         {
             if (verbose)
                 System.Console.WriteLine("Hello world!");
+        }
+
+        [Command]
+        public void Add(int a, int b)
+        {
+
         }
 
     }
