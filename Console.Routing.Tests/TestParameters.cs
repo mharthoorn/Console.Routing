@@ -37,7 +37,7 @@ namespace ConsoleRouting.Tests
 
             arguments.TryGet(parameter, out Flag flag);
             Assert.AreEqual("test", flag.Name);
-            arguments.TryGetFlagValue(parameter, out var value);
+            arguments.TryGetOptionString(parameter, out var value);
             Assert.AreEqual("abc", value);
         }
 

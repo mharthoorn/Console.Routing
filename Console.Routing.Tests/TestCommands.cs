@@ -51,7 +51,7 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual(bind.Arguments[1], "will");
             Assert.AreEqual(((Flag)bind.Arguments[2]).Set, true); // -foo
 
-            Assert.AreEqual("fubar", (FlagValue)bind.Arguments[3]); // -bar fubar
+            Assert.AreEqual("fubar", (Option<string>)bind.Arguments[3]); // -bar fubar
         }
 
         [TestMethod]

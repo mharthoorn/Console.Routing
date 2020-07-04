@@ -71,7 +71,7 @@ namespace ConsoleRouting
             {
                 rep = $"--{name}";
             }
-            else if (type == typeof(FlagValue))
+            else if (type == typeof(Option<string>))
             {
                 rep = $"--{name} <value>";
             }

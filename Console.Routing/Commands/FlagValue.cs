@@ -1,39 +1,48 @@
-﻿namespace ConsoleRouting
+﻿using System;
+
+namespace ConsoleRouting
 {
 
-
-    
-
-    public class FlagValue
+    /// <summary>
+    /// A combination of a flag and a value. This replaces FlagValue (where value is string)
+    /// And opens up other types. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class Option<T> 
     {
         public string Name;
-        public bool Set;
-        public bool Provided;
-        public string Value;
+        public T Value;
+        public bool HasValue; // the value was set
+        public bool HasFlag; // the flag was provided
 
-        public FlagValue(string value, bool provided = true)
+        public Option(string name, T value, bool hasflag = true, bool hasvalue = true)
         {
-            this.Provided = provided;
-            this.Set = provided && !string.IsNullOrEmpty(value);
+            this.Name = name;
             this.Value = value;
+            this.HasFlag = hasflag;
+            this.HasValue = hasvalue;
         }
 
-        public static FlagValue Unset => new FlagValue(null, false);
+        public static Option<T> NotGiven => new Option<T>(null, default, false, false);
 
-        public static implicit operator bool(FlagValue option)
-        {
-            return option.Set;
-        }
+        public static Option<T> WithoutValue => new Option<T>(null, default, true, false);
 
-        public static implicit operator string(FlagValue option)
-        {
-            return option.Value;
-        }
+        public static implicit operator T (Option<T> flag) => flag.Value;
 
         public override string ToString()
         {
-            return Value;
+            return Value.ToString();
         }
+    }
+
+
+    [Obsolete("Use Flag<string>")]
+    public class FlagValue : Option<string>
+    {
+        public FlagValue(string value) : base(null, value)
+        {
+        }
+
     }
 
 }

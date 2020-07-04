@@ -92,13 +92,13 @@ namespace ConsoleRouting
             return false;
         }
 
-        public static bool TryGetFlagValue(this Arguments args, Parameter parameter, out string value)
+        public static bool TryGetOptionString(this Arguments args, Parameter parameter, out string value)
         { 
             if (args.TryGet(parameter, out Flag flag))
             {
-                if (args.TryGetFollowing(flag, out Text literal))
+                if (args.TryGetFollowing(flag, out Text text))
                 {
-                    value = literal.Value;
+                    value = text.Value;
                     return true;
                 }
             }
