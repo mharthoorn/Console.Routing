@@ -1,6 +1,6 @@
 ﻿namespace ConsoleRouting
 {
-    public class Assignment: IArgument
+    public class Assignment 
     {
         public string Name{ get; private set; }
         public string Value { get; private set; }

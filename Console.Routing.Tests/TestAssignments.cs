@@ -18,7 +18,7 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual("Single", result.Route.Method.Name);
             Assert.AreEqual(2, result.Arguments.Count);
 
-            var args = result.Bind.Arguments;
+            var args = result.Bind.Parameters;
 
             Assert.AreEqual(1, args.Length);
             Assert.IsTrue(args[0] is Assignment);
@@ -36,7 +36,7 @@ namespace ConsoleRouting.Tests
             var arguments = Arguments.Parse("expression -f 'name.where(given=''john'')'");
             var result = router.Bind(arguments);
             
-            var args = result.Bind.Arguments;
+            var args = result.Bind.Parameters;
             Assert.IsTrue(args[0] is Flag);
             if (args[0] is Flag f)
                 Assert.AreEqual("f", f.Name);
@@ -55,7 +55,7 @@ namespace ConsoleRouting.Tests
             var arguments = Arguments.Parse("mix format=xml 'name.where(given=''john'')'");
             var result = router.Bind(arguments);
 
-            var args = result.Bind.Arguments;
+            var args = result.Bind.Parameters;
             Assert.IsTrue(args[0] is Assignment);
             if (args[0] is Assignment a)
             { 

@@ -41,8 +41,8 @@ namespace ConsoleRouting.Tests
             var args = Arguments.Parse("add 3 4");
             var result = router.Bind(args);
             Assert.AreEqual(1, result.BindCount);
-            Assert.AreEqual(3, result.Bind.Arguments[0]);
-            Assert.AreEqual(4, result.Bind.Arguments[1]);
+            Assert.AreEqual(3, result.Bind.Parameters[0]);
+            Assert.AreEqual(4, result.Bind.Parameters[1]);
         }
     }
 }

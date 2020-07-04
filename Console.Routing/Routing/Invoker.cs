@@ -26,7 +26,7 @@ namespace ConsoleRouting
 
         public static void Run(Bind bind)
         {
-            Run(bind.Route.Method, bind.Arguments);
+            Run(bind.Route.Method, bind.Parameters);
         }
 
         public static void Run(RoutingResult result)

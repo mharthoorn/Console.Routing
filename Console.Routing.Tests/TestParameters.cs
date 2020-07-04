@@ -24,8 +24,8 @@ namespace ConsoleRouting.Tests
             var parameters = bind.Route.Method.GetRoutingParameters();
             Assert.AreEqual(parameters.Count(), 1);
 
-            Assert.AreEqual(1, bind.Arguments.Length);
-            Assert.AreEqual(bind.Arguments[0], "Foo");
+            Assert.AreEqual(1, bind.Parameters.Length);
+            Assert.AreEqual("Foo", bind.Parameters[0]);
         }
 
 

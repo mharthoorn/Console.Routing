@@ -27,21 +27,6 @@ namespace ConsoleRouting
             var matches = oftype.Where(a => a.Match(parameter)).ToList();
             return matches;
         }
-
-        public ArgResult<T> GetHead<T>(int i = 0) where T: IArgument
-        {
-            //var matches = items.OfType<T>().ToList();
-            if (i < Count)
-            {
-                var item = this[i];
-                if (item is T result)
-                {
-                    return result;
-                }
-            }
-
-            return ArgResult<T>.Fail($"Index {i} Out of bounds");
-        }
          
         public bool TryGet<T>(int i, out T result) where T: IArgument
         {
@@ -107,6 +92,14 @@ namespace ConsoleRouting
         {
             return string.Join(" ", this);
         }
+    }
+
+    /// <summary>
+    /// This static class deals with parsing command line stuff to IArgument implementations. There are only three:
+    /// 
+    /// </summary>
+    public static class Argument
+    {
     }
 
 }

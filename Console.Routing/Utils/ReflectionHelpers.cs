@@ -23,6 +23,7 @@ namespace ConsoleRouting
         {
             return type.IsAbstract && type.IsSealed;
         }
+
     }
 
     

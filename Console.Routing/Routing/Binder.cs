@@ -74,9 +74,9 @@ namespace ConsoleRouting
                 int ia = offset + ip; // index of arguments
                 if (param.Type == typeof(string))
                 {
-                    if (arguments.TryGetText(ia, out string value))
+                    if (arguments.TryGetText(ia, out Text Text))
                     {
-                        values[ip++] = value;
+                        values[ip++] = Text.Value;
                         used++;
                     }
 

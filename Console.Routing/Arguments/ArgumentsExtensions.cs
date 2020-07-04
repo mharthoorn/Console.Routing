@@ -3,19 +3,18 @@ using System.Linq;
 
 namespace ConsoleRouting
 {
+
     public static class ArgumentsExtensions
     { 
         
-        public static bool TryGetText(this Arguments args, int offset, out string literal)
+        public static bool TryGetText(this Arguments args, int offset, out Text literal)
         {
-            var result = args.GetHead<Text>(offset);
-            literal = (result.Success) ? result.Arg.Value : null;
-            return result.Success;
+            return args.TryGet<Text>(offset, out literal);
         }
 
         public static bool TryGetEnum(this Arguments args, int offset, Parameter param, out object value)
         {
-            if (args.TryGetText(offset, out string literal))
+            if (args.TryGetText(offset, out Text literal))
             {
                 try
                 {
@@ -32,7 +31,7 @@ namespace ConsoleRouting
 
         public static bool TryGetInt(this Arguments args, int i, out int value)
         {
-            if (args.TryGetText(i, out string s))
+            if (args.TryGet(i, out Text s))
             {
                 return int.TryParse(s, out value);
             }

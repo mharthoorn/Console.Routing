@@ -5,15 +5,15 @@ namespace ConsoleRouting
     public class Bind
     {
         public Route Route;
-        public object[] Arguments;
+        public object[] Parameters;
          
-        public Bind(Route endpoint, object[] arguments)
+        public Bind(Route endpoint, object[] parameters)
         {
             this.Route = endpoint;
-            this.Arguments = arguments;
+            this.Parameters = parameters;
         }
 
-        private static string ArgumentString(object arg)
+        private static string ParameterString(object arg)
         {
             switch (arg)
             {
@@ -26,7 +26,7 @@ namespace ConsoleRouting
         public override string ToString()
         {
             var parameters = Route.Method.GetRoutingParameters();
-            var assignments = parameters.Zip(Arguments, (p, a) => $"{p}={ArgumentString(a)}");
+            var assignments = parameters.Zip(Parameters, (p, a) => $"{p}={ParameterString(a)}");
             var paramlist = string.Join(",", assignments);
 
             return $"{Route.Method.Name}({paramlist})";

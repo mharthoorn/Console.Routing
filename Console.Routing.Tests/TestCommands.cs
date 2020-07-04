@@ -17,7 +17,7 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Tool", result.Route.Method.Name);
-            Assert.AreEqual(0, result.Bind.Arguments.Length);
+            Assert.AreEqual(0, result.Bind.Parameters.Length);
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual(true, result.Ok);
             Assert.AreEqual(result.BindCount, 1);
-            Assert.AreEqual(4, result.Bind.Arguments.Count());
+            Assert.AreEqual(4, result.Bind.Parameters.Count());
             Assert.IsTrue(result.Candidates.Count > 1);
             
             var bind = result.Bind;
@@ -47,11 +47,11 @@ namespace ConsoleRouting.Tests
             var paramlist = bind.Route.Method.GetRoutingParameters();
             Assert.AreEqual(paramlist.Count(), 4);
 
-            Assert.AreEqual(bind.Arguments[0], "William");
-            Assert.AreEqual(bind.Arguments[1], "will");
-            Assert.AreEqual(((Flag)bind.Arguments[2]).Set, true); // -foo
+            Assert.AreEqual("William", bind.Parameters[0]);
+            Assert.AreEqual("will", bind.Parameters[1]);
+            Assert.AreEqual(true, (bind.Parameters[2] as Flag).Set); // -foo
 
-            Assert.AreEqual("fubar", (Option<string>)bind.Arguments[3]); // -bar fubar
+            Assert.AreEqual("fubar", (Option<string>)bind.Parameters[3]); // -bar fubar
         }
 
         [TestMethod]
