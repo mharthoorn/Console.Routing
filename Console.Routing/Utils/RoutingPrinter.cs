@@ -17,102 +17,97 @@ namespace ConsoleRouting
             switch(result.Status)
             {
                 case RoutingStatus.Ok:
-                    System.Console.WriteLine("The command was found and understood.");
+                    Console.WriteLine("The command was found and understood.");
                     break;
 
                 case RoutingStatus.UnknownCommand:
                     var arg = result.Arguments.FirstOrDefault();
                     if (arg is Text)
                     {
-                        System.Console.WriteLine($"Unknown command: {arg}.");
+                        Console.WriteLine($"Unknown command: {arg}.");
                     }
                     else
                     {
-                        System.Console.WriteLine($"Invalid parameter(s). These are your options:");
-                        PrintCandidates(result.Candidates.Routes(RouteMatch.Default));
+                        Console.WriteLine($"Invalid parameter(s). These are your options:");
+                        WriteCandidates(result.Candidates.Routes(RouteMatch.Default));
                     }
                     
                     break;
 
                 case RoutingStatus.PartialCommand:
-                    System.Console.WriteLine("Did you mean:");
-                    PrintCandidates(result.Candidates.Routes(RouteMatch.Partial));
+                    Console.WriteLine("Did you mean:");
+                    WriteCandidates(result.Candidates.Routes(RouteMatch.Partial));
                     break;
 
                 case RoutingStatus.InvalidParameters:
-                    System.Console.WriteLine("Invalid parameter(s). These are your options:");
-                    PrintCandidates(result.Candidates.Routes(RouteMatch.Full));
+                    Console.WriteLine("Invalid parameter(s). These are your options:");
+                    WriteCandidates(result.Candidates.Routes(RouteMatch.Full));
                     break;
 
                 case RoutingStatus.AmbigousParameters:
-                    System.Console.WriteLine("Ambigous parameter(s). These are your options:");
-                    PrintCandidates(result.Routes);
+                    Console.WriteLine("Ambigous parameter(s). These are your options:");
+                    WriteCandidates(result.Routes);
                     break;
 
                 case RoutingStatus.InvalidDefault:
-                    System.Console.WriteLine("Invalid parameter(s). These are your options:");
-                    PrintCandidates(result.Candidates.Routes(RouteMatch.Default));
+                    Console.WriteLine("Invalid parameter(s). These are your options:");
+                    WriteCandidates(result.Candidates.Routes(RouteMatch.Default));
                     break;
             }
            
         }
 
-        public static void PrintCandidates(IEnumerable<Route> routes)
+        public static void WriteCandidates(IEnumerable<Route> routes)
         {
             
-            foreach (var route in routes) System.Console.WriteLine($"  {route}");
+            foreach (var route in routes) Console.WriteLine($"  {route}");
         }
 
-        private static string GetModuleTitle(Route route)
-        {
-            return route.Method.DeclaringType.Name;
-        }
-
-        public static void PrintRoutes(IEnumerable<Route> routes)
+        public static void WriteRoutes(IEnumerable<Route> routes)
         {
 
             foreach (var group in routes.GroupBy(r => r.Module))
             {
                 
                 var title = group.Key.Title ?? group.FirstOrDefault()?.Method.DeclaringType.Name ?? "Module";
-
-                System.Console.WriteLine($"{title}:");
+                Console.WriteLine($"{title}:");
 
                 foreach (var route in group)
                 {
-                    if (route.Hidden) continue;
-
-                    var parameters = route.Representation().Trim();
-                    var command = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
-                    var description = route.Description;
-                    var text = parameters;
-                    if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
-                    text += description;
-
-                    if (command.Length > 15)
-                    {
-                        System.Console.WriteLine($"  {command,-15}");
-                        System.Console.WriteLine($"  {"",-12}{text}");
-                        
-                    }
-                    else
-                    {
-                        System.Console.WriteLine($"  {command,-15} {text}");
-                    }
+                    WriteRouteSummary(route);
                 }
-                System.Console.WriteLine();
+                Console.WriteLine();
             }
         }
 
-        public static void Write(string[] arguments)
+        private static string CommandPath(this Route route)
         {
-            int i = 0;
-            foreach (var arg in arguments)
+            var path = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
+            return path;
+        }
+        public static void WriteRouteSummary(Route route)
+        {
+            if (route.Hidden) return;
+
+            var parameters = route.Representation().Trim();
+            var command = route.CommandPath();
+            var description = route.Description;
+            var text = parameters;
+            if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
+            text += description;
+
+            if (command.Length > 15)
             {
-                System.Console.WriteLine($" {++i}: '{arg}'");
+                Console.WriteLine($"  {command,-15}");
+                Console.WriteLine($"  {"",-12}{text}");
+
+            }
+            else
+            {
+                Console.WriteLine($"  {command,-15} {text}");
             }
         }
-
+        
         public static void Write(Exception e, bool stacktrace = false)
         {
             string message = GetErrorMessage(e);
@@ -134,4 +129,5 @@ namespace ConsoleRouting
 
         }
     }
+
 }

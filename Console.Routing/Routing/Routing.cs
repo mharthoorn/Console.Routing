@@ -30,7 +30,7 @@ namespace ConsoleRouting
 
         public static void PrintHelp()
         {
-            RoutingPrinter.PrintRoutes(Router.Routes);
+            RoutingPrinter.WriteRoutes(Router.Routes);
         }
             
     }
