@@ -23,7 +23,7 @@ The examples below describe commands for a fictitious tool named ``tool``.
 
 ## Discovery
 You can expose any method to command line argument with the [Command] attribute. To avoid accidental exposure, 
-the declaring class must be marked with [Module]. The minimum example is the bare minimum to get your first command up-and-running. 
+the declaring class must be marked with [Module]. This example is the bare minimum to get your first command up-and-running. 
 
 ```csharp
 [Module]
@@ -62,7 +62,6 @@ Each of the following three command lines statements will route to this method:
 ```powershell
 > tool hello John 
 > tool hello John --upper
-> tool hello John -u
 ```
 
 ```csharp
@@ -85,7 +84,10 @@ Alternatively, you can also use a bool parameter. The following method has the s
     }
 ```
 Aligning with linux style arguments, you can abbreviate flags by using a single dash, and the first letter. 
-And you can group single letter flags:
+```powershell
+> tool hello John -u
+```
+You can group multiple letter flags:
 ```powershell
 > tool feed -cdr
 ```
@@ -105,8 +107,7 @@ In some tools it's common to add an argument that  comes with a flag. A good exm
 > tool log --message "First commit"
 > tool log -m "First commit"
 ```
-You can create the same behaviour with a `Flag<string>` parameter.
-
+You can create this behaviour with a `Flag<string>` parameter.
 
 ```csharp   
     [Command]
@@ -117,24 +118,14 @@ You can create the same behaviour with a `Flag<string>` parameter.
 ```
 Notice that the Flag<string> has an implicit cast to string.
 
-### Optional paramters
-To make a string parameter optional, you can add an `[Optional]` attribute to it.
+The Flag<T> implementation currently also supports `int`.
 ```powershell
-> tool greet John
+> tool loop --count 5
 ```
-```csharp
+```csharp   
     [Command]
-    public void Greet([Optional]string name)
-    {
-        if (name is null)
-        {
-            Console.WriteLine("Hello");
-        }
-        else 
-        {
-            Console.Writeline("Hello " + name);
-        }
-    }
+    public void Loop(Flag<int> count)
+    { ... }
 ```
 
 ### Assignment parameters
@@ -164,7 +155,42 @@ in this case, the routing will not be match this method
     }
 ```
 
-## Command Overloading
+
+### Optional paramters
+To make a parameter optional, you can add an `[Optional]` attribute to it.
+```powershell
+> tool greet John
+```
+```csharp
+    [Command]
+    public void Greet([Optional]string name)
+    {
+        if (name is null)
+        {
+            Console.WriteLine("Hello");
+        }
+        else 
+        {
+            Console.Writeline("Hello " + name);
+        }
+    }
+```
+This attribute is not necessary on any type of flag or assignment parameter since they are optional by design.
+
+### Parameter aliases
+You can create an parameter alias with the `[Alt] attribute:
+```csharp
+    
+    [Command]
+    public void Debug([Alt("no-color")] Flag nocolor)
+    {
+    
+	}
+```
+
+## More on commands
+
+### Command Overloading
 You can overload your commands. So if you provide two commands with the same name, but different parameter types,
 the proper command route will be found:
 ```powershell
@@ -190,7 +216,7 @@ Each of the above inputs, will route to a different method below:
 	}
 ```
 
-## Command name aliases
+### Command name aliases
 As an opposite of overloading, Console.Routing allows a single command to have multiple aliases.
 ```powershell
 > tool greet Anna
@@ -216,7 +242,7 @@ If you want a command to be usable, but not showing up in the help, you can use 
 	}
 ```
 
-## The Default command
+### The Default command
 You should always provide a command that respons when the user has given no input at all.
 This command can also be used for root flags: if no command or sub command has been given.
 
@@ -234,7 +260,42 @@ This command can also be used for root flags: if no command or sub command has b
 
 ```
 
-## Help text
+### Nested Commands
+You can create nested commands, or command groups, by marking a Module class as a command in itself:
+```powershell
+> tool database update
+> tool database drop
+```
+This example (borrowed from Entity Frameowrk), can be constructed like this:
+
+[Module, Command]
+public class Database
+{
+    [Command]
+    public void Update() { }
+    
+    [Command]
+    public void Drop() { }
+}
+
+You can create deeper nested commands by creating sub classes.
+```csharp
+[Module, Command]
+jpublic class Main
+{
+    [Command]
+    public class Sub 
+    {
+        [Command]
+        public void SubSub()
+        {
+        
+		}
+	}
+}
+```
+
+### Help text
 A command can have an additional [Help] attribute for descriptions in automatic documentation.
 A mature command line tool, should have a help line for each command.
 
@@ -247,3 +308,16 @@ A mature command line tool, should have a help line for each command.
 ```
 
 
+## Global Settings
+You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
+Only properties (not fields) will be set when a matching name is found.
+
+For this, use the `[Global]` flag.
+```csharp
+[Global]
+public class Settings
+{
+    public bool Debug { get; set; }
+}
+```
+You can have multple static classes marked as global.
