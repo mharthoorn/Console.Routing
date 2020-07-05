@@ -3,6 +3,9 @@ Console.Routing is a framework makes it easy to build command line tools.
 It routes command line arguments to a specific C# method, and fills in all method parameters. 
 You can implement it with minimal configuration.
 
+
+# Documentation
+
 ## Setup
 You only have to add one line of code to the ``Program.Main`` to enable route discovery and handling of arguments.
 
@@ -16,71 +19,11 @@ You only have to add one line of code to the ``Program.Main`` to enable route di
  }
 ```
 
-## Discovery
-You can expose any method to command line argument with the [Command] attribute. The declaring class must be marked with [Module]
-A command can have an additional [Help] attribute for the description in automatic documentation.
-
-If the executable is called `tool', you can call the following method with ```tool greet John```:
-```csharp
-    [Command]
-    public void Greet(string name)
-    {
-        Console.WriteLine($"Hello {name}");
-    }
-```
-
-Method overloading is supported, and the following C# types can be mapped to command line arguments:
-```csharp
-    string name
-    // any text value 
-    
-    [Optional]string name
-    // optional parameter
-
-    Flag version
-    // --version
-    // -v
-
-    Assignment key
-    //  key=value
-
-    FlagValue message
-    // A flag with a value
-    // --message 'hello'
-    // -m 'hello'
-
-```
-The following attributes control discovery:
-```csharp
-    [Module]
-    [Module("One line description")]
-        Any class with the Module attribute creates a group commands for the methods inside
-        If the title is omitted, the class name is used.
-
-    [Command]
-    [Command("commit")]
-        Any method in a [Module] class with this attribute will become a command. If put on a class,
-        the class becomes a command group.
-
-    [Default]
-        In combination with the Command attribute. Allows the method to be discovered and 
-        used without any command parameter. Good for default options like
-        --help, --version etc.
-
-    [Hidden]
-        In combination with Command, the method will become a command, but is not listed.
-    
-
-```
-
-# Documentation
 The examples below describe commands for a fictitious tool named ``tool``.
 
-## Basic command
-The minimum to get your first command up-and-running.
-```powershell
-> tool hello
-```
+## Discovery
+You can expose any method to command line argument with the [Command] attribute. To avoid accidental exposure, 
+the declaring class must be marked with [Module]. The minimum example is the bare minimum to get your first command up-and-running. 
 
 ```csharp
 [Module]
@@ -93,8 +36,13 @@ public class MyTool
 	}
 }
 ```
+Which can be executed on the command line with:
+```powershell
+> tool hello
+```
 
-## String parameters
+## Parameter types
+### String parameters
 ```powershell
 > tool hello John
 ```
@@ -107,7 +55,7 @@ public class MyTool
 	
 ```
 
-## Flags
+### Flag parameters
 Flags are used to set a setting to true. 
 Each of the following three command lines statements will route to this method:
 ```
@@ -148,7 +96,7 @@ And you can group single letter flags:
     }
 ```
 
-## Flags with a value
+### Flag parameters with a value
 In some tools it's common to add an argument that  comes with a flag. A good exmple of this is Git's commit message:
 ```
 > tool log --message "First commit"
@@ -163,7 +111,7 @@ Notice that the Flag<string> has an implicit cast to string.
         Logger.Log(message); 
     }
 	
-## Optional paramters
+### Optional paramters
 To make a string parameter optional, you can add an `[Optional]` attribute to it.
 ```
 > tool greet John
@@ -183,7 +131,7 @@ To make a string parameter optional, you can add an `[Optional]` attribute to it
     }
 ```
 
-## Assignments 
+### Assignment parameters
 You can provide key value pairs (assignments) as a parameter as well:
 ```
 > tool login user=john password=secret
@@ -210,7 +158,7 @@ the route will not match.
     }
 ```
 
-## Overloading
+## Command Overloading
 You can overload your commands. So if you provide two commands with the same name, but different parameter types,
 the proper command route will be found:
 ```
@@ -238,7 +186,7 @@ Each of the above inputs, will route to a different method below:
 
 ```
 
-## Command name alternatives
+## Command name aliases
 As an opposite of overloading, Console.Routing allows a single command to have multiple aliases.
 ```
 > tool greet Anna
@@ -262,7 +210,7 @@ If you want a command to be usable, but not showing up in the help, you can use 
 	}
 ```
 
-## Default command
+## The Default command
 You should always provide a command that respons when the user has given no input at all.
 This command can also be used for root flags: if no command or sub command has been given.
 
@@ -277,6 +225,18 @@ This command can also be used for root flags: if no command or sub command has b
         if (version.Set) ShowVersion();
     }
 
+```
+
+## Help text
+A command can have an additional [Help] attribute for descriptions in automatic documentation.
+A mature command line tool, should have a help line for each command.
+
+```csharp
+    [Command, Help("This greeting greets any provided name")]
+    public void Greet(string name)
+    {
+        Console.WriteLine($"Hello {name}")
+	}
 ```
 
 
