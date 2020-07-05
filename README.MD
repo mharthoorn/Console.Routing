@@ -287,8 +287,8 @@ jpublic class Main
         public void SubSub()
         {
         
-		}
-	}
+        }
+    }
 }
 ```
 
@@ -314,9 +314,7 @@ You can invoke the help documentation by calling `PrintHelp`:
 
     [Command, Help("Says hello to name")]
     public void Greet(string name)
-    {
-        
-	}
+    { ... }
 ```
 The produced help text looks like this:
 ```
