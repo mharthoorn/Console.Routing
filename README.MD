@@ -1,7 +1,9 @@
 # Console.Routing
-Console.Routing is a framework makes it easy to build command line tools. 
-It routes command line arguments to a specific C# method, and fills in all method parameters. 
-You can implement it with minimal configuration.
+Console.Routing is a framework makes it easy to build command line tools. Proper command line parsing can be tricky and time consuming. This framework hopes to take that away.
+You can implement a command line tool with almost no overhead.
+
+This framework routes command line commands to a specific C# methods  and fills in all method parameters with the remaining command line arguments. 
+If no route is found, a proper error is given. 
 
 
 # Documentation
@@ -22,8 +24,8 @@ You only have to add one line of code to the ``Program.Main`` to enable route di
 The examples below describe commands for a fictitious tool named ``tool``.
 
 ## Discovery
-You can expose any method to command line argument with the [Command] attribute. To avoid accidental exposure, 
-the declaring class must be marked with [Module]. This example is the bare minimum to get your first command up-and-running. 
+You can expose any method to command line argument with the `[Command]` attribute. To avoid accidental exposure, 
+the declaring class must be marked with `[Module]`. This example is the bare minimum to get your first command up-and-running. 
 
 ```csharp
 [Module]
@@ -136,9 +138,7 @@ You can provide key value pairs (assignments) as a parameter as well:
 ```csharp
     [Command]
     public void Login(Assignment user, Assignment password)
-    {
-        //...
-    }
+    { ... }
 ```
 
 ## Integer parameters
@@ -157,7 +157,7 @@ in this case, the routing will not be match this method
 
 
 ### Optional paramters
-To make a parameter optional, you can add an `[Optional]` attribute to it.
+To make a parameter optional, you can add an `[Optional]` attribute to it. The value will be set to null or default if it is not provided.
 ```powershell
 > tool greet John
 ```
@@ -178,7 +178,7 @@ To make a parameter optional, you can add an `[Optional]` attribute to it.
 This attribute is not necessary on any type of flag or assignment parameter since they are optional by design.
 
 ### Parameter aliases
-You can create an parameter alias with the `[Alt] attribute:
+You can create an parameter alias with the `[Alt]` attribute:
 ```csharp
     
     [Command]
@@ -211,9 +211,7 @@ Each of the above inputs, will route to a different method below:
 
     [Command]
     public void Count(string name)
-    {
-    
-	}
+    { ... }
 ```
 
 ### Command name aliases
@@ -301,7 +299,7 @@ A mature command line tool, should have a help line for each command.
     public void Greet(string name)
     {
         Console.WriteLine($"Hello {name}")
-	}
+    }
 ```
 
 You can invoke the help documentation by calling `PrintHelp`:
@@ -310,7 +308,7 @@ You can invoke the help documentation by calling `PrintHelp`:
     public void Help(Flag version)
     {
         Routing.PrintHelp();
-	}
+    }
 
     [Command, Help("Says hello to name")]
     public void Greet(string name)
