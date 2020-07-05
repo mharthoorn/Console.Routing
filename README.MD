@@ -33,7 +33,7 @@ public class MyTool
     public void Hello()
     {
         Console.WriteLine("Hello world!");
-	}
+    }
 }
 ```
 Which can be executed on the command line with:
@@ -43,12 +43,13 @@ Which can be executed on the command line with:
 
 ## Parameter types
 ### String parameters
+To interpret a command line parameter as a string, you can add a string parameter to your command method.
 ```powershell
 > tool hello John
 ```
 ```csharp
     [Command]
-    public void Hello(string name, Flag upper)
+    public void Hello(string name)
     {
         Console.Writeline("Hello " + name);
     }
@@ -58,7 +59,7 @@ Which can be executed on the command line with:
 ### Flag parameters
 Flags are used to set a setting to true. 
 Each of the following three command lines statements will route to this method:
-```
+```powershell
 > tool hello John 
 > tool hello John --upper
 > tool hello John -u
@@ -72,8 +73,9 @@ Each of the following three command lines statements will route to this method:
         Console.Writeline("Hello " + name);
     }
 ```
+The Flag has a default cast to bool.
 
-Alternatively, you can also use a bool: it wll also become a flag on the command line.
+Alternatively, you can also use a bool parameter. The following method has the same command line signature as above. 
 ```csharp
     [Command]
     public void Hello(string name, bool upper)
@@ -84,7 +86,7 @@ Alternatively, you can also use a bool: it wll also become a flag on the command
 ```
 Aligning with linux style arguments, you can abbreviate flags by using a single dash, and the first letter. 
 And you can group single letter flags:
-```
+```powershell
 > tool feed -cdr
 ```
 ```csharp
@@ -97,12 +99,14 @@ And you can group single letter flags:
 ```
 
 ### Flag parameters with a value
-In some tools it's common to add an argument that  comes with a flag. A good exmple of this is Git's commit message:
-```
+In some tools it's common to add an argument that  comes with a flag. A good exmple of this is Git's commit message.
+
+```powershell
 > tool log --message "First commit"
 > tool log -m "First commit"
 ```
-Notice that the Flag<string> has an implicit cast to string.
+You can create the same behaviour with a `Flag<string>` parameter.
+
 
 ```csharp   
     [Command]
@@ -110,10 +114,12 @@ Notice that the Flag<string> has an implicit cast to string.
     {
         Logger.Log(message); 
     }
-	
+```
+Notice that the Flag<string> has an implicit cast to string.
+
 ### Optional paramters
 To make a string parameter optional, you can add an `[Optional]` attribute to it.
-```
+```powershell
 > tool greet John
 ```
 ```csharp
@@ -133,7 +139,7 @@ To make a string parameter optional, you can add an `[Optional]` attribute to it
 
 ### Assignment parameters
 You can provide key value pairs (assignments) as a parameter as well:
-```
+```powershell
 > tool login user=john password=secret
 ```
 ```csharp
@@ -146,8 +152,8 @@ You can provide key value pairs (assignments) as a parameter as well:
 
 ## Integer parameters
 Integers are also regognised as parameter types. If the user provides anything else than an integer,
-the route will not match.
-
+in this case, the routing will not be match this method
+```powershell
 > tool count 5
 ```
 ```csharp
@@ -161,7 +167,7 @@ the route will not match.
 ## Command Overloading
 You can overload your commands. So if you provide two commands with the same name, but different parameter types,
 the proper command route will be found:
-```
+```powershell
 > tool count
 > tool count 3
 > tool count Count
@@ -182,16 +188,16 @@ Each of the above inputs, will route to a different method below:
     {
     
 	}
-
-
 ```
 
 ## Command name aliases
 As an opposite of overloading, Console.Routing allows a single command to have multiple aliases.
-```
+```powershell
 > tool greet Anna
 > tool greeting Anna
 ```
+Bare in mind, that if you add an alias, you should also provide the original name in the list, if you want to make that work as well.
+```csharp
     [Command("greet", "greeting")]
     public void Greet(string name)
     {
@@ -214,10 +220,11 @@ If you want a command to be usable, but not showing up in the help, you can use 
 You should always provide a command that respons when the user has given no input at all.
 This command can also be used for root flags: if no command or sub command has been given.
 
-```
+```powershell
 > tool --help
 > tool --info
 ```
+```csharp
     [Command, Default]
     public void Info(Flag help, Flag version)
     {
