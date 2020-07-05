@@ -185,7 +185,7 @@ You can create an parameter alias with the `[Alt] attribute:
     public void Debug([Alt("no-color")] Flag nocolor)
     {
     
-	}
+    }
 ```
 
 ## More on commands
@@ -229,17 +229,14 @@ Bare in mind, that if you add an alias, you should also provide the original nam
     {
         Console.Writeline("Hello " + name);
     }
-
+```
 
 ## Hidden commands
 If you want a command to be usable, but not showing up in the help, you can use the [Hidden] attribute:
 ```csharp
     [Command, Hidden]
     public void Secret()
-    {
-    
-
-	}
+    { ... }
 ```
 
 ### The Default command
@@ -267,7 +264,7 @@ You can create nested commands, or command groups, by marking a Module class as 
 > tool database drop
 ```
 This example (borrowed from Entity Frameowrk), can be constructed like this:
-
+```csharp
 [Module, Command]
 public class Database
 {
@@ -277,7 +274,7 @@ public class Database
     [Command]
     public void Drop() { }
 }
-
+```
 You can create deeper nested commands by creating sub classes.
 ```csharp
 [Module, Command]
@@ -307,6 +304,27 @@ A mature command line tool, should have a help line for each command.
 	}
 ```
 
+You can invoke the help documentation by calling `PrintHelp`:
+```csharp
+    [Command, Help("Prints this help text")]
+    public void Help(Flag version)
+    {
+        Routing.PrintHelp();
+	}
+
+    [Command, Help("Says hello to name")]
+    public void Greet(string name)
+    {
+        
+	}
+```
+The produced help text looks like this:
+```
+My tool:
+    Help    --version | Prints this help text
+    Greet   <name> | Says hello to name
+```
+The router gives you access to all route data, if you want to write your own implementation.
 
 ## Global Settings
 You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
