@@ -155,7 +155,7 @@ in this case, the routing will not be match this method
     }
 ```
 
-
+## More on parameters
 ### Optional paramters
 To make a parameter optional, you can add an `[Optional]` attribute to it. The value will be set to null or default if it is not provided.
 ```powershell
@@ -180,7 +180,9 @@ This attribute is not necessary on any type of flag or assignment parameter sinc
 ### Parameter aliases
 You can create an parameter alias with the `[Alt]` attribute:
 ```csharp
-    
+> tool debug --no-color
+```
+```csharp
     [Command]
     public void Debug([Alt("no-color")] Flag nocolor)
     {
