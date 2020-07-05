@@ -4,7 +4,7 @@
     public class Git
     {
         [Command]
-        public void Commit(Option<string> message)
+        public void Commit(Flag<string> message)
         {
         }
 

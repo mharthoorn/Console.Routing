@@ -124,16 +124,16 @@ namespace ConsoleRouting
                         values[ip++] = Assignment.NotProvided();
                     }
                 }
-                else if (param.Type == typeof(Option<string>))
+                else if (param.Type == typeof(Flag<string>))
                 {
                     if (arguments.TryGetOptionString(param, out string value))
                     {
-                        values[ip++] = new Option<string>(null, value);
+                        values[ip++] = new Flag<string>(null, value);
                         used += 2;
                     }
                     else
                     {
-                        values[ip++] = Option<string>.NotGiven;
+                        values[ip++] = Flag<string>.NotGiven;
                     }
                 }
 

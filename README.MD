@@ -72,38 +72,104 @@ The following attributes control discovery:
     
 
 ```
- 
-## Examples 
+
+# Documentation
 The examples below describe commands for a fictitious tool named ``tool``.
+
+## Basic command
+The minimum to get your first command up-and-running.
+```powershell
+> tool hello
+```
+
 ```csharp
-[Module("Example tools commands")]
-public class ToolCommands
+[Module]
+public class MyTool
 {
-    // Allows the following usage on the command line:
-    // > tool hello John 
-    // > tool hello John --upper
-    // > tool hello John -u
-    [Command, Help(("Says Hello to the given name")]
+    [Command]
+    public void Hello()
+    {
+        Console.WriteLine("Hello world!");
+	}
+}
+```
+
+## String parameters
+```powershell
+> tool hello John
+```
+```csharp
+    [Command]
+    public void Hello(string name, Flag upper)
+    {
+        Console.Writeline("Hello " + name);
+    }
+	
+```
+
+## Flags
+Flags are used to set a setting to true. 
+Each of the following three command lines statements will route to this method:
+```
+> tool hello John 
+> tool hello John --upper
+> tool hello John -u
+```
+
+```csharp
+    [Command]
     public void Hello(string name, Flag upper)
     {
         if (upper) name = name.ToUpper();
         Console.Writeline("Hello " + name);
     }
-	
-    // > tool log --message "First commit"
-    // > tool log -m "First commit"
+```
+
+Alternatively, you can also use a bool: it wll also become a flag on the command line.
+```csharp
     [Command]
-    public void Log(FlagValue message)
+    public void Hello(string name, bool upper)
     {
-        Logger.Log(message.Value);
+        if (upper) name = name.ToUpper();
+        Console.Writeline("Hello " + name);
+    }
+```
+Aligning with linux style arguments, you can abbreviate flags by using a single dash, and the first letter. 
+And you can group single letter flags:
+```
+> tool feed -cdr
+```
+```csharp
+   
+    [Command]
+    public void Feed(Flag cat, Flag dog, Flag rabbit)
+    {
+    
+    }
+```
+
+## Flags with a value
+In some tools it's common to add an argument that  comes with a flag. A good exmple of this is Git's commit message:
+```
+> tool log --message "First commit"
+> tool log -m "First commit"
+```
+Notice that the Flag<string> has an implicit cast to string.
+
+```csharp   
+    [Command]
+    public void Log(Flag<string> message)
+    {
+        Logger.Log(message); 
     }
 	
-	
-    // > tool greet
-    // > tool greet John
-    // > tool greeting 
-    // > tool greeting John
-    [Command("greet", "greeting")]
+## Optional paramters
+To make a string parameter optional, you can add an `[Optional]` attribute to it.
+```
+> tool greet John
+```
+```csharp
+    [Command]
     public void Greet([Optional]string name)
     {
         if (name is null)
@@ -115,44 +181,102 @@ public class ToolCommands
             Console.Writeline("Hello " + name);
         }
     }
+```
 
-
-    // > tool login user=john password=secret
-    [Command, Help("Logs in to the system with user/password")]
+## Assignments 
+You can provide key value pairs (assignments) as a parameter as well:
+```
+> tool login user=john password=secret
+```
+```csharp
+    [Command]
     public void Login(Assignment user, Assignment password)
     {
         //...
     }
+```
 
-    // > tool --help
-    // > tool --info
-    [Default, Hidden]
+## Integer parameters
+Integers are also regognised as parameter types. If the user provides anything else than an integer,
+the route will not match.
+
+> tool count 5
+```
+```csharp
+    [Command]
+    public void Count(int max)
+    {
+        for (int i = 0; i < count; i++) Console.WriteLine(i);
+    }
+```
+
+## Overloading
+You can overload your commands. So if you provide two commands with the same name, but different parameter types,
+the proper command route will be found:
+```
+> tool count
+> tool count 3
+> tool count Count
+```
+Each of the above inputs, will route to a different method below:
+
+```csharp
+    [Command]
+    public void Count()
+    { ... }
+
+    [Command]
+    public void Count(int number)
+    { ...  }
+
+    [Command]
+    public void Count(string name)
+    {
+    
+	}
+
+
+```
+
+## Command name alternatives
+As an opposite of overloading, Console.Routing allows a single command to have multiple aliases.
+```
+> tool greet Anna
+> tool greeting Anna
+```
+    [Command("greet", "greeting")]
+    public void Greet(string name)
+    {
+        Console.Writeline("Hello " + name);
+    }
+
+
+## Hidden commands
+If you want a command to be usable, but not showing up in the help, you can use the [Hidden] attribute:
+```csharp
+    [Command, Hidden]
+    public void Secret()
+    {
+    
+
+	}
+```
+
+## Default command
+You should always provide a command that respons when the user has given no input at all.
+This command can also be used for root flags: if no command or sub command has been given.
+
+```
+> tool --help
+> tool --info
+```
+    [Command, Default]
     public void Info(Flag help, Flag version)
     {
         if (help.Set) ShowHelp();
         if (version.Set) ShowVersion();
     }
 
-
-    // > tool commit -m "first commit"
-    [Command]
-    public void Commit(FlagValue message)
-    {
-        
-    }
-
-}
 ```
 
-## Flag abbreviation
-Aligning with linux style arguments, you can abbreviate flags by using a single dash, and the first letter. 
-And you can group single letter flags:
 
-```csharp
-    // feed -cdr
-    [Command]
-    public void Feed(Flag cat, Flag dog, Flag rabbit)
-    {
-    
-    }
-```

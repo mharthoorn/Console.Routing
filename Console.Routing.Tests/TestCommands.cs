@@ -51,7 +51,7 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual("will", bind.Parameters[1]);
             Assert.AreEqual(true, (bind.Parameters[2] as Flag).Set); // -foo
 
-            Assert.AreEqual("fubar", (Option<string>)bind.Parameters[3]); // -bar fubar
+            Assert.AreEqual("fubar", (Flag<string>)bind.Parameters[3]); // -bar fubar
         }
 
         [TestMethod]

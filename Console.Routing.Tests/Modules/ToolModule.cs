@@ -29,13 +29,13 @@
         }
 
         [Command] 
-        public void Action(string name, string alias, Flag foo, Option<string> bar)
+        public void Action(string name, string alias, Flag foo, Flag<string> bar)
         {
             
         }
 
         [Command]
-        public void Save([Optional]string filename, Flag all, Flag json, Flag xml, Option<string> pattern)
+        public void Save([Optional]string filename, Flag all, Flag json, Flag xml, Flag<string> pattern)
         {
             System.Console.WriteLine("Saving");
         }

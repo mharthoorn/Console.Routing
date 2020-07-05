@@ -13,9 +13,11 @@ namespace ConsoleAppTemplate
         }
 
         [Command, Default, Hidden]
-        public void Default()
+        public void Default([Alt("?")]Flag help)
         {
-            Console.WriteLine($"If you provide no parameters, you end up here.");
+            // If you provide no parameters, you end up here.
+            Console.WriteLine($"Your tool. Version 0.1. Copyright (c) you.");
+            if (help) Help();
         }
 
         [Command]
