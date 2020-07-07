@@ -331,9 +331,9 @@ Only properties (not fields) will be set when a matching name is found.
 For this, use the `[Global]` flag.
 ```csharp
 [Global]
-public class Settings
+public static class Settings
 {
-    public bool Debug { get; set; }
+    public static bool Debug { get; set; }
 }
 ```
 You can have multple static classes marked as global.

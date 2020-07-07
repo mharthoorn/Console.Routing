@@ -18,6 +18,12 @@ namespace ConsoleRouting.Tests
             System.Console.WriteLine($"{DateTime.Now} {detail} {word}");
         }
 
+        [Command]
+        public void Train(Flag dog) // The rest are global settings.
+        {
+
+        }
+
     }
 
 }

@@ -7,6 +7,7 @@
 
     }
 
+    [Global]
     public static class AnimalSettings
     {
         public static Flag Mouse { get; set; }

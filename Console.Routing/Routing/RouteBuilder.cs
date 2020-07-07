@@ -8,7 +8,7 @@ namespace ConsoleRouting
     public class RouteBuilder
     {
         public List<Route> Routes { get; }
-        public List<Type> Globals { get; }
+        public List<Type> Globals { get; private set; }
         public RouteBuilder()
         {
             Routes = new List<Route>();
@@ -22,7 +22,7 @@ namespace ConsoleRouting
         public RouteBuilder Add(Assembly assembly)
         {
             DiscoverModules(assembly);
-            DiscoverGlobals(assembly);
+            Globals = DiscoverGlobals(assembly).ToList();
             return this;
         }
 

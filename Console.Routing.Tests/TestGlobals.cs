@@ -22,7 +22,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void RemovalOfGlobals()
         {
-            var args = Arguments.Parse("do --mouse --cat --dog");
+            var args = Arguments.Parse("train --mouse --cat --dog");
             Binder.Bind(typeof(AnimalSettings), args);
 
             Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
@@ -33,6 +33,23 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual(null, AnimalSettings.Canary);
 
             Assert.AreEqual(2, args.Count);
+
+        }
+
+        [TestMethod]
+        public void GlobalBindingInRouting()
+        {
+            var args = Arguments.Parse("train --mouse --cat --dog");
+            var result = router.Handle(args);
+
+            Assert.IsTrue(result.Ok);
+            Assert.AreEqual(2, result.Arguments.Count);
+
+            Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
+            Assert.IsTrue(AnimalSettings.Mouse.Set);
+
+         
+            var x = result.Bind.Route;
 
         }
 
