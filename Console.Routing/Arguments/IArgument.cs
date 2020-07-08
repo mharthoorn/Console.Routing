@@ -2,6 +2,7 @@
 {
     public interface IArgument
     {
+        string Original { get; }
         bool Match(string name);
         string Value { get; }
     }

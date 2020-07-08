@@ -102,11 +102,18 @@ namespace ConsoleRouting
             }
 
             string path = route.CommandPath();
-            Console.WriteLine(path);
-            Console.WriteLine($"  {route.Description}");
-            foreach(var parameter in route.GetRoutingParameters())
+            Console.WriteLine($"Command:");
+            Console.WriteLine($"  {path}\n");
+            Console.WriteLine($"Description:");
+            Console.WriteLine($"  {route.Description}\n");
+            var parameters = route.GetRoutingParameters().ToList();
+            if (parameters.Count > 0)
             {
-                Console.WriteLine($"  {parameter.AsText()}"); 
+                Console.WriteLine($"Parameters:");
+                foreach (var parameter in route.GetRoutingParameters())
+                {
+                    Console.WriteLine($"  {parameter.AsText()}"); 
+                }
             }
         }
 

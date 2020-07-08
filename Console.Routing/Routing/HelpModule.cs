@@ -16,10 +16,10 @@ namespace ConsoleRouting
             this.router = router;
         }
 
-        [Command("help", "?"), Help("Provides this help text")]
+        [Command("help", "?", "--help", "-?", "-h"), Help("Provides this help text")]
         public void Help(Arguments args = null)
         {
-            if (args is null || args.Count == 0)
+            if (args is null || args.Count == 1)
             {
                 RoutingWriter.WriteRoutes(router);
             }
@@ -28,13 +28,6 @@ namespace ConsoleRouting
                 args.RemoveAt(0);
                 RoutingWriter.WriteRouteDocumentation(Routing.Router, args);
             }
-        }
-
-        [Command("--help", "-?"), Hidden]
-        public void FlagHelp()
-        {
-            // If you provide no parameters, you end up here.   
-            Help();
         }
 
     }

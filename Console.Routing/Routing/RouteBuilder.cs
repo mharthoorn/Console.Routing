@@ -53,7 +53,7 @@ namespace ConsoleRouting
         {
             if (module is null) module = type.GetCustomAttribute<Module>();
             var command = type.GetCustomAttribute<Command>();
-            var t = trail.Rebase(command);
+            var t = trail.Retail(command);
             DiscoverNestedModules(module, type, t);
             DiscoverCommands(module, type, t);
         }

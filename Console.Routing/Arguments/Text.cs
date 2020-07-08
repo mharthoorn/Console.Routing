@@ -4,11 +4,13 @@ namespace ConsoleRouting
 {
     public class Text : IArgument
     {
+        public string Original { get; }
         public string Value { get; }
 
         public Text(string value)
         {
             this.Value = value;
+            this.Original = value;
         }
 
         public virtual bool Match(string value)

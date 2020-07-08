@@ -65,7 +65,7 @@ namespace ConsoleRouting
 
             while (index < length)
             {
-                if (arguments.TryGet(index, out Text value))
+                if (arguments.TryGetCommand(index, out string value))
                 {
                     if (route.Nodes[index].Matches(value))
                     {

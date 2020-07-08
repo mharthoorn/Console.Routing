@@ -4,17 +4,25 @@ namespace ConsoleRouting
 {
     public class Flag : IArgument
     {
+        public string Original { 
+            get 
+            {
+                string dash = Short ? "-" : "--";
+                return dash + Name;
+            } 
+        }
         public bool Short { get; private set; }
         public string Name { get; private set; }
         public bool Set { get; private set; }
 
         public string Value { get => Set.ToString(); }
 
-        public Flag(string name)
+        public Flag(string value)
         {
-            this.Name = name;
+
+            this.Name = value.TrimStart('-');
             this.Set = true;
-            this.Short = name.Length == 1;
+            this.Short = value.Length == 1;
         }
 
         public Flag(string name, bool set)
