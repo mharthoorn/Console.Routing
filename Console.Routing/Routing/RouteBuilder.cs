@@ -7,8 +7,9 @@ namespace ConsoleRouting
 {
     public class RouteBuilder
     {
-        public List<Route> Routes { get; }
-        public List<Type> Globals { get; private set; }
+        private List<Route> Routes { get; }
+        private List<Type> Globals;
+        
         public RouteBuilder()
         {
             Routes = new List<Route>();
@@ -26,7 +27,17 @@ namespace ConsoleRouting
             return this;
         }
 
-        public void DiscoverModules(Assembly assembly)
+        public void Add(Route route)
+        {
+            Routes.Add(route);
+        }
+
+        public Router Build()
+        {
+            return new Router(Routes, Globals);
+        }
+
+        private void DiscoverModules(Assembly assembly)
         {
             List<Node> trail = new List<Node>();
             var types = assembly.GetAttributeTypes<Module>().ToList();
@@ -38,7 +49,7 @@ namespace ConsoleRouting
             foreach (var type in types) DiscoverModule(module, type, trail);
         }
 
-        public void DiscoverModule(Module module, Type type, in List<Node> trail)
+        private void DiscoverModule(Module module, Type type, in List<Node> trail)
         {
             if (module is null) module = type.GetCustomAttribute<Module>();
             var command = type.GetCustomAttribute<Command>();
@@ -47,19 +58,19 @@ namespace ConsoleRouting
             DiscoverCommands(module, type, t);
         }
 
-        public void DiscoverNestedModules(Module module, Type type, in List<Node> trail)
+        private void DiscoverNestedModules(Module module, Type type, in List<Node> trail)
         {
             var nestedTypes = type.GetNestedTypes().Where(t => t.HasAttribute<Command>());
             DiscoverModules(module, nestedTypes, trail);
         }
 
-        public void DiscoverCommands(Module module, Type type, in List<Node> trail)
+        private void DiscoverCommands(Module module, Type type, in List<Node> trail)
         {
             var methods = type.GetAttributeMethods<Command>();
             foreach (var method in methods) DiscoverCommand(module, method, trail);
         }
 
-        public IEnumerable<Type> DiscoverGlobals(Assembly assembly)
+        private IEnumerable<Type> DiscoverGlobals(Assembly assembly)
         {
             var types = assembly.GetTypes().Where(t => t.HasAttribute<Global>());
             foreach (var type in types)
@@ -72,7 +83,7 @@ namespace ConsoleRouting
             }
         }
 
-        public void DiscoverCommand(Module module, MethodInfo method, in List<Node> trail)
+        private void DiscoverCommand(Module module, MethodInfo method, in List<Node> trail)
         {
             var isdefault = method.HasAttribute<Default>();
             var help = method.GetCustomAttribute<Help>();
@@ -83,17 +94,8 @@ namespace ConsoleRouting
 
         }
 
-        public void Add(Route route)
-        {
-            Routes.Add(route);
-        }
-
-        public Router Build()
-        {
-            return new Router(Routes, Globals);
-        }
-
     }
+
 
 
 }

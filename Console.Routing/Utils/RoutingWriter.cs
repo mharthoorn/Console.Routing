@@ -10,7 +10,14 @@ namespace ConsoleRouting
         public IList<Route> Candidates;
     }
 
+
+    [Obsolete("Use RoutingWriter instead")]
     public static class RoutingPrinter
+    {
+
+    }
+      
+    public static class RoutingWriter
     {
         public static void Write(RoutingResult result)
         {
@@ -65,7 +72,6 @@ namespace ConsoleRouting
 
         public static void WriteRoutes(IEnumerable<Route> routes)
         {
-
             foreach (var group in routes.GroupBy(r => r.Module))
             {
                 
@@ -80,16 +86,41 @@ namespace ConsoleRouting
             }
         }
 
+        public static void WriteRoutes(Router router)
+        {
+            WriteRoutes(router?.Routes);
+        }
+
+        public static void WriteRouteDocumentation(this Router router, Arguments args)
+        {
+            var routes = router.GetCandidates(args).Routes(RouteMatch.Full).ToList();
+            var route = routes.FirstOrDefault();
+            if (route is null) 
+            { 
+                Console.WriteLine("No matching command was found"); 
+                return; 
+            }
+
+            string path = route.CommandPath();
+            Console.WriteLine(path);
+            Console.WriteLine($"  {route.Description}");
+            foreach(var parameter in route.GetRoutingParameters())
+            {
+                Console.WriteLine($"  {parameter.AsText()}"); 
+            }
+        }
+
         private static string CommandPath(this Route route)
         {
             var path = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
             return path;
         }
+
         public static void WriteRouteSummary(Route route)
         {
             if (route.Hidden) return;
 
-            var parameters = route.Representation().Trim();
+            var parameters = route.AsText().Trim();
             var command = route.CommandPath();
             var description = route.Description;
             var text = parameters;

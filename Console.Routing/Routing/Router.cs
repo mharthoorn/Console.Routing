@@ -22,7 +22,7 @@ namespace ConsoleRouting
             RoutingResult result = Bind(arguments);
 
             if (result.Ok)
-                Invoker.Run(result.Bind);
+                Invoker.Run(this, result.Bind);
 
             return result;
         }
@@ -30,14 +30,14 @@ namespace ConsoleRouting
         public RoutingResult Bind(Arguments arguments)
         {
             Binder.Bind(Globals, arguments);
-            var candidates = ElectCandidates(arguments).ToList();
+            var candidates = GetCandidates(arguments).ToList();
             var routes = candidates.Routes(RouteMatch.Full, RouteMatch.Default);
             var binds = Bind(routes, arguments).ToList();
 
             return CreateResult(arguments, candidates, binds);
         }
 
-        public static IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
+        private static IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
             foreach (var route in routes)
             {
@@ -48,7 +48,7 @@ namespace ConsoleRouting
             }
         }
 
-        public IEnumerable<Candidate> ElectCandidates(Arguments arguments)
+        public IEnumerable<Candidate> GetCandidates(Arguments arguments)
         {
             foreach (var route in Routes)
             {

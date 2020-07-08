@@ -1,15 +1,15 @@
 # Console.Routing
-Console.Routing is a framework makes it easy to build command line tools. Proper command line parsing can be tricky and time consuming. This framework hopes to take that away.
-You can implement a command line tool with almost no overhead.
+Console.Routing is a framework that makes it easy to build command line tools. Proper command line parsing can be tricky and time consuming. This framework hopes to take that away.
+With this library You can implement a command line tool with almost no overhead.
 
-This framework routes command line commands to a specific C# methods  and fills in all method parameters with the remaining command line arguments. 
-If no route is found, a proper error is given. 
-
+Console.Routing works with a router that somewhat similar to ASP.NET. It routes commands and parameters from the command line 
+a specific C# method and fills in all method parameters with the matching command line arguments. 
+If no route is found, a clear user friendly error is given. 
 
 # Documentation
 
 ## Setup
-You only have to add one line of code to the ``Program.Main`` to enable route discovery and handling of arguments.
+By adding one line of code to the ``Program.Main`` you enable route discovery and handling of arguments.
 
 ```csharp
  class Program
@@ -278,7 +278,7 @@ public class Database
 You can create deeper nested commands by creating sub classes.
 ```csharp
 [Module, Command]
-jpublic class Main
+public class Main
 {
     [Command]
     public class Sub 
@@ -337,3 +337,24 @@ public static class Settings
 }
 ```
 You can have multple static classes marked as global.
+
+
+# Working Multiple Projects or commands not in your Startup project.
+By using the default `Routing.Handle(args)` all modules and commands in your startup project will
+be discovered as a route candidate. If you have commands in a different library (dll) or in multiple libraries,
+you can use the RouteBuilder class instead.
+
+The route builder allows you to add assemblies to the discovery list, either by providing the assembly 
+or a type in the assembly. The example below has some duplicate functionality but it shows you
+the options:
+
+```csharp
+    var router = new RouteBuilder()
+        .Add(Assembly.GetExecutingAssembly())
+        .AddAssemblyOf<Program>()
+        .Add(AppDomain.CurrentDomain.GetAssemblies())
+        .Buid();
+    
+    router.Handle(args);
+
+```

@@ -38,29 +38,33 @@ namespace ConsoleRouting
             }
         }
 
+        public static IEnumerable<Parameter> GetRoutingParameters(this Route route)
+        {
+            var paraminfo = route.Method.GetParameters();
+            var parameters = GetRoutingParameters(paraminfo);
+            return parameters;
+        }
+
         public static IEnumerable<Parameter> GetRoutingParameters(this MethodInfo method)
         {
             var parameters = method.GetParameters();
             return GetRoutingParameters(parameters);
         }
 
-        public static string Representation(this Route route)
+        public static string AsText(this Route route)
         {
-            var paraminfo = route.Method.GetParameters();
-            var parameters = GetRoutingParameters(paraminfo);
-            return string.Join(" ", parameters.Select(p => Representation(p)));
-            
+            var parameters = route.GetRoutingParameters();
+            return string.Join(" ", parameters.Select(p => AsText(p)));
         }
 
-        public static string Representation(this MethodInfo method)
+        public static string AsText(this MethodInfo method)
         {
             var paraminfo = method.GetParameters();
             var parameters = GetRoutingParameters(paraminfo);
-            return string.Join(" ", parameters.Select(p => Representation(p)));
-
+            return string.Join(" ", parameters.Select(p => AsText(p)));
         }
 
-        public static string Representation(this Parameter parameter)
+        public static string AsText(this Parameter parameter)
         {
             Type type = parameter.Type;
             string name = parameter.Name;
@@ -79,9 +83,13 @@ namespace ConsoleRouting
             {
                 rep = $"({name}...)";
             }
+            else if (type == typeof(string)) // string
+            {
+                rep = $"<{name}>"; // shouldn't get here.
+            }
             else
             {
-                rep = $"{name}"; // shouldn't get here.
+                rep = $"{name}";
             }
 
             if (parameter.Optional) rep = $"({rep})";

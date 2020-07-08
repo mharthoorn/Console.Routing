@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace ConsoleRouting
 {
@@ -12,12 +13,17 @@ namespace ConsoleRouting
     public static class Routing
     {
         internal static Assembly Assembly { get; set; }  
-        private static Router Router;
+        public static Router Router { get; private set; }
 
         public static void Handle(string[] args)
         {
             Assembly = Assembly.GetCallingAssembly();
-            Router = new RouteBuilder().Add(Assembly).Build();
+
+            Router = new RouteBuilder()
+                .Add(Assembly)
+                .AddAssemblyOf<HelpModule>()
+                .Build();
+
             Router.Handle(args);
         }
 
@@ -27,9 +33,18 @@ namespace ConsoleRouting
             Handle(args);
         }
 
+        public static void WriteRoutes()
+        {
+            if (Router?.Routes is null)
+                throw new Exception("You are not using the default router. Use RoutingPrinter.WriteRoutes() instead.");
+
+            RoutingWriter.WriteRoutes(Router);
+        }
+        
+        [Obsolete("Use Routing.WriteRoutes() instead")]
         public static void PrintHelp()
         {
-            RoutingPrinter.WriteRoutes(Router.Routes);
+            WriteRoutes();
         }
             
     }

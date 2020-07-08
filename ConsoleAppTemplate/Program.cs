@@ -7,20 +7,28 @@ namespace ConsoleAppTemplate
     public class BasicCommands
     {
         [Command]
-        public void Help()
+        public void Documentation(Arguments args = null)
         {
-            Routing.PrintHelp();
+            if (args is null | args.Count == 0)
+            {
+                Routing.WriteRoutes();
+            }
+            else
+            {
+                args.RemoveAt(0);
+                RoutingWriter.WriteRouteDocumentation(Routing.Router, args);
+            }
         }
 
         [Command, Default, Hidden]
-        public void Default([Alt("?")]Flag help)
+        public void Default()
         {
             // If you provide no parameters, you end up here.
             Console.WriteLine($"Your tool. Version 0.1. Copyright (c) you.");
-            if (help) Help();
+            
         }
 
-        [Command]
+        [Command, Help("Says hello to the given name")]
         public void Greet(string name)
         {
             Console.WriteLine($"Hello {name}!");
@@ -30,7 +38,6 @@ namespace ConsoleAppTemplate
     
     class Program
     {
-
         static void Main(string[] args)
         {
             Routing.Handle(args);

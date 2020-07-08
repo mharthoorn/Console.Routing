@@ -28,7 +28,7 @@ namespace ConsoleRouting
         public override string ToString()
         {
             string commands = string.Join(" ", Nodes);
-            var parameters = Method.Representation();
+            var parameters = Method.AsText();
             return $"{commands} {parameters}";
 
         }

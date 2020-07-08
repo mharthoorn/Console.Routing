@@ -11,11 +11,11 @@ namespace ConsoleRouting
             try
             {
                 var result = router.Handle(arguments);
-                if (!result.Ok) RoutingPrinter.Write(result);
+                if (!result.Ok) RoutingWriter.Write(result);
             }
             catch (Exception e)
             {
-                RoutingPrinter.Write(e, stacktrace: false); //todo: re-enable through parameter later.
+                RoutingWriter.Write(e, stacktrace: false); //todo: re-enable through parameter later.
             }
 
         }

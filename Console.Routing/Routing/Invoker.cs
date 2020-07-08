@@ -5,17 +5,17 @@ namespace ConsoleRouting
 {
     public static class Invoker
     {
-        public static void Run(MethodInfo method, Arguments arguments)
+        public static void Run(MethodInfo method, Router router, Arguments arguments)
         {
-            var instance = Activator.CreateInstance(method.DeclaringType);
+            var instance = CreateInstance(method.DeclaringType, router);
             method.Invoke(instance, new[] { arguments });
         }
 
-        public static void Run(MethodInfo method, object[] arguments)
+        public static void Run(Router router, MethodInfo method, object[] arguments)
         {
             try
             {
-                var instance = Activator.CreateInstance(method.DeclaringType);
+                var instance = CreateInstance(method.DeclaringType, router);
                 method.Invoke(instance, arguments);
             }
             catch (Exception e)
@@ -24,16 +24,29 @@ namespace ConsoleRouting
             }
         }
 
-        public static void Run(Bind bind)
+        public static object CreateInstance(Type type, Router router)
         {
-            Run(bind.Route.Method, bind.Parameters);
+            if (type.GetConstructor(new Type[] { typeof(Router) }) is object)
+            {
+                return Activator.CreateInstance(type, router);
+            }
+            else 
+            {
+                return Activator.CreateInstance(type);
+            }
+            
         }
 
-        public static void Run(RoutingResult result)
+        public static void Run(Router router, Bind bind)
+        {
+            Run(router, bind.Route.Method, bind.Parameters);
+        }
+
+        public static void Run(Router router, RoutingResult result)
         {
             if (result.Ok)
             {
-                Run(result.Bind);
+                Run(router, result.Bind);
             }
         }
     }

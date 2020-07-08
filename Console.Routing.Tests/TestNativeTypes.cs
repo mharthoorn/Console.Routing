@@ -31,7 +31,7 @@ namespace ConsoleRouting.Tests
             result = router.Bind(arguments);
             Assert.AreEqual(0, result.BindCount);
 
-            var rep = router.Routes.First(r => r.Method.Name == "ActionB").Representation();
+            var rep = router.Routes.First(r => r.Method.Name == "ActionB").AsText();
             Assert.AreEqual("--verbose", rep);
         }
         
