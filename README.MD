@@ -222,10 +222,21 @@ As an opposite of overloading, Console.Routing allows a single command to have m
 > tool greet Anna
 > tool greeting Anna
 ```
+Just like the default command names, matching is case insensitive. 
 Bare in mind, that if you add an alias, you should also provide the original name in the list, if you want to make that work as well.
 ```csharp
     [Command("greet", "greeting")]
     public void Greet(string name)
+    {
+        Console.Writeline("Hello " + name);
+    }
+```
+
+Aliases also allow you to use commands that C# syntax do not allow. If you must you can parse a flag as a command, but keep in mind
+that it will just be treated as a literal, so if you need the abbreviation too, you have to add it yourself. 
+```csharp
+    [Command("info", "give-info", "--info", "-i")]
+    public void Info(string name)
     {
         Console.Writeline("Hello " + name);
     }
