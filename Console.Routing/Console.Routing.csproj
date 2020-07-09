@@ -2,14 +2,16 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<Version>3.0.0-beta6</Version>
+		<Version>3.0.0-beta7</Version>
 		<LangVersion>8.0</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<Title>Console Routing</Title>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Description>Framework for routing command line parameters</Description>
+		<Description>
+			Framework for routing command line parameters
+		</Description>
 		<Authors>M. Harthoorn</Authors>
 		<RepositoryUrl>https://github.com/mharthoorn/Console.Routing</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/mharthoorn/Console.Routing</PackageProjectUrl>
@@ -18,10 +20,8 @@
 			* Added (beta) global settings
 			* Namespace changed to ConsoleRouting
 			* Arguments now derives from List`IArgument
+
+			See the readme in the git repo for documentation
 		</PackageReleaseNotes>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\" />
-	</ItemGroup>
 </Project>

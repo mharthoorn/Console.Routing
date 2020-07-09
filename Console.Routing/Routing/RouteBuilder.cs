@@ -8,11 +8,12 @@ namespace ConsoleRouting
     public class RouteBuilder
     {
         private List<Route> Routes { get; }
-        private List<Type> Globals;
+        private List<Type> Globals { get; }
         
         public RouteBuilder()
         {
-            Routes = new List<Route>();
+             Routes = new List<Route>();
+             Globals = new List<Type>();
         }
 
         public RouteBuilder AddAssemblyOf<T>()
@@ -23,7 +24,7 @@ namespace ConsoleRouting
         public RouteBuilder Add(Assembly assembly)
         {
             DiscoverModules(assembly);
-            Globals = DiscoverGlobals(assembly).ToList();
+            DiscoverGlobals(assembly);
             return this;
         }
 
@@ -70,7 +71,7 @@ namespace ConsoleRouting
             foreach (var method in methods) DiscoverCommand(module, method, trail);
         }
 
-        private IEnumerable<Type> DiscoverGlobals(Assembly assembly)
+        private void DiscoverGlobals(Assembly assembly)
         {
             var types = assembly.GetTypes().Where(t => t.HasAttribute<Global>());
             foreach (var type in types)
@@ -78,7 +79,7 @@ namespace ConsoleRouting
                 if (type is object)
                 {
                     if (!type.IsStatic()) throw new ArgumentException("A global settings class must be static");
-                    yield return type;
+                    Globals.Add(type);
                 }
             }
         }
