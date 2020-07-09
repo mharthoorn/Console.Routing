@@ -10,28 +10,27 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void BasicFlagBind()
         {
-            Arguments args; 
+            SomeSettings.Debug = false;
+            var args = Arguments.Parse("main sub --debug");
 
-            args = Arguments.Parse("main sub --debug");
             Binder.Bind(typeof(SomeSettings), args);
 
-            Assert.AreEqual("debug", SomeSettings.Debug.Name);
-            Assert.IsTrue(SomeSettings.Debug.Set);
+            Assert.IsTrue(SomeSettings.Debug);
         }
 
         [TestMethod]
         public void RemovalOfGlobals()
         {
+            AnimalSettings.Mouse = false;
+            AnimalSettings.Cat = false;
+            AnimalSettings.Canary = false;
+
             var args = Arguments.Parse("train --mouse --cat --dog");
             Binder.Bind(typeof(AnimalSettings), args);
 
-            Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
-            Assert.IsTrue(AnimalSettings.Mouse.Set);
-
+            Assert.IsTrue(AnimalSettings.Mouse);
             Assert.IsTrue(AnimalSettings.Cat);
-
-            Assert.AreEqual(null, AnimalSettings.Canary);
-
+            Assert.IsFalse(AnimalSettings.Canary);
             Assert.AreEqual(2, args.Count);
 
         }
@@ -45,8 +44,7 @@ namespace ConsoleRouting.Tests
             Assert.IsTrue(result.Ok);
             Assert.AreEqual(2, result.Arguments.Count);
 
-            Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
-            Assert.IsTrue(AnimalSettings.Mouse.Set);
+            Assert.IsTrue(AnimalSettings.Mouse);
 
          
             var x = result.Bind.Route;
@@ -55,15 +53,16 @@ namespace ConsoleRouting.Tests
 
         public void Multiflag()
         {
+            AnimalSettings.Mouse = false;
+            AnimalSettings.Cat = false;
+            AnimalSettings.Canary = false;
+
             var args = Arguments.Parse("do -mcd");
             Binder.Bind(typeof(AnimalSettings), args);
 
-            Assert.AreEqual("mouse", AnimalSettings.Mouse.Name);
-            Assert.IsTrue(AnimalSettings.Mouse.Set);
-
+            Assert.IsTrue(AnimalSettings.Mouse);
             Assert.IsTrue(AnimalSettings.Cat);
-
-            Assert.AreEqual(null, AnimalSettings.Canary);
+            Assert.IsFalse(AnimalSettings.Canary);
 
             Assert.AreEqual(2, args.Count);
         }

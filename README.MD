@@ -337,7 +337,8 @@ The router gives you access to all route data, if you want to write your own imp
 
 ## Global Settings
 You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
-Only properties (not fields) will be set when a matching name is found.
+Only properties (not fields) will be set when a matching name is found. And currently only `bool` is supported (a flag on the command line)
+But it's the plan to add `string`   and `int` (valued flags) later.
 
 For this, use the `[Global]` flag.
 ```csharp
@@ -345,6 +346,7 @@ For this, use the `[Global]` flag.
 public static class Settings
 {
     public static bool Debug { get; set; }
+    public static bool Verbose { get; set; }
 }
 ```
 You can have multple static classes marked as global.

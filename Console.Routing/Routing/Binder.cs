@@ -26,21 +26,19 @@ namespace ConsoleRouting
 
             foreach (var arg in arguments)
             {
-                if (arg is Flag f)
+                if (arg is Flag f && type.GetProperty(typeof(bool), f.Name) is PropertyInfo pb)
                 {
-                    if (type.GetProperty(typeof(Flag), f.Name) is PropertyInfo pf)
-                    {
-                        pf.SetValue(null, f);
-                        globals.Add(arg);
-                    }
-                    else if (type.GetProperty(typeof(bool), f.Name) is PropertyInfo pb)
-                    {
-                        pb.SetValue(null, true);
-                        globals.Add(arg);
-                    }
+                    pb.SetValue(null, true);
+                    globals.Add(arg);
                 }
-
+                //else if (arg is Flag<string> && type.GetProperty(typeof(string), t.Value) is PropertyInfo ps)
+                //{
+                //    ps.SetValue(null, t.Value);
+                //    globals.Add(arg);
+                //}
+                
             }
+
             foreach (var a in globals) arguments.Remove(a);
         }
 

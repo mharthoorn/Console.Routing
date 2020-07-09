@@ -3,16 +3,16 @@
     [Global]
     public static class SomeSettings
     {
-        public static Flag Debug { get; set; }
+        public static bool Debug { get; set; }
 
     }
 
     [Global]
     public static class AnimalSettings
     {
-        public static Flag Mouse { get; set; }
+        public static bool Mouse { get; set; }
         public static bool Cat { get; set; } = false;
-        public static Flag Canary { get; set; } 
+        public static bool Canary { get; set; } 
     }
 
 

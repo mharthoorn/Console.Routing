@@ -48,7 +48,7 @@ namespace ConsoleRouting
 
         public static implicit operator bool (Flag flag)
         {
-            return flag.Set;
+            return flag?.Set ?? false;
         }
 
         public override string ToString()
