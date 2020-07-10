@@ -75,6 +75,10 @@ namespace ConsoleRouting
             {
                 rep = $"--{name}";
             }
+            else if (type == typeof(Assignment))
+            {
+                rep = $"{name}=<value>";
+            }
             else if (type == typeof(Flag<string>))
             {
                 rep = $"--{name} <value>";
@@ -91,7 +95,6 @@ namespace ConsoleRouting
             {
                 rep = $"{name}";
             }
-
             if (parameter.Optional) rep = $"({rep})";
 
             return rep;
