@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace ConsoleRouting.Tests
 {
@@ -104,6 +105,39 @@ namespace ConsoleRouting.Tests
         }
 
         [TestMethod]
+        public void Generics()
+        {
+            var fs = new Flag<Format>("option", Format.Json);
+            
+            var t = fs.GetType();
+            var b = t.GetGenericTypeDefinition() == typeof(Flag<>);
+            var arg = t.GetGenericArguments()[0]; 
+
+
+            Console.WriteLine(b);
+        }
+        [TestMethod]
+        public void TestFlagValues()
+        {
+            var args = Arguments.Parse("parse --format xml");
+            var result = router.Bind(args);
+
+            Assert.AreEqual("Parse", result.Bind.Route.Method.Name);
+            Assert.AreEqual("xml", (result.Bind.Parameters[0] as Flag<string>).Value);
+        }
+
+        [TestMethod]
+        public void TestEnumFlags()
+        {
+            // Enum Parsing
+            var args = Arguments.Parse("typedparse --format json");
+            var result = router.Bind(args);
+
+            Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
+            Assert.AreEqual(Format.Json, (result.Bind.Parameters[0] as Flag<Format>).Value);
+        }
+
+        [TestMethod]
         public void FlagValues_GitCommit()
         {
             var arguments = Arguments.Create("commit", "-m", "\"ux: change layout\""); // git parameters
@@ -113,6 +147,8 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual(1, result.BindCount);
 
         }
+
+        
 
     }
 

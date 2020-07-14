@@ -122,17 +122,34 @@ namespace ConsoleRouting
                         values[ip++] = Assignment.NotProvided();
                     }
                 }
-                else if (param.Type == typeof(Flag<string>))
+               
+                else if (param.Type.IsGenericType && param.Type.GetGenericTypeDefinition() == typeof(Flag<>))
                 {
+                    Type genarg = param.Type.GetGenericArguments()[0];
+
                     if (arguments.TryGetOptionString(param, out string value))
                     {
-                        values[ip++] = new Flag<string>(null, value);
-                        used += 2;
+                        if (genarg == typeof(string))
+                        {
+                            values[ip++] = new Flag<string>(null, value);
+                            used += 2;
+                        }
+                        else if (genarg.IsEnum)
+                        {
+                            var enumvalue = Enum.Parse(param.Type.GetGenericArguments()[0], value, ignoreCase: true);
+                            var t = typeof(Flag<>).MakeGenericType(genarg);
+                            var flagt = Activator.CreateInstance(t, param.Name, enumvalue, true, true);
+                            values[ip++] = flagt;
+                            used += 2;
+                        }
+
                     }
                     else
                     {
                         values[ip++] = Flag<string>.NotGiven;
                     }
+
+
                 }
 
                 else if (param.Type == typeof(Flag))
