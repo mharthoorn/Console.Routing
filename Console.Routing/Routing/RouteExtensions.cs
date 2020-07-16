@@ -79,7 +79,7 @@ namespace ConsoleRouting
             {
                 rep = $"{name}=<value>";
             }
-            else if (type == typeof(Flag<string>))
+            else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>))
             {
                 rep = $"--{name} <value>";
             }
@@ -87,11 +87,11 @@ namespace ConsoleRouting
             {
                 rep = $"({name}...)";
             }
-            else if (type == typeof(string)) // string
+            else if (type == typeof(string)) 
             {
-                rep = $"<{name}>"; // shouldn't get here.
+                rep = $"<{name}>"; 
             }
-            else
+            else  
             {
                 rep = $"{name}";
             }

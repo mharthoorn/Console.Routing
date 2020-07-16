@@ -62,5 +62,14 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual(1, result.BindCount);
 
         }
+
+        [TestMethod]
+        public void TextualPresentation()
+        {
+            var arguments = Arguments.Parse("intparse --number 3");
+            var result = router.Bind(arguments);
+            string text = result.Bind.Route.Method.AsText();
+            Assert.AreEqual("--number <value>", text);
+        }
     }
 }

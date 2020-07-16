@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConsoleRouting
+﻿namespace ConsoleRouting
 {
     /// <summary>
     /// This is the default help module, that is in included in your routing system when you use
