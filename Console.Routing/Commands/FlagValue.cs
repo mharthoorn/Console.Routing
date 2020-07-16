@@ -33,7 +33,31 @@ namespace ConsoleRouting
         {
             return Value.ToString();
         }
+
+        
     }
+
+    public static class Flags
+    {
+        public static Type CreateType(Type type) 
+        {
+            Type flagType = typeof(Flag<>).MakeGenericType(type);
+            return flagType; 
+        }
+
+        public static object CreateInstance(Type type, string name, object value) 
+        {
+            var flagtype = CreateType(type); 
+            return Activator.CreateInstance(flagtype, name, value, true, true);
+        }
+
+        public static object CreateNotSetInstance(Type type, string name)
+        {
+            var flagtype = CreateType(type);
+            return Activator.CreateInstance(flagtype, name, default, false, false);;
+        }
+    }
+
 
 
     [Obsolete("Use Flag<string>")]

@@ -116,6 +116,7 @@ namespace ConsoleRouting.Tests
 
             Console.WriteLine(b);
         }
+
         [TestMethod]
         public void TestFlagValues()
         {
@@ -135,6 +136,49 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
             Assert.AreEqual(Format.Json, (result.Bind.Parameters[0] as Flag<Format>).Value);
+            Assert.IsTrue((result.Bind.Parameters[0] as Flag<Format>).HasFlag);
+            Assert.IsTrue((result.Bind.Parameters[0] as Flag<Format>).HasValue);
+
+            // Test invalid value
+            args = Arguments.Parse("typedparse --format bson");
+            result = router.Bind(args);
+            Assert.IsFalse(result.Ok);
+
+
+            // Test incomplete flag: no value given
+            args = Arguments.Parse("typedparse --format");
+            result = router.Bind(args);
+            Assert.IsFalse(result.Ok);
+
+
+            // Test not set flag:
+            args = Arguments.Parse("typedparse");
+            result = router.Bind(args);
+
+            Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
+            Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).HasFlag);
+            Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).HasValue);
+        }
+
+        [TestMethod]
+        public void TestIntFlags() 
+        {
+            var args = Arguments.Parse("intparse --number 4");
+            var result = router.Bind(args);
+
+            Assert.AreEqual("IntParse", result.Bind.Route.Method.Name);
+            Assert.AreEqual(4, (result.Bind.Parameters[0] as Flag<int>).Value);
+
+            // Value not given:
+            args = Arguments.Parse("intparse");
+            result = router.Bind(args);
+
+            Assert.AreEqual("IntParse", result.Bind.Route.Method.Name);
+            Assert.AreEqual(0, (result.Bind.Parameters[0] as Flag<int>).Value);
+            Assert.AreEqual(false, (result.Bind.Parameters[0] as Flag<int>).HasFlag);
+            Assert.AreEqual(false, (result.Bind.Parameters[0] as Flag<int>).HasValue);
+
+
         }
 
         [TestMethod]

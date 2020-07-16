@@ -125,30 +125,43 @@ namespace ConsoleRouting
                
                 else if (param.Type.IsGenericType && param.Type.GetGenericTypeDefinition() == typeof(Flag<>))
                 {
-                    Type genarg = param.Type.GetGenericArguments()[0];
+                    Type innertype = param.Type.GetGenericArguments()[0];
 
                     if (arguments.TryGetOptionString(param, out string value))
                     {
-                        if (genarg == typeof(string))
+                        if (innertype == typeof(string))
                         {
-                            values[ip++] = new Flag<string>(null, value);
+                            values[ip++] = new Flag<string>(param.Name, value);
                             used += 2;
                         }
-                        else if (genarg.IsEnum)
+                        else if (innertype == typeof(int))
                         {
-                            var enumvalue = Enum.Parse(param.Type.GetGenericArguments()[0], value, ignoreCase: true);
-                            var t = typeof(Flag<>).MakeGenericType(genarg);
-                            var flagt = Activator.CreateInstance(t, param.Name, enumvalue, true, true);
-                            values[ip++] = flagt;
-                            used += 2;
+                            if (int.TryParse(value, out int n))
+                            {
+                                values[ip++] = new Flag<int>(param.Name, n);
+                                used += 2;
+                            }
+                        }
+                        else if (innertype.IsEnum)
+                        {
+                            
+                            if (TryParseEnum(innertype, value, out object enumvalue))
+                            {
+                                var flagt = Flags.CreateInstance(innertype, param.Name, enumvalue);
+                                values[ip++] = flagt;
+                                used += 2;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
 
                     }
                     else
                     {
-                        values[ip++] = Flag<string>.NotGiven;
+                        values[ip++] = Flags.CreateNotSetInstance(innertype, param.Name);
                     }
-
 
                 }
 
@@ -191,6 +204,22 @@ namespace ConsoleRouting
             }
             return (argcount == used);
 
+        }
+
+        public static bool TryParseEnum(Type type, string value, out object result)
+        {
+            try
+            {
+                result = Enum.Parse(type, value, ignoreCase: true);
+                return true;
+
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+            
         }
     }
 }

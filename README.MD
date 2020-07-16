@@ -118,9 +118,9 @@ You can create this behaviour with a `Flag<string>` parameter.
         Logger.Log(message); 
     }
 ```
-Notice that the Flag<string> has an implicit cast to string.
+Notice that the Flag<T> has an implicit cast to T.
 
-The Flag<T> implementation currently also supports `int`.
+The Flag<T> implementation currently also supports enums and `int`.
 ```powershell
 > tool loop --count 5
 ```

@@ -19,6 +19,12 @@ namespace ConsoleRouting.Tests
         }
 
         [Command]
+        public void IntParse(Flag<int> number)
+        {
+
+        }
+
+        [Command]
         public void TypedParse(Flag<Format> format)
         {
 
