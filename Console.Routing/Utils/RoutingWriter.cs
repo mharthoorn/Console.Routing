@@ -72,9 +72,10 @@ namespace ConsoleRouting
 
         public static void WriteRoutes(IEnumerable<Route> routes)
         {
-            foreach (var group in routes.GroupBy(r => r.Module))
+            foreach (var group in routes.Where(r => r.Hidden == false).GroupBy(r => r.Module))
             {
-                
+                if (group.Count() == 0) continue;
+
                 var title = group.Key.Title ?? group.FirstOrDefault()?.Method.DeclaringType.Name ?? "Module";
                 Console.WriteLine($"{title}:");
 
@@ -86,10 +87,8 @@ namespace ConsoleRouting
             }
         }
 
-        public static void WriteRoutes(Router router)
-        {
-            WriteRoutes(router?.Routes);
-        }
+        public static void WriteRoutes(Router router) => WriteRoutes(router?.Routes);
+        
 
         public static void WriteRouteDocumentation(this Router router, Arguments args)
         {

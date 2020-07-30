@@ -3,10 +3,10 @@ using System;
 
 namespace ConsoleAppTemplate
 {
-    [Module]
+    [Module, Hidden]
     public class BasicCommands
     {
-        [Command]
+        [Command, Hidden]
         public void Documentation(Arguments args = null)
         {
             if (args is null | args.Count == 0)
@@ -28,7 +28,7 @@ namespace ConsoleAppTemplate
             
         }
 
-        [Command, Help("Says hello to the given name")]
+        [Command, Hidden, Help("Says hello to the given name")]
         public void Greet(string name)
         {
             Console.WriteLine($"Hello {name}!");
