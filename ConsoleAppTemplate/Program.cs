@@ -40,7 +40,8 @@ namespace ConsoleAppTemplate
     {
         static void Main(string[] args)
         {
-            Routing.Handle(args);
+            //Routing.Handle(args);
+            Routing.Interactive();
         }
     }
 }

@@ -46,6 +46,27 @@ namespace ConsoleRouting
         {
             WriteRoutes();
         }
+
+
+
+        public static void Interactive()
+        {
+            // We have to call this directly, otherwise we get the wrong assembly/
+            Assembly = Assembly.GetCallingAssembly();
+
+            Router = new RouteBuilder()
+                .Add(Assembly)
+                .AddAssemblyOf<HelpModule>()
+                .Build();
+
+            while (true)
+            {
+                Console.Write("> ");
+                var query = Console.ReadLine();
+                var arguments = query.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                Router.Handle(arguments);
+            }
+        }
             
     }
 
