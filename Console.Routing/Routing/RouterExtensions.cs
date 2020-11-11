@@ -15,7 +15,8 @@ namespace ConsoleRouting
             }
             catch (Exception e)
             {
-                RoutingWriter.Write(e, stacktrace: false); //todo: re-enable through parameter later.
+                RoutingWriter.Write(e, stacktrace: router.DebugMode); //todo: re-enable through parameter later.
+                Environment.Exit(-1);
             }
 
         }

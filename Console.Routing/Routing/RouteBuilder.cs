@@ -9,6 +9,7 @@ namespace ConsoleRouting
     {
         private List<Route> Routes { get; }
         private List<Type> Globals { get; }
+        public bool DebugMode { get; set; }
         
         public RouteBuilder()
         {
@@ -28,6 +29,11 @@ namespace ConsoleRouting
             return this;
         }
 
+        public RouteBuilder Debug()
+        {
+            DebugMode = true;
+            return this;
+        }
         public void Add(Route route)
         {
             Routes.Add(route);
@@ -95,6 +101,7 @@ namespace ConsoleRouting
 
         }
 
+        
     }
 
 

@@ -15,15 +15,17 @@ namespace ConsoleRouting
         internal static Assembly Assembly { get; set; }  
         public static Router Router { get; private set; }
 
-        public static void Handle(string[] args)
+        static Routing()
         {
-            Assembly = Assembly.GetCallingAssembly();
-
+            Assembly = Assembly.GetEntryAssembly();
             Router = new RouteBuilder()
                 .Add(Assembly)
                 .AddAssemblyOf<HelpModule>()
                 .Build();
+        }
 
+        public static void Handle(string[] args)
+        {
             Router.Handle(args);
         }
 

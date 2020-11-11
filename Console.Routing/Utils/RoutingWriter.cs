@@ -148,9 +148,9 @@ namespace ConsoleRouting
         public static void Write(Exception e, bool stacktrace = false)
         {
             string message = GetErrorMessage(e);
-            System.Console.Write($"Error: {message}");
+            Console.Write($"Error: {message}");
 
-            if (stacktrace) System.Console.WriteLine(e.StackTrace);
+            if (stacktrace) Console.WriteLine(e.StackTrace);
         }
 
         public static string GetErrorMessage(Exception exception)

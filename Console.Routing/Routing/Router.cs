@@ -10,6 +10,7 @@ namespace ConsoleRouting
 
         public List<Route> Routes { get; }
         private List<Type> Globals;
+        public bool DebugMode { get; set; }
 
         public Router(List<Route> routes, IEnumerable<Type> globals = null)
         {

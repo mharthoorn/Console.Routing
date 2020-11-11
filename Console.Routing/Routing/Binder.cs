@@ -31,11 +31,11 @@ namespace ConsoleRouting
                     pb.SetValue(null, true);
                     globals.Add(arg);
                 }
-                //else if (arg is Flag<string> && type.GetProperty(typeof(string), t.Value) is PropertyInfo ps)
-                //{
-                //    ps.SetValue(null, t.Value);
-                //    globals.Add(arg);
-                //}
+                else if (arg is Flag<string> s && type.GetProperty(typeof(string), s.Value) is PropertyInfo ps)
+                {
+                    ps.SetValue(null, s.Value);
+                    globals.Add(arg);
+                }
                 
             }
 
