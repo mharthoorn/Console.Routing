@@ -103,7 +103,7 @@ You can group multiple letter flags:
 ```
 
 ### Flag parameters with a value
-In some tools it's common to add an argument that  comes with a flag. A good exmple of this is Git's commit message.
+In some tools it's common to add an argument that  comes with a flag. A good exmple of this is the equivalent of Git's commit message.
 
 ```powershell
 > tool log --message "First commit"
@@ -118,9 +118,9 @@ You can create this behaviour with a `Flag<string>` parameter.
         Logger.Log(message); 
     }
 ```
-Notice that the Flag<T> has an implicit cast to T.
+Notice that the `Flag<T>` has an implicit cast to `T`.
 
-The Flag<T> implementation currently also supports enums and `int`.
+The `Flag<T>` implementation currently also supports enums and `int`.
 ```powershell
 > tool loop --count 5
 ```
@@ -274,7 +274,7 @@ You can create nested commands, or command groups, by marking a Module class as 
 > tool database update
 > tool database drop
 ```
-This example (borrowed from Entity Frameowrk), can be constructed like this:
+This example (borrowed from Entity Frameowrk command line tool), can be constructed like this:
 ```csharp
 [Module, Command]
 public class Database
@@ -304,7 +304,7 @@ public class Main
 ```
 
 ### Help text
-A command can have an additional [Help] attribute for descriptions in automatic documentation.
+A command can have an additional `[Help]` attribute for descriptions in automatic documentation.
 A mature command line tool, should have a help line for each command.
 
 ```csharp
@@ -364,6 +364,25 @@ A fully documentation enriched command will look something like this:
         }
 ```
 
+This will produce:
+
+```
+> tool help greet
+Command:
+  Greet (<name>) --uppercase --repeats <value>
+
+Description:
+Says hello to the given name
+
+Parameters:
+  (<name>)             The name that will be greeted. You can use any name in the known universe
+  --uppercase          Transforms the name to all caps
+  --repeats <value>    How many times the greeting should be repeated
+
+Documentation:
+Says hello to the name in question
+```
+
 In order to enable xml documentation to be published with your tool - necessary for the help enrichment to work, you have to enable 
 it either your build settings (Visual Studio / Project / properties / Build / Output / Xml Documentation file) or directly in the `.csproj` file of the app or dll where your commands reside:
 ```xml
@@ -389,7 +408,7 @@ public static class Settings
 You can have multple static classes marked as global.
 
 
-# Working Multiple Projects or commands not in your Startup project.
+# Working with Multiple Projects or Commands not in your Startup Project.
 By using the default `Routing.Handle(args)` all modules and commands in your startup project will
 be discovered as a route candidate. If you have commands in a different library (dll) or in multiple libraries,
 you can use the RouteBuilder class instead.
