@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<Version>3.0.0</Version>
+		<Version>3.1.0-beta1</Version>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
@@ -16,12 +16,7 @@
 		<RepositoryUrl>https://github.com/mharthoorn/Console.Routing</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/mharthoorn/Console.Routing</PackageProjectUrl>
 		<PackageReleaseNotes>
-			* Rename from Shell.Routing to Console.Routing
-			* Added (beta) global settings
-			* Namespace changed to ConsoleRouting
-			* Arguments now derives from List`IArgument
-
-			See the readme in the git repo for documentation
+			Added C# inline XML documentation for commands and parameters
 		</PackageReleaseNotes>
 	</PropertyGroup>
 </Project>

@@ -335,6 +335,43 @@ My tool:
 ```
 The router gives you access to all route data, if you want to write your own implementation.
 
+## Documentation
+By default ConsoleRouting provides a help command, that lists all the available visible commands.
+But it also allows for more indepth documentation by writing
+```
+> tool help <command> 
+```
+This can optionally be followed bu subcommands.
+The help can print out four segments:
+1. The route, enabled by default
+2. The description, provided by the `[Help( ... )]` attribute.
+3. The parameter list. This one can be enriched by providing C# XML inline documentation in your code.
+4. The extendeddocumentation, also provided by the `///<summary>` field in the C# XML documentation
+A fully documentation enriched command will look something like this:
+```csharp
+        /// <summary>Says hello to the person in question</summary>
+        /// <param name="name"> The name of the person that will be greeted. You can use any name in the known universe </param>
+        /// <param name="uppercase">Transforms the name to all caps</param>
+        /// <param name="repeats">How many times the greeting should be repeated</param>
+        [Command, Help("Says hello to the given name")]
+        public void Greet([Optional]string name, bool uppercase, Flag<int> repeats)
+        {
+            if (uppercase) name = name.ToUpper();
+            for(int i = 1; i < (repeats.HasValue ? repeats.Value : 1); i++)
+            {
+                Console.WriteLine($"Hello {name}!");
+            }
+        }
+```
+
+In order to enable xml documentation to be published with your tool - necessary for the help enrichment to work, you have to enable 
+it either your build settings (Visual Studio / Project / properties / Build / Output / Xml Documentation file) or directly in the `.csproj` file of the app or dll where your commands reside:
+```xml
+  <PropertyGroup>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+```
+
 ## Global Settings
 You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
 Only properties (not fields) will be set when a matching name is found. And currently only `bool` is supported (a flag on the command line)
