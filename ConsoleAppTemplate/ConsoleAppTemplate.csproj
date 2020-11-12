@@ -5,8 +5,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Console.Routing\Console.Routing.csproj" />
+    <ProjectReference Include="..\Console.Routing\ConsoleRouting.csproj" />
   </ItemGroup>
 
 </Project>

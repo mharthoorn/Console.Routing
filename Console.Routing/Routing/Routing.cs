@@ -21,6 +21,7 @@ namespace ConsoleRouting
             Router = new RouteBuilder()
                 .Add(Assembly)
                 .AddAssemblyOf<HelpModule>()
+                .AddXmlDocumentation()
                 .Build();
         }
 
@@ -59,6 +60,7 @@ namespace ConsoleRouting
             Router = new RouteBuilder()
                 .Add(Assembly)
                 .AddAssemblyOf<HelpModule>()
+                .AddXmlDocumentation()
                 .Build();
 
             while (true)

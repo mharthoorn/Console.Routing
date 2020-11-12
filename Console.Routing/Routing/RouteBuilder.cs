@@ -7,16 +7,13 @@ namespace ConsoleRouting
 {
     public class RouteBuilder
     {
-        private List<Route> Routes { get; }
-        private List<Type> Globals { get; }
-        public bool DebugMode { get; set; }
-        
-        public RouteBuilder()
-        {
-             Routes = new List<Route>();
-             Globals = new List<Type>();
+        internal bool DebugMode { get; set; }
+        internal bool Documentation { get; set;
         }
-
+        private List<Assembly> assemblies = new();
+        private List<Route> routes = new();
+        private List<Type> globals = new();
+        
         public RouteBuilder AddAssemblyOf<T>()
         {
             return Add(typeof(T).Assembly);
@@ -24,9 +21,28 @@ namespace ConsoleRouting
 
         public RouteBuilder Add(Assembly assembly)
         {
-            DiscoverModules(assembly);
-            DiscoverGlobals(assembly);
+            assemblies.Add(assembly);
+          
             return this;
+        }
+
+        public RouteBuilder AddXmlDocumentation()
+        {
+            Documentation = true;
+            return this;
+        }
+
+        public void AttachDocumentation()
+        {
+            var docs =
+                new AssemblyDocumentationBuilder()
+                .Add(assemblies)
+                .Build();
+
+            foreach (var route in routes)
+            {
+                route.Documentation = docs.Get(route.Method);
+            }
         }
 
         public RouteBuilder Debug()
@@ -36,12 +52,18 @@ namespace ConsoleRouting
         }
         public void Add(Route route)
         {
-            Routes.Add(route);
+            routes.Add(route);
         }
 
         public Router Build()
         {
-            return new Router(Routes, Globals);
+            foreach (var assembly in assemblies) 
+            { 
+                DiscoverGlobals(assembly);
+                DiscoverModules(assembly);
+            }
+            if (Documentation) AttachDocumentation();
+            return new Router(routes, globals);
         }
 
         private void DiscoverModules(Assembly assembly)
@@ -85,7 +107,7 @@ namespace ConsoleRouting
                 if (type is object)
                 {
                     if (!type.IsStatic()) throw new ArgumentException("A global settings class must be static");
-                    Globals.Add(type);
+                    globals.Add(type);
                 }
             }
         }

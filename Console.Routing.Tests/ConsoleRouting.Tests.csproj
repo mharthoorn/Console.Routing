@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Console.Routing\Console.Routing.csproj" />
+    <ProjectReference Include="..\Console.Routing\ConsoleRouting.csproj" />
   </ItemGroup>
 
 </Project>

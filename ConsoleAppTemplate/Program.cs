@@ -1,11 +1,19 @@
 ﻿using ConsoleRouting;
 using System;
+using System.Linq;
 
 namespace ConsoleAppTemplate
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Module, Hidden]
     public class BasicCommands
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
         [Command, Hidden]
         public void Documentation(Arguments args = null)
         {
@@ -28,10 +36,17 @@ namespace ConsoleAppTemplate
             
         }
 
+        /// <summary>Says hello to the name in question</summary>
+        /// <param name="name"> The name that will be greeted. You can use any name in the known universe </param>
         [Command, Hidden, Help("Says hello to the given name")]
         public void Greet(string name)
         {
             Console.WriteLine($"Hello {name}!");
+        }
+
+        [Command]
+        public void Show()
+        {
         }
     }
     
@@ -40,8 +55,8 @@ namespace ConsoleAppTemplate
     {
         static void Main(string[] args)
         {
-            //Routing.Handle(args);
-            Routing.Interactive();
+            Routing.Handle(args);
+            //Routing.Interactive();
         }
     }
 }

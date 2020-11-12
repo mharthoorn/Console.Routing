@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.Reflection;
 
 namespace ConsoleRouting.Tests
 {
@@ -68,8 +69,18 @@ namespace ConsoleRouting.Tests
         {
             var arguments = Arguments.Parse("intparse --number 3");
             var result = router.Bind(arguments);
-            string text = result.Bind.Route.Method.AsText();
+            string text = result.Bind.Route.Method.ParametersAsText();
             Assert.AreEqual("--number <value>", text);
+        }
+
+        [TestMethod]
+        public void ParameterTextualPresentation()
+        {
+            var method = typeof(FlagTestModule).GetMethod("TypedParse");
+            
+            var text = method.ParametersAsText();
+            Assert.AreEqual("--format <value>", text);
+
         }
     }
 }

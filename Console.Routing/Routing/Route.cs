@@ -12,6 +12,7 @@ namespace ConsoleRouting
         public List<Node> Nodes;
         public Help Help; 
         public MethodInfo Method;
+        public MethodDoc Documentation;
 
         public Route(Module module, IEnumerable<Node> nodes, MethodInfo method, Help help, Hidden hidden, bool isdefault)
         {
@@ -28,7 +29,7 @@ namespace ConsoleRouting
         public override string ToString()
         {
             string commands = string.Join(" ", Nodes);
-            var parameters = Method.AsText();
+            var parameters = Method.ParametersAsText();
             return $"{commands} {parameters}";
 
         }

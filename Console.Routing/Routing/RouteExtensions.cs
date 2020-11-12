@@ -57,7 +57,7 @@ namespace ConsoleRouting
             return string.Join(" ", parameters.Select(p => AsText(p)));
         }
 
-        public static string AsText(this MethodInfo method)
+        public static string ParametersAsText(this MethodInfo method)
         {
             var paraminfo = method.GetParameters();
             var parameters = GetRoutingParameters(paraminfo);
@@ -68,7 +68,7 @@ namespace ConsoleRouting
         {
             Type type = parameter.Type;
             string name = parameter.Name;
-
+            
             string rep;
 
             if (type == typeof(Flag) || type == typeof(bool))
@@ -100,10 +100,24 @@ namespace ConsoleRouting
             return rep;
         }
 
-     
-        
+        public static string GetMethodDoc(this Route route)
+        {
+            var doc = route.Documentation;
+            if (doc is null) return null;
+            return doc.Summary;
+        }
 
-      
+        public static string GetParamDoc(this Route route, string name)
+        {
+            var doc = route.Documentation;
+            if (doc is null) return null;
+            return doc.Params.TryGetValue(name, out var value) ? value : null;
+        }
+
+
+
+
+
     }
 
 }

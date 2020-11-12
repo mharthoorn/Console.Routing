@@ -105,13 +105,25 @@ namespace ConsoleRouting
             Console.WriteLine($"  {path}\n");
             Console.WriteLine($"Description:");
             Console.WriteLine($"  {route.Description}\n");
+            
+            Console.WriteLine($"Help");
+            Console.WriteLine($"  {route.GetMethodDoc()}\n");
             var parameters = route.GetRoutingParameters().ToList();
+            
             if (parameters.Count > 0)
             {
                 Console.WriteLine($"Parameters:");
                 foreach (var parameter in route.GetRoutingParameters())
                 {
-                    Console.WriteLine($"  {parameter.AsText()}"); 
+                    var paramdoc = route.GetParamDoc(parameter.Name);
+                    if (paramdoc is not null)
+                        Console.WriteLine($"  {parameter.AsText()}: {paramdoc}");
+                    else
+                        Console.WriteLine($"  {parameter.AsText()}");
+                        
+                    
+                    
+                    
                 }
             }
         }
