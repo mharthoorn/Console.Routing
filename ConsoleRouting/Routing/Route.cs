@@ -28,10 +28,12 @@ namespace ConsoleRouting
 
         public override string ToString()
         {
-            string commands = string.Join(" ", Nodes);
+            string commands = string.Join(" ", Nodes); 
             var parameters = Method.ParametersAsText();
-            return $"{commands} {parameters}";
 
+            string s = commands;
+            if (parameters.Length > 0) s += " " + parameters;
+            return s;
         }
     }
 

@@ -24,7 +24,7 @@
             else
             {
                 args.RemoveAt(0);
-                RoutingWriter.WriteRouteDocumentation(Routing.Router, args);
+                RoutingWriter.WriteRouteHelp(Routing.Router, args);
             }
         }
 

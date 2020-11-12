@@ -89,8 +89,62 @@ namespace ConsoleRouting
 
         public static void WriteRoutes(Router router) => WriteRoutes(router?.Routes);
         
+        public static void WriteWrouteCommand(Route route)
+        {
+            string path = route.CommandPath();
+            Console.WriteLine($"Command:");
+            Console.WriteLine($"  {route}");
+        }
 
-        public static void WriteRouteDocumentation(this Router router, Arguments args)
+        public static void WriteWrouteDescription(Route route)
+        {
+            if (route.Description is not null)
+            {
+                Console.WriteLine($"\nDescription:");
+                Console.WriteLine(route.Description);
+            }
+        }
+
+        public static void WriteRouteParameters(Route route)
+        {
+            var parameters = route.GetRoutingParameters().ToList();
+            if (parameters.Count > 0)
+            {
+                Console.WriteLine($"\nParameters:");
+                foreach (var parameter in route.GetRoutingParameters())
+                {
+                    var paramdoc = route.GetParamDoc(parameter.Name);
+                    if (paramdoc.HasValue())
+                        Console.WriteLine($"  {parameter.AsText(),-20} {paramdoc}");
+                    else
+                        Console.WriteLine($"  {parameter.AsText()}");
+                }
+            }
+        }
+
+        public static void WriteRouteDocumentation(Route route)
+        {
+            string doc = route.GetMethodDoc();
+            if (doc.HasValue())
+            {
+                Console.WriteLine($"\nDocumentation:");
+                Console.WriteLine($"{doc}\n");
+            }
+        }
+
+        public static void WriteRouteHelp(Route route)
+        {
+            WriteWrouteCommand(route);
+            WriteWrouteDescription(route);
+            WriteRouteParameters(route);
+            WriteRouteDocumentation(route);
+           
+
+           
+           
+        }
+
+        public static void WriteRouteHelp(this Router router, Arguments args)
         {
             var routes = router.GetCandidates(args).Routes(RouteMatch.Full).ToList();
             var route = routes.FirstOrDefault();
@@ -100,32 +154,8 @@ namespace ConsoleRouting
                 return; 
             }
 
-            string path = route.CommandPath();
-            Console.WriteLine($"Command:");
-            Console.WriteLine($"  {path}\n");
-            Console.WriteLine($"Description:");
-            Console.WriteLine($"  {route.Description}\n");
-            
-            Console.WriteLine($"Help");
-            Console.WriteLine($"  {route.GetMethodDoc()}\n");
-            var parameters = route.GetRoutingParameters().ToList();
-            
-            if (parameters.Count > 0)
-            {
-                Console.WriteLine($"Parameters:");
-                foreach (var parameter in route.GetRoutingParameters())
-                {
-                    var paramdoc = route.GetParamDoc(parameter.Name);
-                    if (paramdoc is not null)
-                        Console.WriteLine($"  {parameter.AsText()}: {paramdoc}");
-                    else
-                        Console.WriteLine($"  {parameter.AsText()}");
-                        
-                    
-                    
-                    
-                }
-            }
+            WriteRouteHelp(route);
+
         }
 
         private static string CommandPath(this Route route)

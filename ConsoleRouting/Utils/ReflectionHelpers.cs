@@ -26,7 +26,13 @@ namespace ConsoleRouting
 
     }
 
-    
+    public static class StringHelpers
+    {
+        public static bool HasValue(this string s)
+        {
+            return !string.IsNullOrEmpty(s);
+        }
+    }
 
     
 

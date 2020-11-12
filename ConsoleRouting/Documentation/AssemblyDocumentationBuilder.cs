@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -24,27 +22,11 @@ namespace ConsoleRouting
 
         public MethodDoc Get(MethodInfo method)
         {
-            var key = GetKey(method);
+            var key = DocumentationHelper.GetKey(method);
             return TryGetValue(key, out var doc) ? doc : null;
         }
-        public static string GetKey(MethodInfo method)
-        {
-            var builder = new StringBuilder();
-            builder.Append("M:");
-            builder.Append(method.DeclaringType.FullName);
-            builder.Append(".");
-            builder.Append(method.Name);
-            builder.Append("(");
-            bool first = true;
-            foreach (var par in method.GetParameters())
-            {
-                if (!first) builder.Append(",");
-                builder.Append(par.ParameterType.FullName);
-            }
-            builder.Append(")");
 
-            return builder.ToString();
-        }
+     
 
     }
 
@@ -68,8 +50,10 @@ namespace ConsoleRouting
             if (xdoc is not null)
             {
                 var items = ReadMethods(xdoc);
-                foreach(var item in items) 
+                foreach(var item in items)
+                {
                     documentation.Add(item);
+                }
             }
             return this;
         }
@@ -105,26 +89,6 @@ namespace ConsoleRouting
             return document;
         }
 
-        public string GetKey(MethodInfo method)
-        {
-            var builder = new StringBuilder();
-            builder.Append("M:");
-            builder.Append(method.DeclaringType.FullName);
-            builder.Append(".");
-            builder.Append(method.Name);
-            builder.Append("(");
-            bool first = true;
-            foreach (var par in method.GetParameters())
-            {
-                if (!first) builder.Append(",");
-                builder.Append(par.ParameterType.FullName);
-            }
-            builder.Append(")");
-
-            return builder.ToString();
-        }
-     
-
         public IEnumerable<MethodDoc> ReadMethods(XDocument xdoc)
         {
             //var methods = new List<MethodDoc>();
@@ -139,14 +103,14 @@ namespace ConsoleRouting
                 var method = new MethodDoc();
 
                 method.Key = mnode?.Attribute("name")?.Value;
-                method.Summary = mnode?.Element("summary")?.Value;
+                method.Summary = DocumentationHelper.ConsiseTrim(mnode?.Element("summary")?.Value);
 
                 var pnodes = mnode?.Elements("param");
                 
                 foreach (var pnode in pnodes)
                 {
                     var name = pnode.Attribute("name")?.Value;
-                    var summary = pnode?.Value;
+                    var summary = pnode?.Value?.Trim();
                     method.Params.Add(name, summary);
                 }
                 yield return method;
