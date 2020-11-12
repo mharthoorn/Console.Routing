@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Console.Routing\ConsoleRouting.csproj" />
+    <ProjectReference Include="..\ConsoleRouting\ConsoleRouting.csproj" />
   </ItemGroup>
 
 </Project>
