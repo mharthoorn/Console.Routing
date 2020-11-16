@@ -81,7 +81,7 @@ namespace ConsoleRouting
 
                 foreach (var route in group)
                 {
-                    WriteRouteSummary(route);
+                    WriteRouteDescription(route);
                 }
                 Console.WriteLine();
             }
@@ -138,10 +138,6 @@ namespace ConsoleRouting
             WriteWrouteDescription(route);
             WriteRouteParameters(route);
             WriteRouteDocumentation(route);
-           
-
-           
-           
         }
 
         public static void WriteRouteHelp(this Router router, Arguments args)
@@ -164,10 +160,9 @@ namespace ConsoleRouting
             return path;
         }
 
-        public static void WriteRouteSummary(Route route)
+        public static void WriteRouteDescription(Route route)
         {
             if (route.Hidden) return;
-
             var parameters = route.AsText().Trim();
             var command = route.CommandPath();
             var description = route.Description;

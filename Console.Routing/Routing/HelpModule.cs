@@ -15,16 +15,16 @@
         }
 
         [Command("help", "?", "--help", "-?", "-h"), Help("Provides this help text")]
-        public void Help(Arguments args = null)
+        public void Help(Arguments commands = null)
         {
-            if (args is null || args.Count == 1)
+            if (commands is null || commands.Count == 1)
             {
                 RoutingWriter.WriteRoutes(router);
             }
             else
             {
-                args.RemoveAt(0);
-                RoutingWriter.WriteRouteHelp(Routing.Router, args);
+                commands.RemoveAt(0);
+                RoutingWriter.WriteRouteHelp(Routing.Router, commands);
             }
         }
 

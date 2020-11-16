@@ -16,7 +16,7 @@
 		<Authors>M.Harthoorn</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
-			Framework for routing command line parameters
+			Cross Platform Framework for parsing and routing command line parameters
 		</Description>
 		<Authors>M. Harthoorn</Authors>
 		<RepositoryUrl>https://github.com/mharthoorn/Console.Routing</RepositoryUrl>
