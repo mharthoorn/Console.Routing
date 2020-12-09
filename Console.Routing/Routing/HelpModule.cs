@@ -14,16 +14,16 @@
             this.router = router;
         }
 
-        [Command("help", "?", "--help", "-?", "-h"), Help("Provides this help text")]
+        [Command("help", "?", "--help", "-?", "-h"), Help("Provides this help list or detailed help about a command")]
         public void Help(Arguments commands = null)
         {
-            if (commands is null || commands.Count == 1)
+            commands.RemoveAt(0); // remove the help command
+            if (commands is null || commands.Count == 0)
             {
                 RoutingWriter.WriteRoutes(router);
             }
             else
             {
-                commands.RemoveAt(0);
                 RoutingWriter.WriteRouteHelp(Routing.Router, commands);
             }
         }
