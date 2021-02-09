@@ -39,7 +39,7 @@ namespace ConsoleRouting
             }
             catch (Exception e)
             {
-                HandleException(this, e);
+                if (HandleException is object) HandleException(this, e); else throw;
             }
         }
 
@@ -141,7 +141,6 @@ namespace ConsoleRouting
             int full = candidates.Count(RouteMatch.Full);
             return (partial, def, full);
         }
-
     }
 }
 
