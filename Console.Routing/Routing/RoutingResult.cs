@@ -8,10 +8,10 @@ namespace ConsoleRouting
     {
         public RoutingStatus Status;
         public Arguments Arguments;
-        public IList<Candidate> Candidates; //where the commands match, but not necessarily the parameters
-        public IList<Bind> Binds;
+        public List<Candidate> Candidates; //where the commands match, but not necessarily the parameters
+        public List<Bind> Binds;
 
-        public RoutingResult(Arguments arguments, RoutingStatus status, IList<Bind> binds, IList<Candidate> candidates)
+        public RoutingResult(Arguments arguments, RoutingStatus status, List<Bind> binds, List<Candidate> candidates)
         {
             this.Arguments = arguments;
             this.Candidates = candidates;

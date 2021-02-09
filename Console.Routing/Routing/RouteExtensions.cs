@@ -107,18 +107,12 @@ namespace ConsoleRouting
             return doc.Summary;
         }
 
-        
-
         public static string GetParamDoc(this Route route, string name)
         {
             var doc = route.Documentation;
             if (doc is null) return null;
             return doc.Params.TryGetValue(name, out var value) ? value : null;
         }
-
-
-
-
 
     }
 

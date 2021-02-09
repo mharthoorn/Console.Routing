@@ -5,7 +5,7 @@ using System.Linq;
 namespace ConsoleAppTemplate
 {
     [Module, Hidden]
-    public class BasicCommands
+    internal class BasicCommands
     {
         [Command]
         public void Documentation(Arguments args = null)
@@ -44,7 +44,7 @@ namespace ConsoleAppTemplate
 
 
         /// <summary>
-        /// This command shows how funny it is to create commands. Although the show command does not do anything, 
+        /// This command shows how much fun it is to create commands. Although the show command does not do anything, 
         /// it helps understand that you can write extensive documentation on commands using ConsoleRouting.
         /// 
         /// And here you see how that works. This line was after a double new line. Do you think we correctly deal with spaces?
@@ -52,6 +52,12 @@ namespace ConsoleAppTemplate
         [Command]
         public void Show()
         {
+        }
+
+        [Command]
+        public void Throw()
+        {
+            throw new Exception();
         }
     }
     

@@ -18,10 +18,12 @@ namespace ConsoleRouting
         static Routing()
         {
             Assembly = Assembly.GetEntryAssembly();
+
             Router = new RouteBuilder()
                 .Add(Assembly)
                 .AddAssemblyOf<HelpModule>()
                 .AddXmlDocumentation()
+                .AddExceptionHandler(DefaultExceptionHandler.Handle)
                 .Build();
         }
 

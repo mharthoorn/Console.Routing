@@ -13,7 +13,8 @@ namespace ConsoleRouting
         private List<Assembly> assemblies = new();
         private List<Route> routes = new();
         private List<Type> globals = new();
-        
+        Action<Router, Exception> exceptionHandler;
+
         public RouteBuilder AddAssemblyOf<T>()
         {
             return Add(typeof(T).Assembly);
@@ -29,6 +30,12 @@ namespace ConsoleRouting
         public RouteBuilder AddXmlDocumentation()
         {
             Documentation = true;
+            return this;
+        }
+
+        public RouteBuilder AddExceptionHandler(Action<Router, Exception> handler)
+        {
+            this.exceptionHandler = handler;
             return this;
         }
 
@@ -63,7 +70,7 @@ namespace ConsoleRouting
                 DiscoverModules(assembly);
             }
             if (Documentation) AttachDocumentation();
-            return new Router(routes, globals);
+            return new Router(routes, globals, exceptionHandler);
         }
 
         private void DiscoverModules(Assembly assembly)

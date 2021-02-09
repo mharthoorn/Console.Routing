@@ -7,15 +7,16 @@ namespace ConsoleRouting
 
     public class Router
     {
-
         public List<Route> Routes { get; }
         private List<Type> Globals;
         public bool DebugMode { get; set; }
+        public Action<Router, Exception> HandleException;
 
-        public Router(List<Route> routes, IEnumerable<Type> globals = null)
+        public Router(List<Route> routes, IEnumerable<Type> globals = null, Action<Router, Exception> exceptionhandler = null)
         {
             this.Globals = globals?.ToList();
             this.Routes = routes;
+            HandleException = exceptionhandler ?? DefaultExceptionHandler.Handle;
         }
 
         public RoutingResult Handle(Arguments arguments)
@@ -23,9 +24,23 @@ namespace ConsoleRouting
             RoutingResult result = Bind(arguments);
 
             if (result.Ok)
-                Invoker.Run(this, result.Bind);
+            {
+                Run(result);
+            }
 
             return result;
+        }
+
+        public void Run(RoutingResult result)
+        {
+            try
+            {
+                Invoker.Run(this, result.Bind);
+            }
+            catch (Exception e)
+            {
+                HandleException(this, e);
+            }
         }
 
         public RoutingResult Bind(Arguments arguments)
@@ -53,35 +68,34 @@ namespace ConsoleRouting
         {
             foreach (var route in Routes)
             {
-                var match = TryMatchCommands(route, arguments);
+                var match = TestMatch(route, arguments);
                 if (match == RouteMatch.Not) continue;
                 else yield return new Candidate(match, route);
             }
         }
 
-        private RouteMatch TryMatchCommands(Route route, Arguments arguments)
+        private RouteMatch TestMatch(Route route, Arguments arguments)
         {
             int index = 0;
-            int length = route.Nodes.Count;
+            int count = route.Nodes.Count;
 
-            while (index < length)
+            while (index < count)
             {
                 if (arguments.TryGetCommand(index, out string value))
                 {
                     if (route.Nodes[index].Matches(value))
                     {
                         index++;
-                        //if (index == length) return true;
                     }
                     else break;
 
                 }
                 else break;
             }
-            return MapCommandMatch(length, index);
+            return MatchType(count, index);
         }
 
-        private static RouteMatch MapCommandMatch(int nodeCount, int index)
+        private static RouteMatch MatchType(int nodeCount, int index)
         {
             if (nodeCount == 0) return RouteMatch.Default;
             if (index == 0) return RouteMatch.Not;
@@ -89,7 +103,7 @@ namespace ConsoleRouting
             return RouteMatch.Partial;
         }
 
-        private static RoutingResult CreateResult(Arguments arguments, IList<Candidate> candidates, IList<Bind> bindings)
+        private static RoutingResult CreateResult(Arguments arguments, List<Candidate> candidates, List<Bind> bindings)
         {
             (int partial, int def, int full) = Count(candidates);
             int binds = bindings.Count;
@@ -128,7 +142,6 @@ namespace ConsoleRouting
             return (partial, def, full);
         }
 
-        
     }
 }
 
