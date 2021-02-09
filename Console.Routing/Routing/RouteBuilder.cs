@@ -38,6 +38,12 @@ namespace ConsoleRouting
             this.exceptionHandler = handler;
             return this;
         }
+         
+        public RouteBuilder NoExceptionHandling()
+        {
+            this.exceptionHandler = null;
+            return this;
+        }
 
         public void AttachDocumentation()
         {
