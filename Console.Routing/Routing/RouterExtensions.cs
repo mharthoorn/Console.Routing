@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConsoleRouting
+﻿namespace ConsoleRouting
 {
     public static class RouterExtensions
     {
@@ -12,16 +10,6 @@ namespace ConsoleRouting
             if (!result.Ok) RoutingWriter.Write(result);
         }
 
-        
-    }
-
-    public static class DefaultExceptionHandler
-    {
-        public static void Handle(Router router, Exception e)
-        {
-            RoutingWriter.Write(e, stacktrace: router.DebugMode); //todo: re-enable through parameter later.
-            Environment.Exit(-1);
-        }
     }
 
 }
