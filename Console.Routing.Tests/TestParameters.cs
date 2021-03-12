@@ -7,7 +7,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestParameters
     {
-        Router router = new RouteBuilder().AddAssemblyOf<TestParameters>().Build();
+        Router router = new RouterBuilder().AddAssemblyOf<TestParameters>().Build();
 
         [TestMethod]
         public void SingleLiteral()

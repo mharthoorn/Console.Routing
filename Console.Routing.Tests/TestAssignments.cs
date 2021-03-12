@@ -6,7 +6,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestAssignments
     {
-        Router router = new RouteBuilder().AddAssemblyOf<ToolModule>().Build();
+        Router router = new RouterBuilder().AddAssemblyOf<ToolModule>().Build();
 
         [TestMethod]
         public void BasicAssignments()

@@ -10,7 +10,7 @@ namespace ConsoleRouting.Tests
         public void TestGlobals()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var router = new RouteBuilder().Add(assembly).Build();
+            var router = new RouterBuilder().Add(assembly).Build();
             var args=  Arguments.Parse("--alpha --beta --gamma");
             var result = router.Bind(args);
             

@@ -8,14 +8,20 @@ namespace ConsoleRouting
     public class Router
     {
         public List<Route> Routes { get; }
+        public Binder Binder;
         private List<Type> Globals;
         public bool DebugMode { get; set; }
         public Action<Router, Exception> HandleException;
 
-        public Router(List<Route> routes, IEnumerable<Type> globals = null, Action<Router, Exception> exceptionhandler = null)
+        public Router(
+            List<Route> routes, 
+            Binder binder,
+            IEnumerable<Type> globals = null,
+            Action<Router, Exception> exceptionhandler = null)
         {
             this.Globals = globals?.ToList();
             this.Routes = routes;
+            this.Binder = binder;
             HandleException = exceptionhandler ?? DefaultExceptionHandler.Handle;
         }
 
@@ -53,7 +59,7 @@ namespace ConsoleRouting
             return CreateResult(arguments, candidates, binds);
         }
 
-        private static IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
+        private IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
         {
             foreach (var route in routes)
             {

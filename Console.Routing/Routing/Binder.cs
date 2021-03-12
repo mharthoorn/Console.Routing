@@ -5,10 +5,16 @@ using System.Reflection;
 
 namespace ConsoleRouting
 {
-    public static class Binder 
+    public class Binder 
     {
-        
-        public static void Bind(IEnumerable<Type> types, Arguments arguments)
+        private List<IBinder> binders;
+
+        public Binder(IEnumerable<IBinder> binders)
+        {
+            this.binders = binders.ToList();
+        }
+
+        public void Bind(IEnumerable<Type> types, Arguments arguments)
         {
             if (types is null) return;
 
@@ -18,7 +24,7 @@ namespace ConsoleRouting
             }
         }
 
-        public static void Bind(Type type, Arguments arguments)
+        public void Bind(Type type, Arguments arguments)
         {
             if (type is null) return;
 
@@ -42,7 +48,7 @@ namespace ConsoleRouting
             foreach (var a in globals) arguments.Remove(a);
         }
 
-        public static bool TryBind(Route route, Arguments arguments, out Bind bind)
+        public bool TryBind(Route route, Arguments arguments, out Bind bind)
         {
             if (TryBindParameters(route, arguments, out var values))
             {
@@ -56,37 +62,19 @@ namespace ConsoleRouting
             }
         }
 
-        private static List<IBinder> DEFAULTBINDERS = new()
-        {
-            new StringBinder(),
-            new EnumBinder(),
-            new IntBinder(),
-            new AssignmentBinder(),
-            new FlagValueBinder(),
-            new FlagBinder(),
-            new BoolBinder(),
-        };
-        
 
         /// <summary>
         /// Note that parameters here refer to the parameters of a C# method, and that arguments refer to the values
         /// that may go into those paremeters
         /// </summary>
-        public static bool TryBindParameters(Route route, Arguments arguments, out object[] values)
+        public bool TryBindParameters(Route route, Arguments arguments, out object[] values)
         {
             Parameters parameters = route.Method.GetRoutingParameters();
             arguments = arguments.RemoveCommands(route);
             return TryBindParameters(parameters, arguments, out values);
         }
 
-        private static Arguments RemoveCommands(this Arguments arguments, Route route)
-        {
-            var offset = route.Nodes.Count(); 
-            return new Arguments(arguments.Skip(offset));
-        }
-
-
-        private static bool TryBindParameters(Parameters parameters, Arguments arguments, out object[] values)
+        private bool TryBindParameters(Parameters parameters, Arguments arguments, out object[] values)
         {
             var argcount = arguments.Count;
             var count = parameters.Count;
@@ -95,8 +83,6 @@ namespace ConsoleRouting
 
             int index = 0; // index of parameters
             int used = 0; // arguments used;
-
-            List<IBinder> binders = DEFAULTBINDERS;
 
             foreach (var param in parameters)
             {

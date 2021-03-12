@@ -5,7 +5,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestGlobals 
     {
-        Router router = new RouteBuilder().AddAssemblyOf<TestGlobals>().Build();
+        Router router = new RouterBuilder().AddAssemblyOf<TestGlobals>().Build();
 
         [TestMethod]
         public void BasicFlagBind()
@@ -13,7 +13,7 @@ namespace ConsoleRouting.Tests
             SomeSettings.Debug = false;
             var args = Arguments.Parse("main sub --debug");
 
-            Binder.Bind(typeof(SomeSettings), args);
+            router.Binder.Bind(typeof(SomeSettings), args);
 
             Assert.IsTrue(SomeSettings.Debug);
         }
@@ -26,7 +26,8 @@ namespace ConsoleRouting.Tests
             AnimalSettings.Canary = false;
 
             var args = Arguments.Parse("train --mouse --cat --dog");
-            Binder.Bind(typeof(AnimalSettings), args);
+
+            router.Binder.Bind(typeof(AnimalSettings), args);
 
             Assert.IsTrue(AnimalSettings.Mouse);
             Assert.IsTrue(AnimalSettings.Cat);
@@ -58,7 +59,8 @@ namespace ConsoleRouting.Tests
             AnimalSettings.Canary = false;
 
             var args = Arguments.Parse("do -mcd");
-            Binder.Bind(typeof(AnimalSettings), args);
+           
+            router.Binder.Bind(typeof(AnimalSettings), args);
 
             Assert.IsTrue(AnimalSettings.Mouse);
             Assert.IsTrue(AnimalSettings.Cat);

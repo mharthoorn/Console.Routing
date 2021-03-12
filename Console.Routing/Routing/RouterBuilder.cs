@@ -5,41 +5,42 @@ using System.Reflection;
 
 namespace ConsoleRouting
 {
-    public class RouteBuilder
+    public class RouterBuilder
     {
         internal bool DebugMode { get; set; }
         internal bool Documentation { get; set;
         }
         private List<Assembly> assemblies = new();
         private List<Route> routes = new();
+        private List<IBinder> binders = new();
         private List<Type> globals = new();
         Action<Router, Exception> exceptionHandler;
 
-        public RouteBuilder AddAssemblyOf<T>()
+        public RouterBuilder AddAssemblyOf<T>()
         {
             return Add(typeof(T).Assembly);
         }
 
-        public RouteBuilder Add(Assembly assembly)
+        public RouterBuilder Add(Assembly assembly)
         {
             assemblies.Add(assembly);
           
             return this;
         }
 
-        public RouteBuilder AddXmlDocumentation()
+        public RouterBuilder AddXmlDocumentation()
         {
             Documentation = true;
             return this;
         }
 
-        public RouteBuilder AddExceptionHandler(Action<Router, Exception> handler)
+        public RouterBuilder AddExceptionHandler(Action<Router, Exception> handler)
         {
             this.exceptionHandler = handler;
             return this;
         }
          
-        public RouteBuilder NoExceptionHandling()
+        public RouterBuilder NoExceptionHandling()
         {
             this.exceptionHandler = null;
             return this;
@@ -58,7 +59,7 @@ namespace ConsoleRouting
             }
         }
 
-        public RouteBuilder Debug()
+        public RouterBuilder Debug()
         {
             DebugMode = true;
             return this;
@@ -76,8 +77,27 @@ namespace ConsoleRouting
                 DiscoverModules(assembly);
             }
             if (Documentation) AttachDocumentation();
-            return new Router(routes, globals, exceptionHandler);
+          
+            var binder = CreateBinder();
+            return new Router(routes, binder, globals, exceptionHandler);
         }
+
+        private static List<IBinder> DEFAULTBINDERS = new()
+        {
+            new StringBinder(),
+            new EnumBinder(),
+            new IntBinder(),
+            new AssignmentBinder(),
+            new FlagValueBinder(),
+            new FlagBinder(),
+            new BoolBinder(),
+        };
+
+        private Binder CreateBinder()
+        {
+            if (binders.Count > 0) return new Binder(binders);
+            else return new Binder(DEFAULTBINDERS);
+        }      
 
         private void DiscoverModules(Assembly assembly)
         {

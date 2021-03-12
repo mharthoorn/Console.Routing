@@ -19,7 +19,7 @@ namespace ConsoleRouting
         {
             Assembly = Assembly.GetEntryAssembly();
 
-            Router = new RouteBuilder()
+            Router = new RouterBuilder()
                 .Add(Assembly)
                 .AddAssemblyOf<HelpModule>()
                 .AddXmlDocumentation()
@@ -59,7 +59,7 @@ namespace ConsoleRouting
             // We have to call this directly, otherwise we get the wrong assembly/
             Assembly = Assembly.GetCallingAssembly();
 
-            Router = new RouteBuilder()
+            Router = new RouterBuilder()
                 .Add(Assembly)
                 .AddAssemblyOf<HelpModule>()
                 .AddXmlDocumentation()

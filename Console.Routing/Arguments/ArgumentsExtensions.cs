@@ -5,8 +5,13 @@ namespace ConsoleRouting
 {
 
     public static class ArgumentsExtensions
-    { 
-        
+    {
+        public static Arguments RemoveCommands(this Arguments arguments, Route route)
+        {
+            var offset = route.Nodes.Count();
+            return new Arguments(arguments.Skip(offset));
+        }
+
         public static bool TryGetText(this Arguments args, int offset, out Text literal)
         {
             return args.TryGet<Text>(offset, out literal);
@@ -38,8 +43,6 @@ namespace ConsoleRouting
             value = default;
             return false;
         }
-
-     
 
         public static bool TryGetAssignment(this Arguments args, string name, out Assignment assignment)
         { 

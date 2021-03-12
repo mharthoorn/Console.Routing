@@ -6,7 +6,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestFlags
     {
-        Router router = new RouteBuilder().AddAssemblyOf<TestFlags>().Build();
+        Router router = new RouterBuilder().AddAssemblyOf<TestFlags>().Build();
 
         [TestMethod]
         public void BaseFlags()

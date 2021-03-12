@@ -6,7 +6,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestNativeTypes
     {
-        Router router = new RouteBuilder().AddAssemblyOf<TestNativeTypes>().Build();
+        Router router = new RouterBuilder().AddAssemblyOf<TestNativeTypes>().Build();
 
         [TestMethod]
         public void Booleans()

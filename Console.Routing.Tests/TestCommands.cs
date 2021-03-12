@@ -7,7 +7,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestCommands
     {
-        Router router = new RouteBuilder().AddAssemblyOf<TestCommands>().Build();
+        Router router = new RouterBuilder().AddAssemblyOf<TestCommands>().Build();
 
         [TestMethod]
         public void PlainCommandAttribute()
