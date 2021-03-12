@@ -32,7 +32,7 @@ namespace ConsoleRouting
 
     public static class CandidateExtensions
     {
-        public static IEnumerable<Route> GetRoutes(this IEnumerable<Candidate> candidates, params RouteMatch[] matches)
+        public static IEnumerable<Route> Matching(this IEnumerable<Candidate> candidates, params RouteMatch[] matches)
         {
             return candidates.Where(c => matches.Contains(c.Match)).Select(c => c.Route);
         } 

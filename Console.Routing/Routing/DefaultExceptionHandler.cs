@@ -6,7 +6,7 @@ namespace ConsoleRouting
     {
         public static void Handle(Router router, Exception e)
         {
-            RoutingWriter.Write(e, stacktrace: router.DebugMode); //todo: re-enable through parameter later.
+            RoutingWriter.WriteException(e, stacktrace: router.DebugMode); //todo: re-enable through parameter later.
             Environment.Exit(-1);
         }
     }

@@ -35,7 +35,7 @@ namespace ConsoleRouting
           
     public class RoutingWriter
     {
-        public void Write(RoutingResult result)
+        public void WriteResult(RoutingResult result)
         {
             switch(result.Status)
             {
@@ -52,19 +52,19 @@ namespace ConsoleRouting
                     else
                     {
                         Console.WriteLine($"Invalid parameter(s). These are your options:");
-                        WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Default));
+                        WriteCandidates(result.Candidates.Matching(RouteMatch.Default));
                     }
                     
                     break;
 
                 case RoutingStatus.PartialCommand:
                     Console.WriteLine("Did you mean:");
-                    WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Partial));
+                    WriteCandidates(result.Candidates.Matching(RouteMatch.Partial));
                     break;
 
                 case RoutingStatus.InvalidParameters:
                     Console.WriteLine("Invalid parameter(s). These are your options:");
-                    WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Full));
+                    WriteCandidates(result.Candidates.Matching(RouteMatch.Full));
                     break;
 
                 case RoutingStatus.AmbigousParameters:
@@ -74,15 +74,10 @@ namespace ConsoleRouting
 
                 case RoutingStatus.InvalidDefault:
                     Console.WriteLine("Invalid parameter(s). These are your options:");
-                    WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Default));
+                    WriteCandidates(result.Candidates.Matching(RouteMatch.Default));
                     break;
             }
            
-        }
-
-        public void WriteCandidates(IEnumerable<Route> routes)
-        {
-            foreach (var route in routes) Console.WriteLine($"  {route}");
         }
 
         public void WriteRoutes(IEnumerable<Route> routes)
@@ -101,17 +96,53 @@ namespace ConsoleRouting
                 Console.WriteLine();
             }
         }
-
-        public void WriteRoutes(Router router) => WriteRoutes(router?.Routes);
         
-        public void WriteWrouteCommand(Route route)
+        public void WriteRouteHelp(Route route)
         {
-            string path = route.GetCommandPath();
+            WriteWrouteCommand(route);
+            WriteWrouteDescription(route);
+            WriteRouteParameters(route);
+            WriteRouteDocumentation(route);
+        }
+
+        public void WriteRouteHelp(RoutingResult result)
+        {
+            var routes = result.Candidates.Matching(RouteMatch.Full).ToList();
+            if (routes.Count == 0) routes = result.Candidates.Matching(RouteMatch.Partial).ToList();
+
+            if (routes.Count > 1)
+            {
+                Console.WriteLine("There are multiple routes that match: ");
+                WriteRoutes(routes);
+                return;
+            }
+
+            var route = routes.FirstOrDefault();
+            if (route is null)
+            {
+                Console.WriteLine("No matching command was found");
+                return;
+            }
+
+            WriteRouteHelp(route);
+
+        }
+
+
+
+        private void WriteCandidates(IEnumerable<Route> routes)
+        {
+            foreach (var route in routes) Console.WriteLine($"  {route}");
+        }
+
+        private void WriteWrouteCommand(Route route)
+        {
+            //string path = route.GetCommandPath();
             Console.WriteLine($"Command:");
             Console.WriteLine($"  {route}");
         }
 
-        public void WriteWrouteDescription(Route route)
+        private void WriteWrouteDescription(Route route)
         {
             if (route.Description is not null)
             {
@@ -120,7 +151,7 @@ namespace ConsoleRouting
             }
         }
 
-        public void WriteRouteParameters(Route route)
+        private void WriteRouteParameters(Route route)
         {
             var parameters = route.GetRoutingParameters().ToList();
             if (parameters.Count > 0)
@@ -137,7 +168,7 @@ namespace ConsoleRouting
             }
         }
 
-        public void WriteRouteDocumentation(Route route)
+        private void WriteRouteDocumentation(Route route)
         {
             string doc = route.GetMethodDoc();
             if (doc.HasValue())
@@ -147,38 +178,7 @@ namespace ConsoleRouting
             }
         }
 
-        public void WriteRouteHelp(Route route)
-        {
-            WriteWrouteCommand(route);
-            WriteWrouteDescription(route);
-            WriteRouteParameters(route);
-            WriteRouteDocumentation(route);
-        }
-
-        public void WriteRouteHelp(Router router, Arguments args)
-        {
-            var routes = router.GetCandidates(args).GetRoutes(RouteMatch.Full).ToList();
-            if (routes.Count == 0) routes = router.GetCandidates(args).GetRoutes(RouteMatch.Partial).ToList();
-            
-            if (routes.Count > 1)
-            {
-                Console.WriteLine("There are multiple routes that match: ");
-                WriteRoutes(routes);
-                return;
-            }
-          
-            var route = routes.FirstOrDefault();
-            if (route is null) 
-            { 
-                Console.WriteLine("No matching command was found"); 
-                return; 
-            }
-
-            WriteRouteHelp(route);
-
-        }
-
-        public void WriteRouteDescription(Route route)
+        private void WriteRouteDescription(Route route)
         {
             if (route.Hidden) return;
             var parameters = route.AsText().Trim();
@@ -200,15 +200,19 @@ namespace ConsoleRouting
             }
         }
         
-        public static void Write(Exception e, bool stacktrace = false)
+        public static void WriteException(Exception e, bool stacktrace = false)
         {
             string message = e.GetErrorMessage();
             Console.Write($"Error: {message}");
 
             if (stacktrace) Console.WriteLine(e.StackTrace);
         }
-
         
+    }
+
+    public static class RoutingWriterExtensions
+    {
+        public static void WriteRoutes(this RoutingWriter writer, Router router) => writer.WriteRoutes(router?.Routes);
     }
 
 }

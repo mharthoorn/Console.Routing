@@ -42,7 +42,7 @@ namespace ConsoleRouting
             RoutingResult result = Bind(arguments);
 
             if (result.Ok) Run(result);
-            else Writer.Write(result);
+            else Writer.WriteResult(result);
             return result;
         }
 
@@ -62,7 +62,7 @@ namespace ConsoleRouting
         {
             Binder.Bind(Globals, arguments);
             var candidates = GetCandidates(arguments).ToList();
-            var routes = candidates.GetRoutes(RouteMatch.Full, RouteMatch.Default);
+            var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default);
             var binds = Binder.Bind(routes, arguments).ToList();
 
             return CreateResult(arguments, candidates, binds);

@@ -15,16 +15,17 @@
         }
 
         [Command("help", "?", "--help", "-?", "-h"), Help("Provides this help list or detailed help about a command")]
-        public void Help(Arguments commands = null)
+        public void Help(Arguments args = null)
         {
-            commands.RemoveAt(0); // remove the help command
-            if (commands is null || commands.Count == 0)
+            args.RemoveAt(0); // remove the help command
+            if (args is null || args.Count == 0)
             {
                 router.Writer.WriteRoutes(router);
             }
             else
             {
-                router.Writer.WriteRouteHelp(Routing.Router, commands);
+                var result = router.Bind(args);
+                router.Writer.WriteRouteHelp(result);
             }
         }
 
