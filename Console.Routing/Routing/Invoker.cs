@@ -24,19 +24,6 @@ namespace ConsoleRouting
             }
         }
 
-        public static object CreateInstance(Type type, Router router)
-        {
-            if (type.GetConstructor(new Type[] { typeof(Router) }) is object)
-            {
-                return Activator.CreateInstance(type, router);
-            }
-            else 
-            {
-                return Activator.CreateInstance(type);
-            }
-            
-        }
-
         public static void Run(Router router, Bind bind)
         {
             Run(router, bind.Route.Method, bind.Parameters);
@@ -48,6 +35,20 @@ namespace ConsoleRouting
             {
                 Run(router, result.Bind);
             }
+        }
+
+
+        private static object CreateInstance(Type type, Router router)
+        {
+            if (type.GetConstructor(new Type[] { typeof(Router) }) is object)
+            {
+                return Activator.CreateInstance(type, router);
+            }
+            else
+            {
+                return Activator.CreateInstance(type);
+            }
+
         }
     }
 

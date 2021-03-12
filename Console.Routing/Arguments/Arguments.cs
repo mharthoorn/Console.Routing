@@ -48,6 +48,7 @@ namespace ConsoleRouting
                 return false;
             }
         }
+
         public bool TryGet<T>(int i, out T result) where T: IArgument
         {
             if (i < Count && this[i] is T item)
