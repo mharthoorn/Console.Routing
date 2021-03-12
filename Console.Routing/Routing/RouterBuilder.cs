@@ -94,6 +94,7 @@ namespace ConsoleRouting
             new FlagValueBinder(),
             new FlagBinder(),
             new BoolBinder(),
+            new ArgumentsBinder()
         };
 
         private Binder CreateBinder()

@@ -76,11 +76,27 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void ParameterTextualPresentation()
         {
-            var method = typeof(FlagTestModule).GetMethod("TypedParse");
+            var method = typeof(FlagTestModule).GetMethod(nameof(FlagTestModule.TypedParse));
             
             var text = method.ParametersAsText();
             Assert.AreEqual("--format <value>", text);
 
+        }
+
+        [TestMethod]
+        public void ArgumentsParameter()
+        {
+            var args = router.Parse("anythinggoes a b c d e f g h i j");
+            var result = router.Bind(args);
+            Assert.AreEqual("AnythingGoes", result.Bind.Route.Method.Name);
+            Assert.IsTrue((result.Bind.Parameters[0] as Arguments).Count == 10);
+
+            args = router.Parse("aftertherain rainy drippy ding dong");
+            result = router.Bind(args);
+            Assert.AreEqual("AfterTheRain", result.Bind.Route.Method.Name);
+            Assert.IsTrue((result.Bind.Parameters[0] as string) == "rainy");
+            Assert.IsTrue((result.Bind.Parameters[1] as string) == "drippy");
+            Assert.IsTrue((result.Bind.Parameters[2] as Arguments).Count == 4);
         }
     }
 }
