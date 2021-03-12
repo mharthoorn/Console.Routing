@@ -14,41 +14,16 @@ namespace ConsoleRouting
 
             if (arguments.TryGetOptionString(param, out string s))
             {
-                if (innertype == typeof(string))
-                {
-                    value = new Flag<string>(param.Name, s);
-                    return 2;
-                }
-                else if (innertype == typeof(int))
-                {
-                    if (int.TryParse(s, out int n))
-                    {
-                        value = new Flag<int>(param.Name, n);
-                        return 2;
-                    }
-                }
-                else if (innertype.IsEnum)
-                {
+                value = FlagActivator.CreateInstance(innertype, param.Name, s);
+                if (value is not null) return 2;
+            } 
 
-                    if (StringHelpers.TryParseEnum(innertype, s, out object enumvalue))
-                    {
-                        var flagt = FlagActivator.CreateInstance(innertype, param.Name, enumvalue);
-                        value = flagt;
-                        return 2;
-                    }
-                    else
-                    {
-                        value = default;
-                        return 0;
-                    }
-                }
-
-            }
-            
             value = FlagActivator.CreateNotSetInstance(innertype, param.Name);
             return 0;
 
         }
+
+       
     }
 
 }

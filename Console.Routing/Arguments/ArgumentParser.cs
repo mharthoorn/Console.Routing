@@ -4,10 +4,6 @@ namespace ConsoleRouting
 {
     public class ArgumentParser
     {
-        public ArgumentParser()
-        {
-
-        }
 
         public Arguments Parse(string[] args)
         {
