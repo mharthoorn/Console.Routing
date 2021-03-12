@@ -17,7 +17,6 @@
         [Command("help", "?", "--help", "-?", "-h"), Help("Provides this help list or detailed help about a command")]
         public void Help(Arguments args = null)
         {
-            args.RemoveAt(0); // remove the help command
             if (args is null || args.Count == 0)
             {
                 router.Writer.WriteRoutes(router);

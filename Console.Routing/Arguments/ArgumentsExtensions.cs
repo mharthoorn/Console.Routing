@@ -12,14 +12,14 @@ namespace ConsoleRouting
             return new Arguments(arguments.Skip(offset));
         }
 
-        public static bool TryGetText(this Arguments args, int offset, out Text literal)
+        public static bool TryGetText(this Arguments args, int index, out Text literal)
         {
-            return args.TryGet<Text>(offset, out literal);
+            return args.TryGet(index, out literal);
         }
 
-        public static bool TryGetEnum(this Arguments args, int offset, Parameter param, out object value)
+        public static bool TryGetEnum(this Arguments args, int index, Parameter param, out object value)
         {
-            if (args.TryGetText(offset, out Text literal))
+            if (args.TryGetText(index, out Text literal))
             {
                 try
                 {
@@ -34,9 +34,9 @@ namespace ConsoleRouting
             return false;
         }
 
-        public static bool TryGetInt(this Arguments args, int i, out int value)
+        public static bool TryGetInt(this Arguments args, int index, out int value)
         {
-            if (args.TryGet(i, out Text s))
+            if (args.TryGet(index, out Text s))
             {
                 return int.TryParse(s, out value);
             }
@@ -70,9 +70,9 @@ namespace ConsoleRouting
             return items.Count == 1;
         }
 
-        public static bool TryGet<T>(this Arguments args, int i, out T item) where T: IArgument
+        public static bool TryGet<T>(this Arguments args, int index, out T item) where T: IArgument
         {
-            if (i < args.Count && args[i] is T arg)
+            if (index < args.Count && args[index] is T arg)
             {
                 item = arg;
                 return true;

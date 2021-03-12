@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ConsoleRouting
 {
     public class ArgumentParser
     {
+        public ArgumentParser()
+        {
+
+        }
+
         public Arguments Parse(string[] args)
         {
             var arguments = ParseArguments(args);
@@ -41,12 +45,6 @@ namespace ConsoleRouting
                 yield return new Text(arg);
             }
 
-        }
-
-        public Arguments Parse(string s)
-        {
-            var args = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            return Parse(args);
         }
 
     }

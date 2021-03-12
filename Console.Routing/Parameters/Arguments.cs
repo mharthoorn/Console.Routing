@@ -8,9 +8,6 @@ namespace ConsoleRouting
     [DebuggerDisplay("{Text}")]
     public class Arguments : List<IArgument>
     { 
-        
-    
-
         public Arguments(IEnumerable<IArgument> arguments)
         {
             this.AddRange(arguments);
@@ -30,11 +27,11 @@ namespace ConsoleRouting
             return matches;
         }
          
-        public bool TryGetCommand(int i, out string result) 
+        public bool TryGetCommand(int index, out string result) 
         {
-            if (i < Count)
+            if (index < Count)
             {
-                result = this[i].Original;
+                result = this[index].Original;
                 return true;
             }
             else
@@ -45,9 +42,9 @@ namespace ConsoleRouting
             }
         }
 
-        public bool TryGet<T>(int i, out T result) where T: IArgument
+        public bool TryGet<T>(int index, out T result) where T: IArgument
         {
-            if (i < Count && this[i] is T item)
+            if (index < Count && this[index] is T item)
             {
                 result = item;
                 return true;
@@ -55,11 +52,6 @@ namespace ConsoleRouting
             result = default;
             return false;
         }
-
-        //public bool TryGetHead<T>(out T result) where T : IArgument
-        //{
-        //    return TryGet(0, out result);
-        //}
 
         public string Text => string.Join(" ", this);
     }
