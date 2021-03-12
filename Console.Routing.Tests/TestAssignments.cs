@@ -11,7 +11,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void BasicAssignments()
         {
-            var arguments = Arguments.Parse("single a=b");
+            var arguments = router.Parser.Parse("single a=b");
             var result = router.Bind(arguments);
         
             Assert.AreEqual(1, result.Routes.Count());
@@ -33,7 +33,7 @@ namespace ConsoleRouting.Tests
         {
             // even though the query might contain an equals sign, it should not be treated as an assignment
 
-            var arguments = Arguments.Parse("expression -f 'name.where(given=''john'')'");
+            var arguments = router.Parse("expression -f 'name.where(given=''john'')'");
             var result = router.Bind(arguments);
             
             var args = result.Bind.Parameters;
@@ -52,7 +52,7 @@ namespace ConsoleRouting.Tests
         { 
             // even though the query might contain an equals sign, it should not be treated as an assignment
 
-            var arguments = Arguments.Parse("mix format=xml 'name.where(given=''john'')'");
+            var arguments = router.Parse("mix format=xml 'name.where(given=''john'')'");
             var result = router.Bind(arguments);
 
             var args = result.Bind.Parameters;

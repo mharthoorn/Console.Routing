@@ -7,6 +7,12 @@ namespace ConsoleAppTemplate
     [Module, Hidden]
     internal class BasicCommands
     {
+        private RoutingWriter writer;
+
+        public BasicCommands(RoutingWriter writer)
+        {
+            this.writer = writer;
+        }
         [Command]
         public void Documentation(Arguments args = null)
         {
@@ -17,7 +23,7 @@ namespace ConsoleAppTemplate
             else
             {
                 args.RemoveAt(0);
-                RoutingWriter.WriteRouteHelp(Routing.Router, args);
+                writer.WriteRouteHelp(Routing.Router, args);
             }
         }
 

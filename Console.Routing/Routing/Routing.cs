@@ -43,16 +43,8 @@ namespace ConsoleRouting
             if (Router?.Routes is null)
                 throw new Exception("You are not using the default router. Use RoutingPrinter.WriteRoutes() instead.");
 
-            RoutingWriter.WriteRoutes(Router);
+            Router.Writer.WriteRoutes(Router);
         }
-        
-        [Obsolete("Use Routing.WriteRoutes() instead")]
-        public static void PrintHelp()
-        {
-            WriteRoutes();
-        }
-
-
 
         public static void Interactive()
         {

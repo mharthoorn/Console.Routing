@@ -15,7 +15,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void CommitMessage()
         {
-            var arguments = Arguments.Create("commit", "-m", "\"ux: change layout\""); // git
+            var arguments = router.Parse("commit", "-m", "\"ux: change layout\""); // git
             var result = router.Bind(arguments);
             Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");
         }

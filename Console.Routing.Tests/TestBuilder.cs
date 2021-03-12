@@ -11,7 +11,7 @@ namespace ConsoleRouting.Tests
         {
             var assembly = Assembly.GetExecutingAssembly();
             var router = new RouterBuilder().Add(assembly).Build();
-            var args=  Arguments.Parse("--alpha --beta --gamma");
+            var args=  router.Parse("--alpha --beta --gamma");
             var result = router.Bind(args);
             
             Assert.IsTrue(BuilderSettings.Beta);

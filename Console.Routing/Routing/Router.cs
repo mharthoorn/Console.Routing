@@ -9,31 +9,40 @@ namespace ConsoleRouting
     {
         public List<Route> Routes { get; }
         public Binder Binder;
+        public ArgumentParser Parser;
+        public RoutingWriter Writer;
         private List<Type> Globals;
         public bool DebugMode { get; set; }
         public Action<Router, Exception> HandleException;
 
         public Router(
-            List<Route> routes, 
+            List<Route> routes,
             Binder binder,
+            ArgumentParser parser,
+            RoutingWriter writer,
             IEnumerable<Type> globals = null,
             Action<Router, Exception> exceptionhandler = null)
         {
             this.Globals = globals?.ToList();
             this.Routes = routes;
             this.Binder = binder;
+            this.Parser = parser;
+            this.Writer = writer;
             HandleException = exceptionhandler ?? DefaultExceptionHandler.Handle;
+        }
+
+        public RoutingResult Handle(string[] args)
+        {
+            Arguments arguments = Parser.Parse(args);
+            return Handle(arguments);
         }
 
         public RoutingResult Handle(Arguments arguments)
         {
             RoutingResult result = Bind(arguments);
 
-            if (result.Ok)
-            {
-                Run(result);
-            }
-
+            if (result.Ok) Run(result);
+            else Writer.Write(result);
             return result;
         }
 
@@ -54,33 +63,42 @@ namespace ConsoleRouting
             Binder.Bind(Globals, arguments);
             var candidates = GetCandidates(arguments).ToList();
             var routes = candidates.GetRoutes(RouteMatch.Full, RouteMatch.Default);
-            var binds = Bind(routes, arguments).ToList();
+            var binds = Binder.Bind(routes, arguments).ToList();
 
             return CreateResult(arguments, candidates, binds);
         }
 
-        private IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
+        private static RoutingResult CreateResult(Arguments arguments, List<Candidate> candidates, List<Bind> bindings)
         {
-            foreach (var route in routes)
-            {
-                if (Binder.TryBind(route, arguments, out var bind))
-                {
-                    yield return bind;
-                }
-            }
+            (int partial, int full) = RouteMatcher.Tally(candidates);
+            int binds = bindings.Count;
+            var status = RouteMatcher.MapRoutingStatus(binds, partial, full);
+
+            return new RoutingResult(arguments, status, bindings, candidates);
+
         }
 
         public IEnumerable<Candidate> GetCandidates(Arguments arguments)
         {
             foreach (var route in Routes)
             {
-                var match = TestMatch(route, arguments);
+                var match = RouteMatcher.Match(route, arguments);
                 if (match == RouteMatch.Not) continue;
                 else yield return new Candidate(match, route);
             }
         }
 
-        private RouteMatch TestMatch(Route route, Arguments arguments)
+      
+
+    
+    
+   
+  
+    }
+
+    public static class RouteMatcher
+    {
+        public static RouteMatch Match(Route route, Arguments arguments)
         {
             int index = 0;
             int count = route.Nodes.Count;
@@ -109,17 +127,7 @@ namespace ConsoleRouting
             return RouteMatch.Partial;
         }
 
-        private static RoutingResult CreateResult(Arguments arguments, List<Candidate> candidates, List<Bind> bindings)
-        {
-            (int partial, int def, int full) = Count(candidates);
-            int binds = bindings.Count;
-            var status = MapRoutingStatus(binds, partial, def, full);
-
-            return new RoutingResult(arguments, status, bindings, candidates);
-
-        }
-
-        private static RoutingStatus MapRoutingStatus(int binds, int partial, int def, int full)
+        public static RoutingStatus MapRoutingStatus(int binds, int partial, int full)
         {
             if (binds == 1)
             {
@@ -140,13 +148,13 @@ namespace ConsoleRouting
             throw new System.Exception("Invalid status");
         }
 
-        private static (int partial, int def, int full) Count(IEnumerable<Candidate> candidates)
+        public static (int partial, int full) Tally(this IEnumerable<Candidate> candidates)
         {
             int partial = candidates.Count(RouteMatch.Partial);
-            int def = candidates.Count(RouteMatch.Default);
             int full = candidates.Count(RouteMatch.Full);
-            return (partial, def, full);
+            return (partial, full);
         }
+
     }
 }
 

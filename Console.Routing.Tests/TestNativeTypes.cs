@@ -12,22 +12,22 @@ namespace ConsoleRouting.Tests
         public void Booleans()
         {
             // ActionB should be matched, with '--verbose' set to false.
-            var arguments = Arguments.Parse("actionb");
+            var arguments = router.Parse("actionb");
             var result = router.Bind(arguments);
             Assert.AreEqual(1, result.BindCount);
 
             // ActionB should be matched, with '--verbose' set to true.
-            arguments = Arguments.Parse("actionb --verbose");
+            arguments = router.Parse("actionb --verbose");
             result = router.Bind(arguments);
             Assert.AreEqual(1, result.BindCount);
 
             // ActionB should be matched, with '--verbose' set to true.
-            arguments = Arguments.Parse("actionb -v");
+            arguments = router.Parse("actionb -v");
             result = router.Bind(arguments);
             Assert.AreEqual(1, result.BindCount);
 
             // ActionB should NOT be matched.
-            arguments = Arguments.Parse("actionb --alt");
+            arguments = router.Parse("actionb --alt");
             result = router.Bind(arguments);
             Assert.AreEqual(0, result.BindCount);
 
@@ -38,7 +38,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Integers()
         {
-            var args = Arguments.Parse("add 3 4");
+            var args = router.Parse("add 3 4");
             var result = router.Bind(args);
             Assert.AreEqual(1, result.BindCount);
             Assert.AreEqual(3, result.Bind.Parameters[0]);

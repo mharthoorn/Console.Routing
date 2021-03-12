@@ -11,7 +11,7 @@ namespace ConsoleRouting.Tests
         public void BasicFlagBind()
         {
             SomeSettings.Debug = false;
-            var args = Arguments.Parse("main sub --debug");
+            var args = router.Parse("main sub --debug");
 
             router.Binder.Bind(typeof(SomeSettings), args);
 
@@ -25,7 +25,7 @@ namespace ConsoleRouting.Tests
             AnimalSettings.Cat = false;
             AnimalSettings.Canary = false;
 
-            var args = Arguments.Parse("train --mouse --cat --dog");
+            var args = router.Parser.Parse("train --mouse --cat --dog");
 
             router.Binder.Bind(typeof(AnimalSettings), args);
 
@@ -39,7 +39,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void GlobalBindingInRouting()
         {
-            var args = Arguments.Parse("train --mouse --cat --dog");
+            var args = router.Parser.Parse("train --mouse --cat --dog");
             var result = router.Handle(args);
 
             Assert.IsTrue(result.Ok);
@@ -58,7 +58,7 @@ namespace ConsoleRouting.Tests
             AnimalSettings.Cat = false;
             AnimalSettings.Canary = false;
 
-            var args = Arguments.Parse("do -mcd");
+            var args = router.Parse("do -mcd");
            
             router.Binder.Bind(typeof(AnimalSettings), args);
 

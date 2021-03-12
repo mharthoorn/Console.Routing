@@ -12,7 +12,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void PlainCommandAttribute()
         {
-            var arguments = Arguments.Parse("tool");
+            var arguments = router.Parse("tool");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(1, result.Routes.Count());
@@ -23,7 +23,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void DefaultCommand()
         {
-            var arguments = Arguments.Parse("");
+            var arguments = router.Parse("");
             var result = router.Bind(arguments);
 
             Assert.AreEqual("Info", result.Route.Method.Name);
@@ -33,7 +33,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Binding()
         {
-            var arguments = Arguments.Parse("action William will --foo --bar fubar");
+            var arguments = router.Parse("action William will --foo --bar fubar");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(true, result.Ok);
@@ -57,14 +57,14 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Nesting()
         {
-            var arguments = Arguments.Parse("main action hello");
+            var arguments = router.Parse("main action hello");
             var result = router.Bind(arguments);
             Assert.AreEqual("Action", result.Route.Method.Name);
             Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
             Assert.AreEqual("Action", result.Route.Nodes.Skip(1).First().Names.First());
             Assert.AreEqual(1, result.BindCount);
 
-            arguments = Arguments.Parse("main sub detail hello");
+            arguments = router.Parse("main sub detail hello");
             result = router.Bind(arguments);
             Assert.AreEqual("main", result.Route.Nodes.First().Names.First());
             Assert.AreEqual("Detail", result.Route.Method.Name);
@@ -76,7 +76,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void ForgetSubCommand()
         {
-            var arguments = Arguments.Parse("mainfirst");
+            var arguments = router.Parse("mainfirst");
             var result = router.Bind(arguments);
             var count = result.Candidates.Count(RouteMatch.Partial);
             Assert.AreEqual(2, count);

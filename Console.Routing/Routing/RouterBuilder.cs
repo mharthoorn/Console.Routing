@@ -79,7 +79,10 @@ namespace ConsoleRouting
             if (Documentation) AttachDocumentation();
           
             var binder = CreateBinder();
-            return new Router(routes, binder, globals, exceptionHandler);
+            var parser = new ArgumentParser();
+            var writer = new RoutingWriter();
+
+            return new Router(routes, binder, parser, writer, globals, exceptionHandler);
         }
 
         private static List<IBinder> DEFAULTBINDERS = new()

@@ -14,7 +14,7 @@ namespace ConsoleRouting.Tests
         {
             // ToolCommands.Single(string name) // 1 matching bind
 
-            var arguments = Arguments.Parse("action Foo");
+            var arguments = router.Parse("action Foo");
             var result = router.Bind(arguments);
 
             Assert.AreEqual(result.BindCount, 1);
@@ -33,7 +33,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void FlagValue()
         {
-            var arguments = Arguments.Parse("-a -b --test abc");
+            var arguments = router.Parse("-a -b --test abc");
             var parameter = Parameter.Create<Flag>("test");
 
             arguments.TryGet(parameter, out Flag flag);
@@ -47,7 +47,7 @@ namespace ConsoleRouting.Tests
         {
             // since we match on used parameter count, flag vaues are a special case
             // one FlagValue consumes 2 command line arguments
-            var arguments = Arguments.Parse("save --all --pattern '{id}-{id}'");
+            var arguments = router.Parse("save --all --pattern '{id}-{id}'");
             var result = router.Bind(arguments);
             Assert.AreEqual(1, result.BindCount);
 
@@ -57,7 +57,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void AlternateParamNames()
         {
-            var arguments = Arguments.Parse("-?"); // should route to ToolModule.Info
+            var arguments = router.Parse("-?"); // should route to ToolModule.Info
             var result = router.Bind(arguments);
             string s = result.ToString();
             Assert.AreEqual(1, result.BindCount);
@@ -67,7 +67,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TextualPresentation()
         {
-            var arguments = Arguments.Parse("intparse --number 3");
+            var arguments = router.Parse("intparse --number 3");
             var result = router.Bind(arguments);
             string text = result.Bind.Route.Method.ParametersAsText();
             Assert.AreEqual("--number <value>", text);

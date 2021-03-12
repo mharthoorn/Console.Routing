@@ -114,8 +114,15 @@ namespace ConsoleRouting
             return doc.Params.TryGetValue(name, out var value) ? value : null;
         }
 
+        public static Arguments Parse(this Router router, string text)
+        {
+            return router.Parser.Parse(text);
+        }
+
+        public static Arguments Parse(this Router router, params string[] args)
+        {
+            return router.Parser.Parse(args);
+        }
+
     }
-
-   
-
 }

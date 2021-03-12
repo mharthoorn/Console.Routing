@@ -14,6 +14,18 @@ namespace ConsoleRouting
             this.binders = binders.ToList();
         }
 
+
+        public IEnumerable<Bind> Bind(IEnumerable<Route> routes, Arguments arguments)
+        {
+            foreach (var route in routes)
+            {
+                if (TryBind(route, arguments, out var bind))
+                {
+                    yield return bind;
+                }
+            }
+        }
+
         public void Bind(IEnumerable<Type> types, Arguments arguments)
         {
             if (types is null) return;
@@ -61,12 +73,7 @@ namespace ConsoleRouting
                 return false;
             }
         }
-
-
-        /// <summary>
-        /// Note that parameters here refer to the parameters of a C# method, and that arguments refer to the values
-        /// that may go into those paremeters
-        /// </summary>
+      
         public bool TryBindParameters(Route route, Arguments arguments, out object[] values)
         {
             Parameters parameters = route.Method.GetRoutingParameters();
@@ -74,6 +81,8 @@ namespace ConsoleRouting
             return TryBindParameters(parameters, arguments, out values);
         }
 
+        // Note that parameters here refer to the parameters of a C# method, and that arguments refer to the values
+        // from the command line that will set those paremeters.
         private bool TryBindParameters(Parameters parameters, Arguments arguments, out object[] values)
         {
             var argcount = arguments.Count;
@@ -86,8 +95,7 @@ namespace ConsoleRouting
 
             foreach (var param in parameters)
             {
-                
-                var binder = binders.FirstOrDefault(b => b.Match(param));
+                var binder = binders.FindMatch(param.Type);
                 if (binder is null) return false;
 
                 int uses = binder.TryUse(arguments, param, index, out var value);
@@ -108,7 +116,6 @@ namespace ConsoleRouting
             }
             return (argcount == used);
         }
-
 
     }
 

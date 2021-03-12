@@ -9,7 +9,7 @@ namespace ConsoleRouting
     public interface IBinder
     {
         bool Optional { get; }
-        bool Match(Parameter parameter);
+        bool Match(Type type);
         int TryUse(Arguments arguments, Parameter param, int index, out object value);
     }
 
@@ -17,9 +17,9 @@ namespace ConsoleRouting
     {
         public bool Optional => false;
 
-        public bool Match(Parameter parameter)
+        public bool Match(Type type)
         {
-            return parameter.Type == typeof(string);
+            return type == typeof(string);
         }
 
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
@@ -41,10 +41,7 @@ namespace ConsoleRouting
     {
         public bool Optional => false;
 
-        public bool Match(Parameter parameter)
-        {
-            return (parameter.Type.IsEnum);
-       }
+        public bool Match(Type type) => type.IsEnum;
 
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
@@ -63,10 +60,7 @@ namespace ConsoleRouting
     {
         public bool Optional => false;
 
-        public bool Match(Parameter parameter)
-        {
-            return parameter.Type == typeof(int);
-        }
+        public bool Match(Type type) => type == typeof(int);
 
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
@@ -87,11 +81,7 @@ namespace ConsoleRouting
     {
         public bool Optional => false;
 
-        public bool Match(Parameter parameter)
-        {
-            return (parameter.Type == typeof(Assignment));
-            
-        }
+        public bool Match(Type type) => type == typeof(Assignment);
 
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
@@ -114,11 +104,8 @@ namespace ConsoleRouting
     {
         public bool Optional => true;
 
-        public bool Match(Parameter parameter)
-        {
-            return parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(Flag<>);
-        }
-
+        public bool Match(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>);
+    
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
             Type innertype = param.Type.GetGenericArguments()[0];
@@ -143,7 +130,7 @@ namespace ConsoleRouting
 
                     if (StringHelpers.TryParseEnum(innertype, s, out object enumvalue))
                     {
-                        var flagt = Flags.CreateInstance(innertype, param.Name, enumvalue);
+                        var flagt = FlagActivator.CreateInstance(innertype, param.Name, enumvalue);
                         value = flagt;
                         return 2;
                     }
@@ -156,7 +143,7 @@ namespace ConsoleRouting
 
             }
             
-            value = Flags.CreateNotSetInstance(innertype, param.Name);
+            value = FlagActivator.CreateNotSetInstance(innertype, param.Name);
             return 0;
 
         }
@@ -166,10 +153,7 @@ namespace ConsoleRouting
     {
         public bool Optional => true;
 
-        public bool Match(Parameter parameter)
-        {
-            return (parameter.Type == typeof(Flag)) ;
-        }
+        public bool Match(Type type) => type == typeof(Flag);
 
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
@@ -195,10 +179,7 @@ namespace ConsoleRouting
     {
         public bool Optional => true;
 
-        public bool Match(Parameter parameter)
-        {
-            return (parameter.Type == typeof(bool));
-        }
+        public bool Match(Type type) => type == typeof(bool);
 
         public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {

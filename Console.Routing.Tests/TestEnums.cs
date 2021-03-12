@@ -12,20 +12,20 @@ namespace ConsoleRouting.Tests
         public void EnumValue()
         {
             // Matching the case sensitivity
-            var args = Arguments.Parse("bump Minor");
+            var args = router.Parse("bump Minor");
             var result = router.Bind(args);
             Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Bump", result.Route.Method.Name);
 
             // Case insensitive
-            args = Arguments.Parse("bump minor");
+            args = router.Parse("bump minor");
             result = router.Bind(args);
 
             Assert.AreEqual(1, result.Routes.Count());
             Assert.AreEqual("Bump", result.Route.Method.Name);
 
             // Not a valid enum value
-            args = Arguments.Parse("bump minora");
+            args = router.Parse("bump minora");
             result = router.Bind(args);
 
             Assert.AreEqual(0, result.Routes.Count());

@@ -14,7 +14,7 @@ namespace ConsoleRouting.Tests
             Arguments args; bool found;
 
             // long flag found
-            args = Arguments.Parse("-a -b --test");
+            args = router.Parse("-a -b --test");
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found); // broken
             Assert.AreEqual("test", test.Name); // broken
@@ -34,7 +34,7 @@ namespace ConsoleRouting.Tests
         {
             Arguments args; bool found;
 
-            args = Arguments.Parse("-a --test");
+            args = router.Parse("-a --test");
 
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found);
@@ -61,7 +61,7 @@ namespace ConsoleRouting.Tests
         {
             Arguments args; bool found;
 
-            args = Arguments.Parse("-a -t");
+            args = router.Parse("-a -t");
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found); 
             Assert.AreEqual("t", test.Name); 
@@ -79,7 +79,7 @@ namespace ConsoleRouting.Tests
         {
             Arguments args; bool found;
 
-            args = Arguments.Parse("-a -txy");
+            args = router.Parse("-a -txy");
 
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found);
@@ -120,7 +120,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TestFlagValues()
         {
-            var args = Arguments.Parse("parse --format xml");
+            var args = router.Parse("parse --format xml");
             var result = router.Bind(args);
 
             Assert.AreEqual("Parse", result.Bind.Route.Method.Name);
@@ -131,7 +131,7 @@ namespace ConsoleRouting.Tests
         public void TestEnumFlags()
         {
             // Enum Parsing
-            var args = Arguments.Parse("typedparse --format json");
+            var args = router.Parse("typedparse --format json");
             var result = router.Bind(args);
 
             Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
@@ -140,13 +140,13 @@ namespace ConsoleRouting.Tests
             Assert.IsTrue((result.Bind.Parameters[0] as Flag<Format>).HasValue);
 
             // Test invalid value
-            args = Arguments.Parse("typedparse --format bson");
+            args = router.Parse("typedparse --format bson");
             result = router.Bind(args);
             Assert.IsFalse(result.Ok);
 
 
             // Test incomplete flag: no value given
-            args = Arguments.Parse("typedparse --format");
+            args = router.Parse("typedparse --format");
             result = router.Bind(args);
             Assert.IsFalse(result.Ok);
 
@@ -158,7 +158,7 @@ namespace ConsoleRouting.Tests
         public void TypedFlagNotSet()
         {
             // Test not set flag:
-            var args = Arguments.Parse("typedparse");
+            var args = router.Parse("typedparse");
             var result = router.Bind(args);
 
             Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
@@ -170,14 +170,14 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TestIntFlags() 
         {
-            var args = Arguments.Parse("intparse --number 4");
+            var args = router.Parse("intparse --number 4");
             var result = router.Bind(args);
 
             Assert.AreEqual("IntParse", result.Bind.Route.Method.Name);
             Assert.AreEqual(4, (result.Bind.Parameters[0] as Flag<int>).Value);
 
             // Value not given:
-            args = Arguments.Parse("intparse");
+            args = router.Parse("intparse");
             result = router.Bind(args);
 
             Assert.AreEqual("IntParse", result.Bind.Route.Method.Name);
@@ -191,7 +191,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void FlagValues_GitCommit()
         {
-            var arguments = Arguments.Create("commit", "-m", "\"ux: change layout\""); // git parameters
+            var arguments = router.Parse("commit", "-m", "\"ux: change layout\""); // git parameters
 
             var result = router.Bind(arguments);
             Assert.AreEqual(result.Bind.Route.Method.Name, "Commit");

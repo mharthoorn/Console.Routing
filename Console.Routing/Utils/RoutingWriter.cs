@@ -10,16 +10,32 @@ namespace ConsoleRouting
         public IList<Route> Candidates;
     }
 
-
-    [Obsolete("Use RoutingWriter instead")]
-    public static class RoutingPrinter
+    public static class DisplayExtensions
     {
+        public static string GetCommandPath(this Route route)
+        {
+            var path = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
+            return path;
+        }
 
+        public static string GetErrorMessage(this Exception exception)
+        {
+            if (exception.InnerException is null)
+            {
+                return exception.Message;
+            }
+            else
+            {
+                return GetErrorMessage(exception.InnerException);
+            }
+
+        }
     }
-      
-    public static class RoutingWriter
+
+          
+    public class RoutingWriter
     {
-        public static void Write(RoutingResult result)
+        public void Write(RoutingResult result)
         {
             switch(result.Status)
             {
@@ -64,13 +80,12 @@ namespace ConsoleRouting
            
         }
 
-        public static void WriteCandidates(IEnumerable<Route> routes)
+        public void WriteCandidates(IEnumerable<Route> routes)
         {
-            
             foreach (var route in routes) Console.WriteLine($"  {route}");
         }
 
-        public static void WriteRoutes(IEnumerable<Route> routes)
+        public void WriteRoutes(IEnumerable<Route> routes)
         {
             foreach (var group in routes.Where(r => r.Hidden == false).GroupBy(r => r.Module))
             {
@@ -87,16 +102,16 @@ namespace ConsoleRouting
             }
         }
 
-        public static void WriteRoutes(Router router) => WriteRoutes(router?.Routes);
+        public void WriteRoutes(Router router) => WriteRoutes(router?.Routes);
         
-        public static void WriteWrouteCommand(Route route)
+        public void WriteWrouteCommand(Route route)
         {
-            string path = route.CommandPath();
+            string path = route.GetCommandPath();
             Console.WriteLine($"Command:");
             Console.WriteLine($"  {route}");
         }
 
-        public static void WriteWrouteDescription(Route route)
+        public void WriteWrouteDescription(Route route)
         {
             if (route.Description is not null)
             {
@@ -105,7 +120,7 @@ namespace ConsoleRouting
             }
         }
 
-        public static void WriteRouteParameters(Route route)
+        public void WriteRouteParameters(Route route)
         {
             var parameters = route.GetRoutingParameters().ToList();
             if (parameters.Count > 0)
@@ -122,7 +137,7 @@ namespace ConsoleRouting
             }
         }
 
-        public static void WriteRouteDocumentation(Route route)
+        public void WriteRouteDocumentation(Route route)
         {
             string doc = route.GetMethodDoc();
             if (doc.HasValue())
@@ -132,7 +147,7 @@ namespace ConsoleRouting
             }
         }
 
-        public static void WriteRouteHelp(Route route)
+        public void WriteRouteHelp(Route route)
         {
             WriteWrouteCommand(route);
             WriteWrouteDescription(route);
@@ -140,7 +155,7 @@ namespace ConsoleRouting
             WriteRouteDocumentation(route);
         }
 
-        public static void WriteRouteHelp(this Router router, Arguments args)
+        public void WriteRouteHelp(Router router, Arguments args)
         {
             var routes = router.GetCandidates(args).GetRoutes(RouteMatch.Full).ToList();
             if (routes.Count == 0) routes = router.GetCandidates(args).GetRoutes(RouteMatch.Partial).ToList();
@@ -163,17 +178,11 @@ namespace ConsoleRouting
 
         }
 
-        private static string CommandPath(this Route route)
-        {
-            var path = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
-            return path;
-        }
-
-        public static void WriteRouteDescription(Route route)
+        public void WriteRouteDescription(Route route)
         {
             if (route.Hidden) return;
             var parameters = route.AsText().Trim();
-            var command = route.CommandPath();
+            var command = route.GetCommandPath();
             var description = route.Description;
             var text = parameters;
             if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
@@ -193,24 +202,13 @@ namespace ConsoleRouting
         
         public static void Write(Exception e, bool stacktrace = false)
         {
-            string message = GetErrorMessage(e);
+            string message = e.GetErrorMessage();
             Console.Write($"Error: {message}");
 
             if (stacktrace) Console.WriteLine(e.StackTrace);
         }
 
-        public static string GetErrorMessage(Exception exception)
-        {
-            if (exception.InnerException is null)
-            {
-                return exception.Message;
-            }
-            else             
-            {
-                return GetErrorMessage(exception.InnerException);
-            }
-
-        }
+        
     }
 
 }

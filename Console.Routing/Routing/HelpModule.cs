@@ -20,11 +20,11 @@
             commands.RemoveAt(0); // remove the help command
             if (commands is null || commands.Count == 0)
             {
-                RoutingWriter.WriteRoutes(router);
+                router.Writer.WriteRoutes(router);
             }
             else
             {
-                RoutingWriter.WriteRouteHelp(Routing.Router, commands);
+                router.Writer.WriteRouteHelp(Routing.Router, commands);
             }
         }
 
