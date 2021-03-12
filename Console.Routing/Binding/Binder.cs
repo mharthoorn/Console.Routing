@@ -36,6 +36,7 @@ namespace ConsoleRouting
             }
         }
 
+        
         public void Bind(Type type, Arguments arguments)
         {
             if (type is null) return;

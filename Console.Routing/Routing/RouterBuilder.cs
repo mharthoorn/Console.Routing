@@ -46,6 +46,28 @@ namespace ConsoleRouting
             return this;
         }
 
+        public RouterBuilder AddBinder(IBinder binder)
+        {
+            this.binders.Add(binder);
+            return this;
+        }
+
+        public RouterBuilder AddBinders(IEnumerable<IBinder> binders)
+        {
+            this.binders.AddRange(binders);
+            return this;
+        }
+
+        /// <summary>
+        /// You can add the default binders yourself if you want to append more.
+        /// If you don't configure any binders at all, the defaults will be used regardless.
+        /// </summary>
+        public RouterBuilder AddDefaultBinders()
+        {
+            this.binders.AddRange(DEFAULTBINDERS);
+            return this;
+        }
+
         public void AttachDocumentation()
         {
             var docs =
@@ -64,6 +86,7 @@ namespace ConsoleRouting
             DebugMode = true;
             return this;
         }
+
         public void Add(Route route)
         {
             routes.Add(route);
