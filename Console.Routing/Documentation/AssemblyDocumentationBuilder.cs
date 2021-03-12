@@ -11,35 +11,6 @@ using System.Xml.XPath;
 namespace ConsoleRouting
 {
 
-    public class XmlDocumentation : Dictionary<string, MethodDoc>
-    {
-        public void Add(MethodDoc doc)
-        {
-            this.Add(doc.Key, doc);
-        }
-
-        public MethodDoc this[MethodInfo method] => Get(method);
-
-        public MethodDoc Get(MethodInfo method)
-        {
-            var key = DocumentationHelper.GetKey(method);
-            return TryGetValue(key, out var doc) ? doc : null;
-        }
-
-     
-
-    }
-
-    public class MethodDoc
-    {
-        public string Key;
-        public string Summary;
-     
-        public Dictionary<string, string> Params = new();
-    }
-
-   
-
     public class AssemblyDocumentationBuilder
     {
         XmlDocumentation documentation = new();
@@ -91,19 +62,14 @@ namespace ConsoleRouting
 
         public IEnumerable<MethodDoc> ReadMethods(XDocument xdoc)
         {
-            //var methods = new List<MethodDoc>();
-
-            //var docnode = xdoc.Element("doc");
-            var mnodes = xdoc.XPathSelectElements("doc/members/member").ToList().ToList().ToList();
-            //var memnode = docnode.Element("members");
-            //var mnodes = memnode.Elements("member");
+            var mnodes = xdoc.XPathSelectElements("doc/members/member").ToList();
 
             foreach (var mnode in mnodes)
             {
-                var method = new MethodDoc();
+                var doc = new MethodDoc();
 
-                method.Key = mnode?.Attribute("name")?.Value;
-                method.Summary = DocumentationHelper.ConsiseTrim(mnode?.Element("summary")?.Value);
+                doc.Key = mnode?.Attribute("name")?.Value;
+                doc.Summary = DocumentationHelper.ConsiseTrim(mnode?.Element("summary")?.Value);
 
                 var pnodes = mnode?.Elements("param");
                 
@@ -111,40 +77,11 @@ namespace ConsoleRouting
                 {
                     var name = pnode.Attribute("name")?.Value;
                     var summary = pnode?.Value?.Trim();
-                    method.Params.Add(name, summary);
+                    doc.Params.Add(name, summary);
                 }
-                yield return method;
+                yield return doc;
             }
-            //return methods;
         }
 
-        //public MethodDoc GetMethodDocumentation(MethodInfo method)
-        //{
-        //    var mnode = GetMethodNode(method);
-        //    if (mnode is null) return null;
-
-        //    var doc = new MethodDoc();
-        //    doc.Summary = mnode?.Element("summary").Value;
-
-        //    var pnodes = mnode.Elements("param");
-        //    foreach (var param in method.GetParameters())
-        //    {
-        //        var pnode = pnodes.Where(e => e.Attribute("name")?.Value == param.Name).FirstOrDefault();
-        //        if (pnode is not null)
-        //        doc.Params[param.Name] = pnode?.Value;
-        //    }
-
-        //    return doc;
-        //}
-
-    }
-
-    public static class AssemblyDocumentationBuilderExtensions
-    {
-        public static AssemblyDocumentationBuilder Add(this AssemblyDocumentationBuilder builder, IEnumerable<Assembly> assemblies)
-        {
-            foreach (var assembly in assemblies) builder.Add(assembly);
-            return builder;
-        }
     }
 }

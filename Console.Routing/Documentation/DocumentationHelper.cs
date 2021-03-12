@@ -35,8 +35,13 @@ namespace ConsoleRouting
         {
             var builder = new StringBuilder();
             builder.Append("M:");
-            builder.Append(method.DeclaringType.FullName);
+
+            string typename = method.DeclaringType.FullName.Replace("+", ".");
+            builder.Append(typename);
+
             builder.Append(".");
+
+            
             builder.Append(method.Name);
             var parameters = method.GetParameters();
             if (parameters.Length > 0)
