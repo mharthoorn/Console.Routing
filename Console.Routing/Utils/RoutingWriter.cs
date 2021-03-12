@@ -36,19 +36,19 @@ namespace ConsoleRouting
                     else
                     {
                         Console.WriteLine($"Invalid parameter(s). These are your options:");
-                        WriteCandidates(result.Candidates.Routes(RouteMatch.Default));
+                        WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Default));
                     }
                     
                     break;
 
                 case RoutingStatus.PartialCommand:
                     Console.WriteLine("Did you mean:");
-                    WriteCandidates(result.Candidates.Routes(RouteMatch.Partial));
+                    WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Partial));
                     break;
 
                 case RoutingStatus.InvalidParameters:
                     Console.WriteLine("Invalid parameter(s). These are your options:");
-                    WriteCandidates(result.Candidates.Routes(RouteMatch.Full));
+                    WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Full));
                     break;
 
                 case RoutingStatus.AmbigousParameters:
@@ -58,7 +58,7 @@ namespace ConsoleRouting
 
                 case RoutingStatus.InvalidDefault:
                     Console.WriteLine("Invalid parameter(s). These are your options:");
-                    WriteCandidates(result.Candidates.Routes(RouteMatch.Default));
+                    WriteCandidates(result.Candidates.GetRoutes(RouteMatch.Default));
                     break;
             }
            
@@ -142,8 +142,8 @@ namespace ConsoleRouting
 
         public static void WriteRouteHelp(this Router router, Arguments args)
         {
-            var routes = router.GetCandidates(args).Routes(RouteMatch.Full).ToList();
-            if (routes.Count == 0) routes = router.GetCandidates(args).Routes(RouteMatch.Partial).ToList();
+            var routes = router.GetCandidates(args).GetRoutes(RouteMatch.Full).ToList();
+            if (routes.Count == 0) routes = router.GetCandidates(args).GetRoutes(RouteMatch.Partial).ToList();
             
             if (routes.Count > 1)
             {

@@ -151,14 +151,21 @@ namespace ConsoleRouting.Tests
             Assert.IsFalse(result.Ok);
 
 
+          
+        }
+
+        [TestMethod]
+        public void TypedFlagNotSet()
+        {
             // Test not set flag:
-            args = Arguments.Parse("typedparse");
-            result = router.Bind(args);
+            var args = Arguments.Parse("typedparse");
+            var result = router.Bind(args);
 
             Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
             Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).HasFlag);
             Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).HasValue);
         }
+
 
         [TestMethod]
         public void TestIntFlags() 

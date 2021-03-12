@@ -47,7 +47,7 @@ namespace ConsoleRouting
         {
             Binder.Bind(Globals, arguments);
             var candidates = GetCandidates(arguments).ToList();
-            var routes = candidates.Routes(RouteMatch.Full, RouteMatch.Default);
+            var routes = candidates.GetRoutes(RouteMatch.Full, RouteMatch.Default);
             var binds = Bind(routes, arguments).ToList();
 
             return CreateResult(arguments, candidates, binds);

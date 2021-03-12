@@ -8,22 +8,25 @@ namespace ConsoleRouting
 {
     public interface IBinder
     {
+        bool Optional { get; }
         bool Match(Parameter parameter);
-        int TryUse(Arguments arguments, Parameter param, int argindex, out object value);
+        int TryUse(Arguments arguments, Parameter param, int index, out object value);
     }
 
     public class StringBinder : IBinder
     {
+        public bool Optional => false;
+
         public bool Match(Parameter parameter)
         {
             return parameter.Type == typeof(string);
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
             int used = 0;
 
-            if (arguments.TryGetText(argindex, out Text Text))
+            if (arguments.TryGetText(index, out Text Text))
             {
                 value = Text.Value;
                 used++;
@@ -36,14 +39,16 @@ namespace ConsoleRouting
 
     public class EnumBinder : IBinder
     {
+        public bool Optional => false;
+
         public bool Match(Parameter parameter)
         {
             return (parameter.Type.IsEnum);
        }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
-            if (arguments.TryGetEnum(argindex, param, out value))
+            if (arguments.TryGetEnum(index, param, out value))
             {
                 return 1;
             }
@@ -56,14 +61,16 @@ namespace ConsoleRouting
 
     public class IntBinder : IBinder
     {
+        public bool Optional => false;
+
         public bool Match(Parameter parameter)
         {
             return parameter.Type == typeof(int);
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
-            if (arguments.TryGetInt(argindex, out int i))
+            if (arguments.TryGetInt(index, out int i))
             {
                 value = i;
                 return 1;
@@ -78,13 +85,15 @@ namespace ConsoleRouting
 
     public class AssignmentBinder : IBinder
     {
+        public bool Optional => false;
+
         public bool Match(Parameter parameter)
         {
             return (parameter.Type == typeof(Assignment));
             
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
             
             if (arguments.TryGetAssignment(param.Name, out Assignment assignment))
@@ -103,12 +112,14 @@ namespace ConsoleRouting
 
     public class FlagValueBinder : IBinder
     {
+        public bool Optional => true;
+
         public bool Match(Parameter parameter)
         {
             return parameter.Type.IsGenericType && parameter.Type.GetGenericTypeDefinition() == typeof(Flag<>);
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
             Type innertype = param.Type.GetGenericArguments()[0];
 
@@ -153,12 +164,14 @@ namespace ConsoleRouting
 
     public class FlagBinder : IBinder
     {
+        public bool Optional => true;
+
         public bool Match(Parameter parameter)
         {
             return (parameter.Type == typeof(Flag)) ;
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
           
             {
@@ -180,12 +193,14 @@ namespace ConsoleRouting
 
     public class BoolBinder : IBinder
     {
+        public bool Optional => true;
+
         public bool Match(Parameter parameter)
         {
             return (parameter.Type == typeof(bool));
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int argindex, out object value)
+        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
         {
             if (arguments.TryGet(param, out Flag flag))
             {
