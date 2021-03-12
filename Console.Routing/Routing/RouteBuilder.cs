@@ -94,10 +94,12 @@ namespace ConsoleRouting
         private void DiscoverModule(Module module, Type type, in List<Node> trail)
         {
             if (module is null) module = type.GetCustomAttribute<Module>();
-            var command = type.GetCustomAttribute<Command>();
-            var t = trail.Retail(command);
-            DiscoverNestedModules(module, type, t);
-            DiscoverCommands(module, type, t);
+            
+            var node = type.TryCreateRoutingNode();
+            var clone = trail.CloneAndAppend(node);
+
+            DiscoverNestedModules(module, type, clone);
+            DiscoverCommands(module, type, clone);
         }
 
         private void DiscoverNestedModules(Module module, Type type, in List<Node> trail)
@@ -130,8 +132,9 @@ namespace ConsoleRouting
             var isdefault = method.HasAttribute<Default>();
             var help = method.GetCustomAttribute<Help>();
             var hidden = method.GetCustomAttribute<Hidden>();
-            var t = isdefault ? trail : trail.Retail(method);
-            var route = new Route(module, t, method, help, hidden, isdefault);
+            var node = method.TryCreateRoutingNode();
+            var clone = isdefault ? trail : trail.CloneAndAppend(node);
+            var route = new Route(module, clone, method, help, hidden, isdefault);
             Add(route);
 
         }

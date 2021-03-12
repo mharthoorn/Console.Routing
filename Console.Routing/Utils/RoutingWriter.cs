@@ -143,6 +143,15 @@ namespace ConsoleRouting
         public static void WriteRouteHelp(this Router router, Arguments args)
         {
             var routes = router.GetCandidates(args).Routes(RouteMatch.Full).ToList();
+            if (routes.Count == 0) routes = router.GetCandidates(args).Routes(RouteMatch.Partial).ToList();
+            
+            if (routes.Count > 1)
+            {
+                Console.WriteLine("There are multiple routes that match: ");
+                WriteRoutes(routes);
+                return;
+            }
+          
             var route = routes.FirstOrDefault();
             if (route is null) 
             { 

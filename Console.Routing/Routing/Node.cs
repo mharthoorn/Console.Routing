@@ -38,25 +38,31 @@ namespace ConsoleRouting
     {
         // 'Retailing' is cloning a node list and adding a tail segment to it.
 
-        public static List<Node> Retail(this List<Node> nodes, MethodInfo method)
-        {
-            var tail = CreateNode(method);
-            return nodes.Retail(tail);
-        }
+        //public static List<Node> CloneAndAppend(this List<Node> nodes, MethodInfo method)
+        //{
+        //    var tail = CreateNode(method);
+        //    return nodes.CloneAndAppend(tail);
+        //}
 
-        public static List<Node> Retail(this List<Node> nodes, Command command)
-        {
-            if (command is null || command.IsGeneric)
-            {
-                return nodes.Clone();
-            }
-            else
-            {
-                var node = new Node(command.Names);
-                return nodes.Retail(node);
-            }
-            
-        }
+        //public static List<Node> CloneAndAppend(this List<Node> nodes, Type type)
+        //{
+        //    var tail = CreateNode(type);
+        //    return nodes.CloneAndAppend(tail);
+        //}
+
+        //public static List<Node> Retail(this List<Node> nodes, Command command)
+        //{
+        //    if (command is null || command.IsGeneric)
+        //    {
+        //        return nodes.Clone();
+        //    }
+        //    else
+        //    {
+        //        var node = new Node(command.Names);
+        //        return nodes.Retail(node);
+        //    }
+
+        //}
 
         public static List<Node> Clone(this List<Node> nodes)
         {
@@ -65,21 +71,31 @@ namespace ConsoleRouting
             return result;
         }
 
-        public static List<Node> Retail(this List<Node> nodes, Node tail)
+        public static List<Node> CloneAndAppend(this List<Node> nodes, Node tail)
         {
-            var list = new List<Node>();
-            list.AddRange(nodes);
-            list.Add(tail);
-            return list;
+            if (tail is null) return nodes;
+           
+            var clone = nodes.Clone();
+            clone.Add(tail);
+            return clone;
         }
 
-        public static Node CreateNode(MethodInfo method)
+        public static Node TryCreateRoutingNode(this MethodInfo method)
         {
-            // It must have a 
             var command = method.GetCustomAttribute<Command>();
-            if (command is null) throw new InvalidOperationException("This method should not be called for a MethodInfo without a Command attribute");
+            if (command is null) return null;
 
             var names = command.IsGeneric ? new string[] { method.Name } : command.Names;
+            var node = new Node(names);
+            return node;
+        }
+
+        public static Node TryCreateRoutingNode(this Type type)
+        {
+            var command = type.GetCustomAttribute<Command>();
+            if (command is null) return null;
+
+            var names = command.IsGeneric ? new string[] { type.Name } : command.Names;
             var node = new Node(names);
             return node;
         }
