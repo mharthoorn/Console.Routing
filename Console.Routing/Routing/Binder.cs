@@ -64,23 +64,23 @@ namespace ConsoleRouting
             var count = parameters.Length;
 
             values = new object[count];
-            int ip = 0; // index of parameters
+            int pindex = 0; // index of parameters
             int used = 0; // arguments used;
 
             foreach (var param in parameters)
             {
-                int ia = offset + ip; // index of arguments
+                int argindex = offset + pindex; // index of arguments
                 if (param.Type == typeof(string))
                 {
-                    if (arguments.TryGetText(ia, out Text Text))
+                    if (arguments.TryGetText(argindex, out Text Text))
                     {
-                        values[ip++] = Text.Value;
+                        values[pindex++] = Text.Value;
                         used++;
                     }
 
                     else if (param.Optional)
                     {
-                        values[ip++] = null;
+                        values[pindex++] = null;
                     }
                     else
                     {
@@ -89,9 +89,9 @@ namespace ConsoleRouting
                 }
                 else if (param.Type.IsEnum)
                 {
-                    if (arguments.TryGetEnum(ia, param, out object value))
+                    if (arguments.TryGetEnum(argindex, param, out object value))
                     {
-                        values[ip++] = value;
+                        values[pindex++] = value;
                         used++;
                     }
                     else
@@ -103,9 +103,9 @@ namespace ConsoleRouting
 
                 else if (param.Type == typeof(int))
                 {
-                    if (arguments.TryGetInt(ia, out int value))
+                    if (arguments.TryGetInt(argindex, out int value))
                     {
-                        values[ip++] = value;
+                        values[pindex++] = value;
                         used++;
                     }
                 }
@@ -114,12 +114,12 @@ namespace ConsoleRouting
                 {
                     if (arguments.TryGetAssignment(param.Name, out Assignment assignment))
                     {
-                        values[ip++] = assignment;
+                        values[pindex++] = assignment;
                         used++;
                     }
                     else
                     {
-                        values[ip++] = Assignment.NotProvided();
+                        values[pindex++] = Assignment.NotProvided();
                     }
                 }
                
@@ -131,14 +131,14 @@ namespace ConsoleRouting
                     {
                         if (innertype == typeof(string))
                         {
-                            values[ip++] = new Flag<string>(param.Name, value);
+                            values[pindex++] = new Flag<string>(param.Name, value);
                             used += 2;
                         }
                         else if (innertype == typeof(int))
                         {
                             if (int.TryParse(value, out int n))
                             {
-                                values[ip++] = new Flag<int>(param.Name, n);
+                                values[pindex++] = new Flag<int>(param.Name, n);
                                 used += 2;
                             }
                         }
@@ -148,7 +148,7 @@ namespace ConsoleRouting
                             if (TryParseEnum(innertype, value, out object enumvalue))
                             {
                                 var flagt = Flags.CreateInstance(innertype, param.Name, enumvalue);
-                                values[ip++] = flagt;
+                                values[pindex++] = flagt;
                                 used += 2;
                             }
                             else
@@ -160,7 +160,7 @@ namespace ConsoleRouting
                     }
                     else
                     {
-                        values[ip++] = Flags.CreateNotSetInstance(innertype, param.Name);
+                        values[pindex++] = Flags.CreateNotSetInstance(innertype, param.Name);
                     }
 
                 }
@@ -169,12 +169,12 @@ namespace ConsoleRouting
                 {
                     if (arguments.TryGet(param, out Flag flag))
                     {
-                        values[ip++] = flag;
+                        values[pindex++] = flag;
                         used++;
                     }
                     else
                     {
-                        values[ip++] = new Flag(param.Name, set: false);
+                        values[pindex++] = new Flag(param.Name, set: false);
                     }
                 }
 
@@ -182,18 +182,18 @@ namespace ConsoleRouting
                 {
                     if (arguments.TryGet(param, out Flag flag))
                     {
-                        values[ip++] = true;
+                        values[pindex++] = true;
                         used++;
                     }
                     else
                     {
-                        values[ip++] = false;
+                        values[pindex++] = false;
                     }
                 }
 
                 else if (param.Type == typeof(Arguments))
                 {
-                    values[ip++] = arguments;
+                    values[pindex++] = arguments;
                     return true;
                 }
                 else
