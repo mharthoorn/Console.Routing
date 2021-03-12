@@ -34,7 +34,7 @@ namespace ConsoleRouting.Tests
         public void FlagValue()
         {
             var arguments = Arguments.Parse("-a -b --test abc");
-            var parameter = Parameters.Create<Flag>("test");
+            var parameter = Parameter.Create<Flag>("test");
 
             arguments.TryGet(parameter, out Flag flag);
             Assert.AreEqual("test", flag.Name);

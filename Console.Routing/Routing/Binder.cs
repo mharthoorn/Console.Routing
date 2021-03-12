@@ -56,7 +56,19 @@ namespace ConsoleRouting
             }
         }
 
-        public static bool TryBindParameters(Route route, Arguments arguments, out object[] values)
+        private static List<IBinder> DEFAULTBINDERS = new()
+        {
+            new StringBinder(),
+            new EnumBinder(),
+            new IntBinder(),
+            new AssignmentBinder(),
+            new FlagValueBinder(),
+            new FlagBinder(),
+            new BoolBinder(),
+        };
+        
+
+        public static bool TryBindParameters_old(Route route, Arguments arguments, out object[] values)
         {
             var parameters = route.Method.GetRoutingParameters().ToArray();
             var offset = route.Nodes.Count(); // amount of parameters to skip, because they are commands.
@@ -145,7 +157,7 @@ namespace ConsoleRouting
                         else if (innertype.IsEnum)
                         {
                             
-                            if (TryParseEnum(innertype, value, out object enumvalue))
+                            if (StringHelpers.TryParseEnum(innertype, value, out object enumvalue))
                             {
                                 var flagt = Flags.CreateInstance(innertype, param.Name, enumvalue);
                                 values[pindex++] = flagt;
@@ -206,22 +218,69 @@ namespace ConsoleRouting
 
         }
 
-        public static bool TryParseEnum(Type type, string value, out object result)
+        /// <summary>
+        /// Note that parameters here refer to the parameters of a C# method, and that arguments refer to the values
+        /// that may go into those paremeters
+        /// </summary>
+        public static bool TryBindParameters(Route route, Arguments arguments, out object[] values)
         {
-            try
-            {
-                result = Enum.Parse(type, value, ignoreCase: true);
-                return true;
+            Parameters parameters = route.Method.GetRoutingParameters();
+            var offset = route.Nodes.Count(); // amount of parameters to skip, because they are commands.
+            var argcount = arguments.Count - offset;
+            var count = parameters.Count;
 
-            }
-            catch
-            {
-                result = null;
-                return false;
-            }
+            values = new object[count];
+            int pindex = 0; // index of parameters
+            int used = 0; // arguments used;
+
+            List<IBinder> binders = DEFAULTBINDERS;
             
+            foreach (var param in parameters)
+            {
+                int argindex = offset + pindex; // index of arguments
+
+                foreach(var binder in binders)
+                {
+                    if (binder.Match(param))
+                    {
+                        int uses = binder.TryUse(arguments, param, argindex, out var value);
+                        if (uses > 0)
+                        {
+                            values[pindex++] = value;
+                            used += uses;
+                            break;
+                        }
+                        else if (param.Optional)
+                        {
+                            values[pindex++] = default;
+                            break;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+
+                //else if (param.Type == typeof(Arguments))
+                //{
+                //    values[pindex++] = arguments;
+                //    return true;
+                //}
+                //else
+                //{
+                //    // this method has a signature with an unknown type.
+                //    return false;
+                //}
+            }
+            return (argcount == used);
+
         }
+
     }
+
+
 }
 
 

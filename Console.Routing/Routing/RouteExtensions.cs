@@ -45,10 +45,10 @@ namespace ConsoleRouting
             return parameters;
         }
 
-        public static IEnumerable<Parameter> GetRoutingParameters(this MethodInfo method)
+        public static Parameters GetRoutingParameters(this MethodInfo method)
         {
             var parameters = method.GetParameters();
-            return GetRoutingParameters(parameters);
+            return new Parameters(GetRoutingParameters(parameters));
         }
 
         public static string AsText(this Route route)
@@ -115,5 +115,7 @@ namespace ConsoleRouting
         }
 
     }
+
+   
 
 }

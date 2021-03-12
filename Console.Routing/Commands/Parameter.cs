@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ConsoleRouting
 {
@@ -14,10 +16,7 @@ namespace ConsoleRouting
             string optional = Optional ? "(optional) " : "";
             return $"{optional}{Type.Name} {Name}";
         }
-    }
 
-    public static class Parameters
-    {
         public static Parameter Create<T>(string name, string alt = null, bool optional = false)
         {
             return new Parameter
@@ -28,6 +27,18 @@ namespace ConsoleRouting
                 Optional = optional
             };
         }
+    }
+
+    [DebuggerDisplay("{Text}")]
+    public class Parameters : List<Parameter>
+    {
+        public Parameters(IEnumerable<Parameter> parameters)
+        {
+            this.AddRange(parameters);
+        }
+
+        public  string Text => $"({string.Join(", ", this)})";
+
     }
 
 

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ConsoleRouting
 {
-
+    [DebuggerDisplay("{Text}")]
     public class Arguments : List<IArgument>
     { 
         
@@ -102,18 +103,8 @@ namespace ConsoleRouting
             return new Arguments(args);
         }
 
-        public override string ToString()
-        {
-            return string.Join(" ", this);
-        }
+        public string Text => string.Join(" ", this);
     }
 
-    /// <summary>
-    /// This static class deals with parsing command line stuff to IArgument implementations. There are only three:
-    /// 
-    /// </summary>
-    public static class Argument
-    {
-    }
-
+  
 }

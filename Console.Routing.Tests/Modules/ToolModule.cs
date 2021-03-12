@@ -40,11 +40,6 @@
             System.Console.WriteLine("Saving");
         }
 
-        [Command]
-        public void Bump(Component component)
-        {
-            System.Console.WriteLine(component.ToString());
-        }
 
     }
     
