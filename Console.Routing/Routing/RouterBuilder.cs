@@ -64,7 +64,15 @@ namespace ConsoleRouting
         /// </summary>
         public RouterBuilder AddDefaultBinders()
         {
-            this.binders.AddRange(DEFAULTBINDERS);
+            binders.Add(new StringBinder());
+            binders.Add(new EnumBinder());
+            binders.Add(new IntBinder());
+            binders.Add(new AssignmentBinder());
+            binders.Add(new FlagValueBinder());
+            binders.Add(new FlagBinder());
+            binders.Add(new BoolBinder());
+            binders.Add(new ArgumentsBinder());
+
             return this;
         }
 
@@ -108,22 +116,10 @@ namespace ConsoleRouting
             return new Router(routes, binder, parser, writer, globals, exceptionHandler);
         }
 
-        private static List<IBinder> DEFAULTBINDERS = new()
-        {
-            new StringBinder(),
-            new EnumBinder(),
-            new IntBinder(),
-            new AssignmentBinder(),
-            new FlagValueBinder(),
-            new FlagBinder(),
-            new BoolBinder(),
-            new ArgumentsBinder()
-        };
-
         private Binder CreateBinder()
         {
-            if (binders.Count > 0) return new Binder(binders);
-            else return new Binder(DEFAULTBINDERS);
+            if (binders.Count == 0) AddDefaultBinders();
+            return new Binder(binders);
         }      
 
         private void DiscoverModules(Assembly assembly)
