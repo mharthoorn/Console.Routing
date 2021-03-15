@@ -24,11 +24,7 @@ namespace ConsoleRouting
 
         public RouterBuilder AddModule<T>()
         {
-            if (typeof(T).GetCustomAttribute<Module>() is null)
-                throw new Exception($"The type {typeof(T).Name} is not a Routing module. It is missing a [Module] attribute.");
-
             modules.Add(typeof(T));
-
             return this;
         }
 
@@ -131,10 +127,7 @@ namespace ConsoleRouting
         private void DiscoverModule(Type type, in List<Node> trail)
         {
             var module = type.GetCustomAttribute<Module>();
-            if (module is null)
-                throw new Exception($"The type {type.Name} is not a Routing module. It is missing a [Module] attribute.");
-
-
+          
             var node = type.TryCreateRoutingNode();
             var clone = trail.CloneAndAppend(node);
 
