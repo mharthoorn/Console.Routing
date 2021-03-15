@@ -7,24 +7,28 @@ namespace ConsoleRouting
 {
     public class RouterBuilder
     {
-        internal bool DebugMode { get; set; }
-        internal bool Documentation { get; set;
-        }
+        internal bool Documentation { get; set; } = false;
         private List<Assembly> assemblies = new();
+        private List<Type> modules = new();
         private List<Route> routes = new();
         private List<IBinder> binders = new();
         private List<Type> globals = new();
         Action<Router, Exception> exceptionHandler;
 
-        public RouterBuilder AddAssemblyOf<T>()
-        {
-            return Add(typeof(T).Assembly);
-        }
-
         public RouterBuilder Add(Assembly assembly)
         {
             assemblies.Add(assembly);
           
+            return this;
+        }
+
+        public RouterBuilder AddModule<T>()
+        {
+            if (typeof(T).GetCustomAttribute<Module>() is null)
+                throw new Exception($"The type {typeof(T).Name} is not a Routing module. It is missing a [Module] attribute.");
+
+            modules.Add(typeof(T));
+
             return this;
         }
 
@@ -52,12 +56,6 @@ namespace ConsoleRouting
             return this;
         }
 
-        public RouterBuilder AddBinders(IEnumerable<IBinder> binders)
-        {
-            this.binders.AddRange(binders);
-            return this;
-        }
-
         /// <summary>
         /// You can add the default binders yourself if you want to append more.
         /// If you don't configure any binders at all, the defaults will be used regardless.
@@ -73,25 +71,6 @@ namespace ConsoleRouting
             binders.Add(new BoolBinder());
             binders.Add(new ArgumentsBinder());
 
-            return this;
-        }
-
-        public void AttachDocumentation()
-        {
-            var docs =
-                new AssemblyDocumentationBuilder()
-                .Add(assemblies)
-                .Build();
-
-            foreach (var route in routes)
-            {
-                route.Documentation = docs.Get(route.Method);
-            }
-        }
-
-        public RouterBuilder Debug()
-        {
-            DebugMode = true;
             return this;
         }
 
@@ -116,6 +95,21 @@ namespace ConsoleRouting
             return new Router(routes, binder, parser, writer, globals, exceptionHandler);
         }
 
+
+
+        private void AttachDocumentation()
+        {
+            var docs =
+                new AssemblyDocumentationBuilder()
+                .Add(assemblies)
+                .Build();
+
+            foreach (var route in routes)
+            {
+                route.Documentation = docs.Get(route.Method);
+            }
+        }
+
         private Binder CreateBinder()
         {
             if (binders.Count == 0) AddDefaultBinders();
@@ -126,29 +120,32 @@ namespace ConsoleRouting
         {
             List<Node> trail = new List<Node>();
             var types = assembly.GetAttributeTypes<Module>().ToList();
-            DiscoverModules(null, types, trail);
+            DiscoverModules(types, trail);
         }
 
-        private void DiscoverModules(Module module, IEnumerable<Type> types, in List<Node> trail)
+        private void DiscoverModules(IEnumerable<Type> types, in List<Node> trail)
         {
-            foreach (var type in types) DiscoverModule(module, type, trail);
+            foreach (var type in types) DiscoverModule(type, trail);
         }
 
-        private void DiscoverModule(Module module, Type type, in List<Node> trail)
+        private void DiscoverModule(Type type, in List<Node> trail)
         {
-            if (module is null) module = type.GetCustomAttribute<Module>();
-            
+            var module = type.GetCustomAttribute<Module>();
+            if (module is null)
+                throw new Exception($"The type {type.Name} is not a Routing module. It is missing a [Module] attribute.");
+
+
             var node = type.TryCreateRoutingNode();
             var clone = trail.CloneAndAppend(node);
 
-            DiscoverNestedModules(module, type, clone);
+            DiscoverNestedModules(type, clone);
             DiscoverCommands(module, type, clone);
         }
 
-        private void DiscoverNestedModules(Module module, Type type, in List<Node> trail)
+        private void DiscoverNestedModules(Type type, in List<Node> trail)
         {
             var nestedTypes = type.GetNestedTypes().Where(t => t.HasAttribute<Command>());
-            DiscoverModules(module, nestedTypes, trail);
+            DiscoverModules(nestedTypes, trail);
         }
 
         private void DiscoverCommands(Module module, Type type, in List<Node> trail)
@@ -183,6 +180,27 @@ namespace ConsoleRouting
         }
 
         
+    }
+
+    public static class RouterBuilderExtensions
+    {
+        public static RouterBuilder AddDefaultHelp(this RouterBuilder builder)
+        {
+            builder.AddModule<HelpModule>();
+            return builder;
+        }
+
+        public static RouterBuilder AddAssemblyOf<T>(this RouterBuilder builder)
+        {
+            return builder.Add(typeof(T).Assembly);
+        }
+
+        public static RouterBuilder AddBinders(this RouterBuilder builder, IEnumerable<IBinder> binders)
+        {
+            foreach(var binder in binders) builder.AddBinder(binder);
+            return builder;
+        }
+
     }
 
 
