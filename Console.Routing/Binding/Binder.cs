@@ -86,10 +86,7 @@ namespace ConsoleRouting
         // from the command line that will set those paremeters.
         private bool TryBindParameters(Parameters parameters, Arguments arguments, out object[] values)
         {
-            var argcount = arguments.Count;
-            var count = parameters.Count;
-
-            values = new object[count];
+            values = new object[parameters.Count];
 
             int index = 0; // index of parameters
             int used = 0; // arguments used;
@@ -115,7 +112,7 @@ namespace ConsoleRouting
                 }
 
             }
-            return (argcount == used);
+            return (arguments.Count == used);
         }
 
     }

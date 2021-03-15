@@ -24,7 +24,7 @@ namespace ConsoleRouting.Tests
             Assert.IsTrue(args[0] is Assignment);
             
             var assignment = args[0] as Assignment;
-            Assert.AreEqual("a", assignment.Name);
+            Assert.AreEqual("a", assignment.Key);
             Assert.AreEqual("b", assignment.Value);
         }
 
@@ -59,13 +59,32 @@ namespace ConsoleRouting.Tests
             Assert.IsTrue(args[0] is Assignment);
             if (args[0] is Assignment a)
             { 
-                Assert.AreEqual("format", a.Name);
+                Assert.AreEqual("format", a.Key);
                 Assert.AreEqual("xml", a.Value);
             }
 
             Assert.IsTrue(args[1] is string);
             if (args[0] is string raw)
                 Assert.AreEqual("'name.where(given=''john'')'", raw);
+        }
+
+        [TestMethod]
+        public void AssignmentsAreOptional() 
+        { 
+            // even though the query might contain an equals sign, it should not be treated as an assignment
+
+            var arguments = router.Parse("orderfries");
+            var result = router.Bind(arguments);
+
+            var args = result.Bind.Parameters;
+            Assert.IsTrue(args[0] is Assignment);
+            if (args[0] is Assignment assignment)
+            {
+                Assert.AreEqual(false, assignment.Provided);
+                Assert.AreEqual(null, assignment.Key);
+                Assert.AreEqual(null, assignment.Value);
+
+            }
         }
 
     }

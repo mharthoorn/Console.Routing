@@ -31,7 +31,7 @@ namespace ConsoleRouting
             
             assignment = match 
                 ? new Assignment(parts[0], parts[1])
-                : Assignment.NotProvided();
+                : Assignment.NotProvided;
             
             return match;
         }

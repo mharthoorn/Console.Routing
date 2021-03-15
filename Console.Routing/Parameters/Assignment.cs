@@ -2,23 +2,20 @@
 {
     public class Assignment 
     {
-        public string Name{ get; private set; }
+        public string Key { get; private set; }
         public string Value { get; private set; }
         public bool Provided { get; private set; }
 
         public Assignment(string name, string value)
         {
-            this.Name = name;
+            this.Key = name;
             this.Value = value;
 
             Provided = true;
         }
         private Assignment() { } // to allow assignment construction
 
-        public static Assignment NotProvided()
-        {
-            return new Assignment { Name = null, Value = null, Provided = false };
-        }
+        public static Assignment NotProvided = new Assignment { Key = null, Value = null, Provided = false };
 
         public static implicit operator bool(Assignment assignment)
         {
@@ -38,7 +35,7 @@
 
         public bool Match(string name)
         {
-            return string.Compare(this.Name, name, ignoreCase: true) == 0;
+            return string.Compare(this.Key, name, ignoreCase: true) == 0;
         }
     }
 

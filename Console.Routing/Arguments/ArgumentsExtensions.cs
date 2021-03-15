@@ -52,7 +52,7 @@ namespace ConsoleRouting
             {
                 if (m.TryGetAssignment(name, out assignment)) return true;
             }
-            assignment = Assignment.NotProvided();
+            assignment = Assignment.NotProvided;
             return false;
         }
 

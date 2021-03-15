@@ -22,6 +22,12 @@
             // raw allows parsing of any symbol.
             // even though the query might contain an equals sign, it should not be treated as an assignment
         }
+
+        [Command]
+        public void OrderFries(Assignment size)
+        {
+             
+        }
     }
     
 }

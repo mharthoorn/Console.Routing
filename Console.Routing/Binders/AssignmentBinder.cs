@@ -4,7 +4,7 @@ namespace ConsoleRouting
 {
     public class AssignmentBinder : IBinder
     {
-        public bool Optional => false;
+        public bool Optional => true;
 
         public bool Match(Type type) => type == typeof(Assignment);
 
@@ -18,8 +18,8 @@ namespace ConsoleRouting
             }
             else
             {
-                value = Assignment.NotProvided();
-                return 1;
+                value = Assignment.NotProvided;
+                return 0;
             }
             
         }
