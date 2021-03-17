@@ -12,7 +12,6 @@ namespace ConsoleRouting
         public Help(string description = null)
         {
             this.Description = description;
-            
         }
 
         

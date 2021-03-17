@@ -82,7 +82,8 @@ namespace ConsoleRouting
 
         public void WriteRoutes(IEnumerable<Route> routes)
         {
-            foreach (var group in routes.Where(r => r.Hidden == false).GroupBy(r => r.Module))
+            var groups = routes.Where(r => r.Hidden == false).GroupBy(r => r.Module);
+            foreach (var group in groups)
             {
                 if (group.Count() == 0) continue;
 
