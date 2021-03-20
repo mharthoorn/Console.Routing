@@ -10,12 +10,31 @@ namespace ConsoleRouting.Tests
             .Build();
 
         [TestMethod]
-        public void Optionality()
+        public void OptionalBecauseAttribute()
         {
-            var args = router.Parse("tryme");
+            var args = router.Parse("optionaltryme");
             var result = router.Bind(args);
             
-            Assert.AreEqual("TryMe", result.Bind.Route.Method.Name);
+            Assert.AreEqual("OptionalTryMe", result.Bind.Route.Method.Name);
+        }
+
+        [TestMethod]
+        public void OptionalBecauseNullable()
+        {
+
+            var args = router.Parse("nullabletryme");
+            var result = router.Bind(args);
+            
+            Assert.AreEqual("NullableTryMe", result.Bind.Route.Method.Name);
+        }
+
+        [TestMethod]
+        public void OptionalBecauseDefault()
+        {
+            var args = router.Parse("defaulttryme");
+            var result = router.Bind(args);
+
+            Assert.AreEqual("DefaultTryMe", result.Bind.Route.Method.Name);
         }
 
     }

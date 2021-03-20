@@ -31,13 +31,14 @@ namespace ConsoleRouting
         
         public override string ToString()
         {
+            string tally = $"Binds: {BindCount}, Candidates: {Candidates?.Count ?? 0})";
             if (Ok)
             {
-                return "Ok";
+                return $"Ok. {tally}";
             }
             else
             {
-                return $"Failed: {BindCount}/{Candidates?.Count ?? 0}";
+                return $"Failed. {tally}";
             }
             
         }

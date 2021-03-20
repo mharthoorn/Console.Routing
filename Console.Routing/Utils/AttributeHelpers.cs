@@ -67,6 +67,6 @@ namespace ConsoleRouting
         {
             return type.GetCustomAttribute<T>() != null;
         }
-    }
 
+    }
 }

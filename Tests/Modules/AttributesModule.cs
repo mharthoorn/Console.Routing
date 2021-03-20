@@ -11,7 +11,19 @@ namespace ConsoleRouting.Tests
     {
      
         [Command]
-        public void TryMe([Optional]string name)
+        public void OptionalTryMe([Optional]string name)
+        {
+
+        }
+
+        [Command]
+        public void NullableTryMe(string? name)
+        {
+
+        }
+
+        [Command]
+        public void DefaultTryMe(string name = null)
         {
 
         }

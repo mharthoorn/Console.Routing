@@ -11,31 +11,32 @@ namespace ConsoleRouting
         {
             return routes.Where(r => !r.Default);
         }
-        //public static IEnumerable<OldRoute> FindGroup(this IEnumerable<OldRoute> routes, string group)
-        //{
-        //    string g = group.ToLower();
-        //    return routes.Where(r => string.Compare(r.Module.Title, g, ignoreCase: true) == 0);
-        //}
-
-        //public static IEnumerable<OldRoute> FindMethod(this IEnumerable<OldRoute> routes, string methodName)
-        //{
-        //    var method = methodName.ToLower();
-        //    return routes.Where(route => route.MatchName(method));
-        //}
-
+  
         public static IEnumerable<Parameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
-            foreach (var parameter in parameters)
+            foreach (var parameterInfo in parameters)
+                yield return parameterInfo.ToParameter();
+            
+        }
+         
+        public static Parameter ToParameter(this ParameterInfo info)
+        {
+            return new Parameter
             {
-                
-                yield return new Parameter
-                {
-                    Name = parameter.Name.ToLower(),
-                    Type = parameter.ParameterType,
-                    AltName = parameter.GetCustomAttribute<Alt>()?.Name,
-                    Optional = parameter.HasAttribute<Optional>(),
-                };
-            }
+                Name = info.Name.ToLower(),
+                Type = info.ParameterType,
+                AltName = info.GetCustomAttribute<Alt>()?.Name,
+                Optional = info.IsOptionalParameter(),
+            };
+        }
+
+        public static bool IsOptionalParameter(this ParameterInfo parameter)
+        {
+            bool hasAttr = parameter.HasAttribute<Optional>();
+            bool maybenull = parameter.IsNullable();
+            bool hasdefault = parameter.IsOptional;
+
+            return hasAttr ||  maybenull || hasdefault;
         }
 
         public static IEnumerable<Parameter> GetRoutingParameters(this Route route)
