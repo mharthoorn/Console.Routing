@@ -3,32 +3,20 @@ using System;
 
 namespace ConsoleAppTemplate
 {
-
-    // experimental: 
+    [Module]
     internal class GlobalCommands
     {
-        [Command, Global]
-        public bool Default(Arguments args)
+        [Command, Capture("--info", "-i", "info")]
+        public void HandleConfig(Arguments arguments)
         {
-            return false;
-        }
-
-        [Command, Global]
-        public void HandleConfig([Consume]bool verbose)
-        {
-            Config.Verbose = verbose;
+            Console.WriteLine("This is information about the arguments");
+            foreach(var arg in arguments)
+            {
+                Console.WriteLine($"- {arg}");
+            }
         }
     }
 
 
-    public class Consume : Attribute
-    {
-
-    }
-
-    internal static class Config
-    {
-        public static bool Verbose;
-    }
 
 }
