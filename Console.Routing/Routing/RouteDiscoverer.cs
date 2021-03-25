@@ -121,10 +121,11 @@ namespace ConsoleRouting
         {
             var isdefault = method.HasAttribute<Default>();
             var help = method.GetCustomAttribute<Help>();
-            var hidden = method.GetCustomAttribute<Hidden>();
+            var hidden = method.HasAttribute<Hidden>();
+            var capture = method.GetCustomAttribute<Capture>();
             var node = method.TryCreateRoutingNode();
             var clone = isdefault ? trail : trail.CloneAndAppend(node);
-            var route = new Route(module, clone, method, help, hidden, isdefault);
+            var route = new Route(module, clone, method, help, hidden, capture, isdefault);
             routes.Add(route);
         }
       

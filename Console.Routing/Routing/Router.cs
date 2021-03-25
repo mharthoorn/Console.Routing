@@ -61,11 +61,36 @@ namespace ConsoleRouting
         public RoutingResult Bind(Arguments arguments)
         {
             Binder.Bind(Globals, arguments);
+            
+            if (TryCaptureRoute(arguments, out Candidate candidate))
+            {
+                if (Binder.TryBind(candidate.Route, arguments, out Bind bind))
+                {
+                    return CreateResult(arguments, new List<Candidate> { candidate }, new List<Bind> { bind });
+                }
+                
+            }
+
+
             var candidates = GetCandidates(arguments).ToList();
-            var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default);
+            var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default, RouteMatch.Capture);
             var binds = Binder.Bind(routes, arguments).ToList();
 
             return CreateResult(arguments, candidates, binds);
+        }
+
+        public bool TryCaptureRoute(Arguments arguments, out Candidate candidate)
+        {
+            foreach(var route in Routes.Where(r => r.Capture is not null))
+            {
+                if (route.Capture.Match(arguments))
+                {
+                    candidate = new Candidate(RouteMatch.Capture, route);
+                    return true;
+                }
+            }
+            candidate = null;
+            return false;
         }
 
         private static RoutingResult CreateResult(Arguments arguments, List<Candidate> candidates, List<Bind> bindings)
@@ -75,7 +100,6 @@ namespace ConsoleRouting
             var status = RouteMatcher.MapRoutingStatus(binds, partial, full);
 
             return new RoutingResult(arguments, status, bindings, candidates);
-
         }
 
         public IEnumerable<Candidate> GetCandidates(Arguments arguments)

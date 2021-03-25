@@ -69,5 +69,4 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual(2, args.Count);
         }
     }
-
 }

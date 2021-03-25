@@ -10,6 +10,7 @@ namespace ConsoleRouting
         Not,
         Partial,
         Full, 
+        Capture,
     }
 
     public class Candidate
