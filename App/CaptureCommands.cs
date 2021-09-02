@@ -1,11 +1,13 @@
 ﻿using ConsoleRouting;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleAppTemplate
 {
     [Module]
     internal class CaptureCommands
     {
-        private Router router;
+        private readonly Router router;
 
         public CaptureCommands(Router router)
         {
@@ -18,7 +20,7 @@ namespace ConsoleAppTemplate
             
             if (args is null || args.Count == 0)
             {
-                router.Writer.WriteRoutes(router);
+                router.Writer.WriteRoutes(router.Routes);
             }
             else
             {

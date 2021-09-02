@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ConsoleRouting
 {
@@ -53,10 +54,13 @@ namespace ConsoleRouting
         {
             try
             {
-                services.Invoke(result.Bind);
+                var method = result.Bind.Route.Method;
+                var instance = services.CreateInstance(method.DeclaringType, this);
+                method.Invoke(instance, result.Bind.Parameters);
             }
             catch (Exception e)
             {
+                if (e is TargetInvocationException) e = e.InnerException;
                 if (HandleException is object) HandleException(this, e); else throw e;
             }
         }
@@ -82,6 +86,7 @@ namespace ConsoleRouting
 
             return CreateResult(arguments, candidates, binds);
         }
+
 
         public bool TryGetCaptureCandidate(Arguments arguments, out Candidate candidate)
         {

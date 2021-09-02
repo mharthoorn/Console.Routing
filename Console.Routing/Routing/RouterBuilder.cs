@@ -86,6 +86,8 @@ namespace ConsoleRouting
 
             services.AddSingleton(writer);
             services.AddSingleton(routes);
+            services.AddSingleton(binder);
+
             var provider = services.BuildServiceProvider();
 
             return new Router(routes, binder, parser, writer, provider, globals, exceptionHandler);

@@ -19,21 +19,22 @@ namespace ConsoleRouting
         //        Run(router, result.Bind);
         //    }
         //}
+        
 
-        public static void Invoke(this IServiceProvider services, Bind bind)
-        {
-            try
-            {
-                var method = bind.Route.Method;
-                var instance = services.CreateInstance(method.DeclaringType);
-                method.Invoke(instance, bind.Parameters);
-            }
-            catch (Exception e)
-            {
-                if (e is TargetInvocationException) throw e.InnerException;
-                else throw e;
-            }
-        }
+        //public static void Invoke(this IServiceProvider services, Bind bind)
+        //{
+        //    try
+        //    {
+        //        var method = bind.Route.Method;
+        //        var instance = services.CreateInstance(method.DeclaringType);
+        //        method.Invoke(instance, bind.Parameters);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        if (e is TargetInvocationException) throw e.InnerException;
+        //        else throw e;
+        //    }
+        //}
 
         //private static void Invoke(IServiceProvider services, MethodInfo method, object[] arguments)
         //{
@@ -61,7 +62,7 @@ namespace ConsoleRouting
 
         //}
 
-        public static object CreateInstance(this IServiceProvider services, Type type)
+        public static object CreateInstance(this IServiceProvider services, Type type, Router router)
         {
             var constructor = type.GetConstructors().FirstOrDefault();
             if (constructor is null)
@@ -72,13 +73,20 @@ namespace ConsoleRouting
             {
                 var parameters = constructor.GetParameters();
                 var args = new object[parameters.Length];
-                for(int i = 0; i <= parameters.Length-1; i++)
+                for (int i = 0; i <= parameters.Length - 1; i++)
                 {
-                    var service = services.GetService(parameters[i].ParameterType);
-                    if (service is null) 
-                        throw new ArgumentException($"Class {type.Name} could not be constructed. The parameter '{parameters[i].Name}' could not be injected");
+                    if (parameters[i].ParameterType == typeof(Router))
+                    {
+                        args[i] = router;
+                    }
+                    else 
+                    {
+                        var service = services.GetService(parameters[i].ParameterType);
+                        if (service is null)
+                            throw new ArgumentException($"Class {type.Name} could not be constructed. The parameter '{parameters[i].Name}' could not be injected");
 
-                    args[i] = service;
+                        args[i] = service;
+                    }
                 }
                 var instance = Activator.CreateInstance(type, args);
                 return instance;
