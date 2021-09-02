@@ -14,12 +14,14 @@ namespace ConsoleRouting
         private List<Type> Globals;
         public bool DebugMode { get; set; }
         public Action<Router, Exception> HandleException;
+        public IServiceProvider services;
 
         public Router(
             List<Route> routes,
             Binder binder,
             ArgumentParser parser,
             RoutingWriter writer,
+            IServiceProvider services,
             IEnumerable<Type> globals = null,
             Action<Router, Exception> exceptionhandler = null)
         {
@@ -28,6 +30,7 @@ namespace ConsoleRouting
             this.Binder = binder;
             this.Parser = parser;
             this.Writer = writer;
+            this.services = services;
             HandleException = exceptionhandler ?? DefaultExceptionHandler.Handle;
         }
 
@@ -41,20 +44,20 @@ namespace ConsoleRouting
         {
             RoutingResult result = Bind(arguments);
 
-            if (result.Ok) Run(result);
+            if (result.Ok) Invoke(result);
             else Writer.WriteResult(result);
             return result;
         }
 
-        public void Run(RoutingResult result)
+        public void Invoke(RoutingResult result)
         {
             try
             {
-                Invoker.Run(this, result.Bind);
+                services.Invoke(result.Bind);
             }
             catch (Exception e)
             {
-                if (HandleException is object) HandleException(this, e); else throw;
+                if (HandleException is object) HandleException(this, e); else throw e;
             }
         }
 

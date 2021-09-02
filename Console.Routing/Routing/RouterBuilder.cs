@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,10 +13,17 @@ namespace ConsoleRouting
         private RouteDiscoverer discovery = new();
         private List<IBinder> binders = new();
         Action<Router, Exception> exceptionHandler;
+        IServiceCollection services = new ServiceCollection();
 
         public RouterBuilder Add(Assembly assembly)
         {
             discovery.AddModules(assembly);
+            return this;
+        }
+
+        public RouterBuilder AddService<T>() where T : class
+        {
+            services.AddSingleton<T>();
             return this;
         }
 
@@ -76,11 +84,12 @@ namespace ConsoleRouting
             var parser = new ArgumentParser();
             var writer = new RoutingWriter();
 
-            return new Router(routes, binder, parser, writer, globals, exceptionHandler);
+            services.AddSingleton(writer);
+            services.AddSingleton(routes);
+            var provider = services.BuildServiceProvider();
+
+            return new Router(routes, binder, parser, writer, provider, globals, exceptionHandler);
         }
-
-
-
       
 
         private Binder CreateBinder()

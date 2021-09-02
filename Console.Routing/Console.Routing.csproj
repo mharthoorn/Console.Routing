@@ -1,10 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		
-	</PropertyGroup>
-	
-	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
@@ -25,4 +21,8 @@
 			Added C# inline XML documentation for commands and parameters
 		</PackageReleaseNotes>
 	</PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="microsoft.extensions.hosting" Version="5.0.0" />
+    </ItemGroup>
 </Project>

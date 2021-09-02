@@ -1,5 +1,4 @@
 ﻿using ConsoleRouting;
-using System;
 
 namespace ConsoleAppTemplate
 {

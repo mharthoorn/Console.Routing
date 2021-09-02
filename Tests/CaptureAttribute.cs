@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ConsoleRouting.Tests
+﻿namespace ConsoleRouting.Tests
 {
 
 }
