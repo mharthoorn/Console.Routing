@@ -427,3 +427,28 @@ the options:
     router.Handle(args);
 
 ```
+
+# Adding services through dependency injection
+You can add services available for dependency injection through the RouterBuilder.
+To add a service, use the `.AddService()` method.
+```csharp
+    var router = new RouteBuilder()
+        .AddAssemblyOf<Program>()
+        .AddService<SomeService>()
+        .Buid();
+```
+
+# Capturing 
+If you want a certain parameter to capture the route, you can add a `Capture`.
+If the capture parameter is found anywhere in the argument list, the execution will go 
+to that command, without further resolving other routes.
+
+To have a capture, add a `Capture` attribute to a command method like this:
+
+```csharp
+    [Command, Capture("--help", "-h")]
+    public void Help(Args args)
+    {
+        Console.WriteLine($"Help for these arguments: {args}");
+    }
+```
