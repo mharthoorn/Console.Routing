@@ -62,13 +62,14 @@ namespace ConsoleRouting
         {
             Binder.Bind(Globals, arguments);
             
-            if (TryCaptureRoute(arguments, out Candidate candidate))
+            if (TryGetCaptureCandidate(arguments, out Candidate candidate))
             {
+                arguments = arguments.WithoutCapture(candidate.Route.Capture);
+
                 if (Binder.TryBind(candidate.Route, arguments, out Bind bind))
                 {
                     return CreateResult(arguments, new List<Candidate> { candidate }, new List<Bind> { bind });
                 }
-                
             }
 
 
@@ -79,7 +80,7 @@ namespace ConsoleRouting
             return CreateResult(arguments, candidates, binds);
         }
 
-        public bool TryCaptureRoute(Arguments arguments, out Candidate candidate)
+        public bool TryGetCaptureCandidate(Arguments arguments, out Candidate candidate)
         {
             foreach(var route in Routes.Where(r => r.Capture is not null))
             {

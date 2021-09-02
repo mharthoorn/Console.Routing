@@ -78,7 +78,7 @@ namespace ConsoleRouting
         public bool TryBindParameters(Route route, Arguments arguments, out object[] values)
         {
             Parameters parameters = route.Method.GetRoutingParameters();
-            arguments = arguments.RemoveCommands(route);
+            arguments = arguments.WithCommands(route);
             return TryBindParameters(parameters, arguments, out values);
         }
 
@@ -88,6 +88,7 @@ namespace ConsoleRouting
         {
             values = new object[parameters.Count];
 
+            int offset = arguments.Commands;
             int index = 0; // index of parameters
             int used = 0; // arguments used;
 
@@ -96,7 +97,7 @@ namespace ConsoleRouting
                 var binder = binders.FindMatch(param.Type);
                 if (binder is null) return false;
 
-                int uses = binder.TryUse(arguments, param, index, out var value);
+                int uses = binder.TryUse(arguments, param, offset + index, out var value);
                 if (uses > 0)
                 {
                     values[index++] = value;
@@ -112,7 +113,7 @@ namespace ConsoleRouting
                 }
 
             }
-            return (arguments.Count == used);
+            return (arguments.Count - offset == used);
         }
 
     }

@@ -6,10 +6,20 @@ namespace ConsoleRouting
 
     public static class ArgumentsExtensions
     {
-        public static Arguments RemoveCommands(this Arguments arguments, Route route)
+        public static Arguments WithCommands(this Arguments arguments, Route route)
         {
             var offset = route.Nodes.Count();
-            return new Arguments(arguments.Skip(offset));
+            return new Arguments(arguments) { Commands = offset };
+        }
+
+        public static Arguments WithoutCapture(this Arguments arguments, Capture capture)
+        {
+            return new Arguments(arguments.Where(a => !capture.Match(a)));
+        }
+         
+        public static Arguments WithoutCommands(this Arguments arguments)
+        {
+            return new Arguments(arguments.Skip(arguments.Commands));
         }
 
         public static bool TryGetText(this Arguments args, int index, out Text literal)

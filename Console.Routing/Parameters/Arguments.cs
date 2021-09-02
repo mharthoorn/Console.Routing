@@ -7,9 +7,22 @@ namespace ConsoleRouting
 {
     [DebuggerDisplay("{Text}")]
     public class Arguments : List<IArgument>
-    { 
+    {
+        //List<IArgument> arguments = new();
+        //public IArgument this[int index] => arguments[index];
+        //public int Count => arguments.Count;
+
+        public int Commands;
+
         public Arguments(IEnumerable<IArgument> arguments)
         {
+            
+            this.AddRange(arguments);
+        }
+
+        public Arguments(int commands, IEnumerable<IArgument> arguments)
+        {
+            this.Commands = commands;
             this.AddRange(arguments);
         }
 
@@ -29,7 +42,7 @@ namespace ConsoleRouting
          
         public bool TryGetCommand(int index, out string result) 
         {
-            if (index < Count)
+            if (index < this.Count)
             {
                 result = this[index].Original;
                 return true;
