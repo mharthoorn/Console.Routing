@@ -11,19 +11,17 @@ namespace ConsoleRouting
         //public IArgument this[int index] => arguments[index];
         //public int Count => arguments.Count;
 
-        public int Commands;
-
         public Arguments(IEnumerable<IArgument> arguments)
         {
             
             this.AddRange(arguments);
         }
 
-        public Arguments(int commands, IEnumerable<IArgument> arguments)
-        {
-            this.Commands = commands;
-            this.AddRange(arguments);
-        }
+//        public Arguments(IEnumerable<IArgument> arguments)
+//        {
+////            this.Commands = commands;
+//            this.AddRange(arguments);
+//        }
 
         public IList<T> Match<T>(string name) where T: IArgument
         {

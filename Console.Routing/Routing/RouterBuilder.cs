@@ -15,15 +15,37 @@ namespace ConsoleRouting
         Action<Router, Exception> exceptionHandler;
         IServiceCollection services = new ServiceCollection();
 
+        public RouterBuilder AddAssembly(Assembly assembly)
+        {
+            discovery.AddModules(assembly);
+            return this;
+        }
+
+        [Obsolete("Use AddAssembly instead")]
         public RouterBuilder Add(Assembly assembly)
         {
             discovery.AddModules(assembly);
             return this;
         }
 
-        public RouterBuilder AddService<T>() where T : class
+        public RouterBuilder AddService<TService>() 
+            where TService : class
         {
-            services.AddSingleton<T>();
+            services.AddSingleton<TService>();
+            return this;
+        }
+
+        public RouterBuilder AddService<TService, TImplementation>(TImplementation instance) 
+            where TService : class 
+            where TImplementation : class, TService
+        {
+            services.AddSingleton<TService>(instance);
+            return this;
+        }
+
+        public RouterBuilder AddService<TService>(Func<IServiceProvider, TService> implementationFactory) where TService : class
+        {
+            services.AddScoped<TService>(implementationFactory);
             return this;
         }
 

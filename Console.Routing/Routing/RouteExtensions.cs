@@ -12,14 +12,14 @@ namespace ConsoleRouting
             return routes.Where(r => !r.Default);
         }
   
-        public static IEnumerable<Parameter> GetRoutingParameters(this IEnumerable<ParameterInfo> parameters)
+        public static IEnumerable<Parameter> AsRoutingParameters(this IEnumerable<ParameterInfo> parameters)
         {
             foreach (var parameterInfo in parameters)
-                yield return parameterInfo.ToParameter();
+                yield return parameterInfo.AsRoutingParameter();
             
         }
          
-        public static Parameter ToParameter(this ParameterInfo info)
+        public static Parameter AsRoutingParameter(this ParameterInfo info)
         {
             return new Parameter
             {
@@ -42,14 +42,14 @@ namespace ConsoleRouting
         public static IEnumerable<Parameter> GetRoutingParameters(this Route route)
         {
             var paraminfo = route.Method.GetParameters();
-            var parameters = GetRoutingParameters(paraminfo);
+            var parameters = AsRoutingParameters(paraminfo);
             return parameters;
         }
 
         public static Parameters GetRoutingParameters(this MethodInfo method)
         {
-            var parameters = method.GetParameters();
-            return new Parameters(GetRoutingParameters(parameters));
+            var parameters = method.GetParameters().AsRoutingParameters();
+            return new Parameters(parameters);
         }
 
         public static string AsText(this Route route)
@@ -61,7 +61,7 @@ namespace ConsoleRouting
         public static string ParametersAsText(this MethodInfo method)
         {
             var paraminfo = method.GetParameters();
-            var parameters = GetRoutingParameters(paraminfo);
+            var parameters = AsRoutingParameters(paraminfo);
             return string.Join(" ", parameters.Select(p => AsText(p)));
         }
 

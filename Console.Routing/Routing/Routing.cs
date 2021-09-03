@@ -20,7 +20,7 @@ namespace ConsoleRouting
             Assembly = Assembly.GetEntryAssembly();
 
             Router = new RouterBuilder()
-                .Add(Assembly)
+                .AddAssembly(Assembly)
                 .AddAssemblyOf<HelpModule>()
                 .AddXmlDocumentation()
                 .AddExceptionHandler(DefaultExceptionHandler.Handle)
@@ -52,7 +52,7 @@ namespace ConsoleRouting
             Assembly = Assembly.GetCallingAssembly();
 
             Router = new RouterBuilder()
-                .Add(Assembly)
+                .AddAssembly(Assembly)
                 .AddAssemblyOf<HelpModule>()
                 .AddXmlDocumentation()
                 .Build();

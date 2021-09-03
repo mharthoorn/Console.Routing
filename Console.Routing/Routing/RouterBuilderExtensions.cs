@@ -12,7 +12,7 @@ namespace ConsoleRouting
 
         public static RouterBuilder AddAssemblyOf<T>(this RouterBuilder builder)
         {
-            return builder.Add(typeof(T).Assembly);
+            return builder.AddAssembly(typeof(T).Assembly);
         }
 
         public static RouterBuilder AddBinders(this RouterBuilder builder, IEnumerable<IBinder> binders)

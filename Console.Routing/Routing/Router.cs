@@ -65,26 +65,34 @@ namespace ConsoleRouting
             }
         }
 
+        private Bind CreateCaptureBind(Arguments arguments, Candidate candidate)
+        {
+            var args = arguments.WithoutCapture(candidate.Route.Capture);
+            if (Binder.TryCreateBind(candidate.Route, args, out Bind bind))
+                return bind;
+            else 
+                throw new Exception("Capture was invoked, but could not be matched");
+        }
+
+
         public RoutingResult Bind(Arguments arguments)
         {
             Binder.Bind(Globals, arguments);
-            
+
             if (TryGetCaptureCandidate(arguments, out Candidate candidate))
             {
-                arguments = arguments.WithoutCapture(candidate.Route.Capture);
-
-                if (Binder.TryBind(candidate.Route, arguments, out Bind bind))
-                {
-                    return CreateResult(arguments, new List<Candidate> { candidate }, new List<Bind> { bind });
-                }
+                var bind = CreateCaptureBind(arguments, candidate);
+                return CreateResult(arguments, candidate, bind);
+                
             }
+            else
+            {
+                var candidates = GetCandidates(arguments).ToList();
+                var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default, RouteMatch.Capture);
+                var binds = Binder.Bind(routes, arguments).ToList();
 
-
-            var candidates = GetCandidates(arguments).ToList();
-            var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default, RouteMatch.Capture);
-            var binds = Binder.Bind(routes, arguments).ToList();
-
-            return CreateResult(arguments, candidates, binds);
+                return CreateResult(arguments, candidates, binds);
+            }
         }
 
 
@@ -100,6 +108,13 @@ namespace ConsoleRouting
             }
             candidate = null;
             return false;
+        }
+
+        private static RoutingResult CreateResult(Arguments arguments, Candidate candidate, Bind binding)
+        {
+            var candidates = new List<Candidate> { candidate };
+            var bindings = new List<Bind> { binding };
+            return CreateResult(arguments, candidates, bindings);
         }
 
         private static RoutingResult CreateResult(Arguments arguments, List<Candidate> candidates, List<Bind> bindings)

@@ -19,7 +19,8 @@ namespace ConsoleRouting
         {
             foreach (var route in routes)
             {
-                if (TryBind(route, arguments, out var bind))
+                var args = arguments.WithoutCommands(route);
+                if (TryCreateBind(route, args, out var bind))
                 {
                     yield return bind;
                 }
@@ -61,7 +62,7 @@ namespace ConsoleRouting
             foreach (var a in globals) arguments.Remove(a);
         }
 
-        public bool TryBind(Route route, Arguments arguments, out Bind bind)
+        public bool TryCreateBind(Route route, Arguments arguments, out Bind bind)
         {
             if (TryBindParameters(route, arguments, out var values))
             {
@@ -78,7 +79,6 @@ namespace ConsoleRouting
         public bool TryBindParameters(Route route, Arguments arguments, out object[] values)
         {
             Parameters parameters = route.Method.GetRoutingParameters();
-            arguments = arguments.WithCommands(route);
             return TryBindParameters(parameters, arguments, out values);
         }
 
@@ -88,7 +88,7 @@ namespace ConsoleRouting
         {
             values = new object[parameters.Count];
 
-            int offset = arguments.Commands;
+            //int offset = arguments.Commands;
             int index = 0; // index of parameters
             int used = 0; // arguments used;
 
@@ -97,7 +97,7 @@ namespace ConsoleRouting
                 var binder = binders.FindMatch(param.Type);
                 if (binder is null) return false;
 
-                int uses = binder.TryUse(arguments, param, offset + index, out var value);
+                int uses = binder.TryUse(arguments, param, index, out var value);
                 if (uses > 0)
                 {
                     values[index++] = value;
@@ -113,7 +113,7 @@ namespace ConsoleRouting
                 }
 
             }
-            return (arguments.Count - offset == used);
+            return (arguments.Count == used);
         }
 
     }

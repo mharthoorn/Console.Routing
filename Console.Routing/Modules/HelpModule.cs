@@ -20,7 +20,7 @@ namespace ConsoleRouting
         [Command("help"), Help("Provides this help list or detailed help about a command")]
         public void Help(Arguments args = null)
         {
-            if (args is null || args.WithoutCommands().Count == 0)
+            if (args is null || args.Count == 0)
             {
                 router.Writer.WriteRoutes(router);
             }
@@ -34,7 +34,6 @@ namespace ConsoleRouting
         [Command, Capture("?", "--help", "-?", "-h")]
         public void CaptureHelp(Arguments args = null)
         {
-            Console.WriteLine("Capture");
             if (args is null || args.Count == 0)
             {
                 router.Writer.WriteRoutes(router);

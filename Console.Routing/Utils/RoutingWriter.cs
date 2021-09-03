@@ -121,7 +121,7 @@ namespace ConsoleRouting
             var route = routes.FirstOrDefault();
             if (route is null)
             {
-                Console.WriteLine("No matching command was found");
+                Console.WriteLine("Cannot help. No matching command was found");
                 return;
             }
 

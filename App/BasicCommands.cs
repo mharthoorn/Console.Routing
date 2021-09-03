@@ -41,10 +41,10 @@ namespace ConsoleAppTemplate
         /// <param name="uppercase">Transforms the name to all caps</param>
         /// <param name="repeats">How many times the greeting should be repeated</param>
         [Command, Help("Says hello to the given name")]
-        public void Greet([Optional]string name, bool uppercase, Flag<int> repeats)
+        public void Greeting([Optional]string name, bool uppercase, Flag<int> repeats)
         {
             if (uppercase) name = name.ToUpper();
-            for(int i = 1; i < (repeats.HasValue ? repeats.Value : 1); i++)
+            for(int i = 0; i < (repeats.HasValue ? repeats.Value : 1); i++)
             {
                 Console.WriteLine($"Hello {name}!");
             }
