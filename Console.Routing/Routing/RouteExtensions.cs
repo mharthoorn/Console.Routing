@@ -86,7 +86,7 @@ namespace ConsoleRouting
             }
             else if (type == typeof(Arguments))
             {
-                rep = $"({name}...)";
+                rep = $"<{name}>...";
             }
             else if (type == typeof(string)) 
             {
