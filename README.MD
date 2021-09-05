@@ -12,14 +12,10 @@ If no route is found, a clear user friendly error is given.
 By adding one line of code to the ``Program.Main`` you enable route discovery and handling of arguments.
 
 ```csharp
- class Program
- {
-    static void Main(params string[] args)
-    {
-        Routing.Handle(args);
-    }  
- }
-```
+ using ConsoleRouting;
+ 
+ Routing.Handle(args);
+ ```
 
 The examples below describe commands for a fictitious tool named ``tool``.
 
@@ -413,12 +409,12 @@ By using the default `Routing.Handle(args)` all modules and commands in your sta
 be discovered as a route candidate. If you have commands in a different library (dll) or in multiple libraries,
 you can use the RouteBuilder class instead.
 
-The route builder allows you to add assemblies to the discovery list, either by providing the assembly 
+The router builder allows you to add assemblies to the discovery list, either by providing the assembly 
 or a type in the assembly. The example below has some duplicate functionality but it shows you
 the options:
 
 ```csharp
-    var router = new RouteBuilder()
+    var router = new RouterBuilder()
         .Add(Assembly.GetExecutingAssembly())
         .AddAssemblyOf<Program>()
         .Add(AppDomain.CurrentDomain.GetAssemblies())
@@ -432,7 +428,7 @@ the options:
 You can add services available for dependency injection through the RouterBuilder.
 To add a service, use the `.AddService()` method.
 ```csharp
-    var router = new RouteBuilder()
+    var router = new RouterBuilder()
         .AddAssemblyOf<Program>()
         .AddService<SomeService>()
         .Buid();
