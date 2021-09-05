@@ -67,5 +67,11 @@ namespace ConsoleAppTemplate
         {
             throw new Exception();
         }
+
+        [Command]
+        public void Hello()
+        {
+            Console.WriteLine("Hello world");
+        }
     }
 }

@@ -45,8 +45,15 @@ namespace ConsoleRouting
         {
             RoutingResult result = Bind(arguments);
 
-            if (result.Ok) Invoke(result);
-            else Writer.WriteResult(result);
+            if (result.Ok)
+            {
+                Invoke(result);
+            }
+            else
+            {
+                Writer.WriteResult(result);
+            }
+
             return result;
         }
 

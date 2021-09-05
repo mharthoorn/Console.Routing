@@ -7,12 +7,10 @@ namespace ConsoleRouting
 {
     public class RouteDiscoverer
     {
-        private List<Route> routes = new();
-
+        List<Route> routes = new();
         List<Node> start = new();
-
-        private HashSet<Assembly> assemblies = new();
-        private HashSet<Type> modules = new();
+        HashSet<Assembly> assemblies = new();
+        HashSet<Type> modules = new();
 
         public RouteDiscoverer AddModules(Assembly assembly)
         {
