@@ -3,7 +3,7 @@ Console.Routing is a framework that makes it easy to build command line tools. P
 With this library You can implement a command line tool with almost no overhead.
 
 Console.Routing works with a router that somewhat similar to ASP.NET. It routes commands and parameters from the command line 
-a specific C# method and fills in all method parameters with the matching command line arguments. 
+to a specific C# method and fills in all method parameters with the matching command line arguments. 
 If no route is found, a clear user friendly error is given. 
 
 # Documentation
