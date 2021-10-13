@@ -43,7 +43,6 @@ namespace ConsoleRouting
         /// You can add the default binders yourself if you want to append more.
         /// If you don't configure any binders at all, the defaults will be used regardless.
         /// </summary>
-     
 
         public Router Build()
         {

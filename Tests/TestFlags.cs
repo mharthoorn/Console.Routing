@@ -112,8 +112,7 @@ namespace ConsoleRouting.Tests
             var t = fs.GetType();
             var b = t.GetGenericTypeDefinition() == typeof(Flag<>);
             var arg = t.GetGenericArguments()[0]; 
-
-
+            
             Console.WriteLine(b);
         }
 
@@ -199,7 +198,34 @@ namespace ConsoleRouting.Tests
 
         }
 
-        
+        [TestMethod]
+        public void MixedFlags()
+        {
+            // We know this works.
+            var args = router.Parse("search alias Entity --pages 2");
+            var result = router.Bind(args);
+            Assert.AreEqual("Search", result.Bind.Route.Method.Name);
+            Assert.AreEqual("2", (result.Bind.Parameters[2] as Flag<string>).Value);
+            Assert.AreEqual(false, (result.Bind.Parameters[3] as Flag).Set);
+
+            // We know this works works too.
+            args = router.Parse("search alias Entity --split");
+            result = router.Bind(args);
+            Assert.AreEqual("Search", result.Bind.Route.Method.Name);
+            Assert.AreEqual(false, (result.Bind.Parameters[2] as Flag<string>).HasFlag);
+            Assert.AreEqual(false, (result.Bind.Parameters[2] as Flag<string>).HasValue);
+            Assert.AreEqual(true, (result.Bind.Parameters[3] as Flag).Set);
+
+            // But the combination did not work (was caused by mixing arg count with param index)
+            args = router.Parse("search alias Entity --pages 2 --split");
+            result = router.Bind(args);
+            Assert.AreEqual("Search", result.Bind.Route.Method.Name);
+            Assert.AreEqual(true, (result.Bind.Parameters[2] as Flag<string>).HasFlag);
+            Assert.AreEqual(true, (result.Bind.Parameters[2] as Flag<string>).HasValue);
+            Assert.AreEqual("2", (result.Bind.Parameters[2] as Flag<string>).Value);
+            Assert.AreEqual(true, (result.Bind.Parameters[3] as Flag).Set);
+
+        }
 
     }
 

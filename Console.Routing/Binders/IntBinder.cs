@@ -8,17 +8,16 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type == typeof(int);
 
-        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
+        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
         {
             if (arguments.TryGetInt(index, out int i))
             {
-                value = i;
-                return 1;
+                used++;
+                return i;
             }
             else
             {
-                value = default;
-                return 0;
+                return null;
             }
         }
     }

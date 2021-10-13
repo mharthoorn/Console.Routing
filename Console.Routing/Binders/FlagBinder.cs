@@ -8,17 +8,16 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type == typeof(Flag);
 
-        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
+        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
         {
             if (arguments.TryGet(param, out Flag flag))
             {
-                value = flag;
-                return 1;
+                used++;
+                return flag;
             }
             else
             {
-                value = new Flag(param.Name, set: false);
-                return 0;
+                return new Flag(param.Name, set: false);
             }
             
         }

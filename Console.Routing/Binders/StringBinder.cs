@@ -11,18 +11,16 @@ namespace ConsoleRouting
             return type == typeof(string);
         }
 
-        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
+        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
         {
-            int used = 0;
 
             if (arguments.TryGetText(index, out Text Text))
             {
-                value = Text.Value;
                 used++;
+                return Text.Value;
+                
             }
-            else value = null;
-
-            return used;
+            return null;
         }
     }
 

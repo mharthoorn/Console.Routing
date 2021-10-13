@@ -6,7 +6,7 @@ namespace ConsoleRouting
     {
         bool Optional { get; }
         bool Match(Type type);
-        int TryUse(Arguments arguments, Parameter param, int index, out object value);
+        object TryUse(Arguments arguments, Parameter param, int index, ref int used);
     }
 
 }

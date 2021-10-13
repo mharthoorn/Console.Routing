@@ -8,19 +8,18 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>);
     
-        public int TryUse(Arguments arguments, Parameter param, int index, out object value)
+        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
         {
             Type innertype = param.Type.GetGenericArguments()[0];
 
             if (arguments.TryGetOptionString(param, out string s))
             {
-                value = FlagActivator.CreateInstance(innertype, param.Name, s);
-                if (value is not null) return 2;
+                var value = FlagActivator.CreateInstance(innertype, param.Name, s);
+                if (value is not null) used += 2;
+                return value;
             } 
 
-            value = FlagActivator.CreateNotSetInstance(innertype, param.Name);
-            return 0;
-
+            return FlagActivator.CreateNotSetInstance(innertype, param.Name);
         }
 
        
