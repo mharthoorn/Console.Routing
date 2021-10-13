@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<PackageId>Console.Routing</PackageId>
 		<Title>Console Routing</Title>
-		<Version>3.1.0-beta7</Version>
+		<Version>3.1.0</Version>
 		<Authors>M.Harthoorn</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
