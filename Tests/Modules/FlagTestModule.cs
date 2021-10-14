@@ -22,5 +22,11 @@
         {
 
         }
+
+        [Command]
+        public void FlagRun(string command, Flag<string> speed)
+        {
+
+        }
     };
 }

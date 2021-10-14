@@ -39,7 +39,7 @@ namespace ConsoleRouting.Tests
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found);
             Assert.AreEqual("test", test.Name); // broken
-            Assert.AreEqual(true, test.Set); // broken
+            Assert.AreEqual(true, test.IsSet); // broken
 
             // you cannot abreviate long flags. .
             found = args.TryGet<Flag>("tes", out test);
@@ -84,7 +84,7 @@ namespace ConsoleRouting.Tests
             found = args.TryGet<Flag>("test", out var test);
             Assert.AreEqual(true, found);
             Assert.AreEqual("t", test.Name); 
-            Assert.AreEqual(true, test.Set); 
+            Assert.AreEqual(true, test.IsSet); 
 
             found = args.TryGet<Flag>("t", out test);
             Assert.AreEqual(true, found);
@@ -124,6 +124,38 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual("Parse", result.Bind.Route.Method.Name);
             Assert.AreEqual("xml", (result.Bind.Parameters[0] as Flag<string>).Value);
+
+        }
+        [TestMethod]
+        public void TestFlagWithoutValue()
+        {
+            var args = router.Parse("flagrun command --speed fast");
+            var result = router.Bind(args);
+
+            Assert.AreEqual("FlagRun", result.Bind.Route.Method.Name);
+            Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).HasFlag);
+            Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).HasValue);
+            Assert.AreEqual("fast", (result.Bind.Parameters[1] as Flag<string>).Value);
+
+            
+
+            args = router.Parse("flagrun command --speed");
+            result = router.Bind(args);
+            Assert.IsFalse(result.Ok);
+            //Assert.AreEqual("FlagRun", result.Bind.Route.Method.Name);
+            //Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).HasFlag);
+            //Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).HasValue);
+            //Assert.AreEqual(null, (result.Bind.Parameters[1] as Flag<string>).Value);
+
+            args = router.Parse("flagrun command");
+            result = router.Bind(args);
+
+            Assert.AreEqual("FlagRun", result.Bind.Route.Method.Name);
+            Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).HasFlag);
+            Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).HasValue);
+            Assert.AreEqual(null, (result.Bind.Parameters[1] as Flag<string>).Value);
+
+
         }
 
         [TestMethod]
@@ -142,15 +174,12 @@ namespace ConsoleRouting.Tests
             args = router.Parse("typedparse --format bson");
             result = router.Bind(args);
             Assert.IsFalse(result.Ok);
-
+            // but should have candidates.
 
             // Test incomplete flag: no value given
             args = router.Parse("typedparse --format");
             result = router.Bind(args);
             Assert.IsFalse(result.Ok);
-
-
-          
         }
 
         [TestMethod]
@@ -161,8 +190,7 @@ namespace ConsoleRouting.Tests
             var result = router.Bind(args);
 
             Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
-            Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).HasFlag);
-            Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).HasValue);
+            Assert.IsFalse((result.Bind.Parameters[0] as Flag<Format>).IsSet);
         }
 
 
@@ -181,10 +209,7 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual("IntParse", result.Bind.Route.Method.Name);
             Assert.AreEqual(0, (result.Bind.Parameters[0] as Flag<int>).Value);
-            Assert.AreEqual(false, (result.Bind.Parameters[0] as Flag<int>).HasFlag);
-            Assert.AreEqual(false, (result.Bind.Parameters[0] as Flag<int>).HasValue);
-
-
+            Assert.AreEqual(false, (result.Bind.Parameters[0] as Flag<int>).IsSet);
         }
 
         [TestMethod]
@@ -206,24 +231,22 @@ namespace ConsoleRouting.Tests
             var result = router.Bind(args);
             Assert.AreEqual("Search", result.Bind.Route.Method.Name);
             Assert.AreEqual("2", (result.Bind.Parameters[2] as Flag<string>).Value);
-            Assert.AreEqual(false, (result.Bind.Parameters[3] as Flag).Set);
+            Assert.AreEqual(false, (result.Bind.Parameters[3] as Flag).IsSet);
 
             // We know this works works too.
             args = router.Parse("search alias Entity --split");
             result = router.Bind(args);
             Assert.AreEqual("Search", result.Bind.Route.Method.Name);
-            Assert.AreEqual(false, (result.Bind.Parameters[2] as Flag<string>).HasFlag);
-            Assert.AreEqual(false, (result.Bind.Parameters[2] as Flag<string>).HasValue);
-            Assert.AreEqual(true, (result.Bind.Parameters[3] as Flag).Set);
+            Assert.AreEqual(false, (result.Bind.Parameters[2] as Flag<string>).IsSet);
+            Assert.AreEqual(true, (result.Bind.Parameters[3] as Flag).IsSet);
 
             // But the combination did not work (was caused by mixing arg count with param index)
             args = router.Parse("search alias Entity --pages 2 --split");
             result = router.Bind(args);
             Assert.AreEqual("Search", result.Bind.Route.Method.Name);
-            Assert.AreEqual(true, (result.Bind.Parameters[2] as Flag<string>).HasFlag);
-            Assert.AreEqual(true, (result.Bind.Parameters[2] as Flag<string>).HasValue);
+            Assert.AreEqual(true, (result.Bind.Parameters[2] as Flag<string>).IsSet);
             Assert.AreEqual("2", (result.Bind.Parameters[2] as Flag<string>).Value);
-            Assert.AreEqual(true, (result.Bind.Parameters[3] as Flag).Set);
+            Assert.AreEqual(true, (result.Bind.Parameters[3] as Flag).IsSet);
 
         }
 

@@ -12,14 +12,26 @@ namespace ConsoleRouting
         {
             Type innertype = param.Type.GetGenericArguments()[0];
 
-            if (arguments.TryGetOptionString(param, out string s))
+            if (arguments.TryGet(param, out Flag flag))
             {
-                var value = FlagActivator.CreateInstance(innertype, param.Name, s);
-                if (value is not null) used += 2;
-                return value;
-            } 
+                if (arguments.TryGetFollowing(flag, out Text text))
+                {
+                    var value = FlagActivator.CreateValueFlag(innertype, param.Name, text.Value);
+                    if (value is not null)
+                    {
+                        used += 2;
+                        return value;
+                    }
+                } 
 
-            return FlagActivator.CreateNotSetInstance(innertype, param.Name);
+                // we do not increment, because it's not a valid parameter.
+                // used++;
+                return FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+            }
+            else
+            {
+                return FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+            }
         }
 
        

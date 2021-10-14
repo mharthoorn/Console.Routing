@@ -49,7 +49,7 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual("William", bind.Parameters[0]);
             Assert.AreEqual("will", bind.Parameters[1]);
-            Assert.AreEqual(true, (bind.Parameters[2] as Flag).Set); // -foo
+            Assert.AreEqual(true, (bind.Parameters[2] as Flag).IsSet); // -foo
 
             Assert.AreEqual("fubar", (Flag<string>)bind.Parameters[3]); // -bar fubar
         }
