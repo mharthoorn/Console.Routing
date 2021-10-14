@@ -8,16 +8,18 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type.IsEnum;
 
-        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
+        public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {
             if (arguments.TryGetEnum(index, param, out var value))
             {
                 used++;
-                return value;
+                result = value;
+                return BindStatus.Success;
             }
             else
             {
-                return null;
+                result = null;
+                return BindStatus.Failed;
             }
         }
     }

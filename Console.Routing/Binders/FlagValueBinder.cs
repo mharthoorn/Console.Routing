@@ -8,7 +8,7 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>);
     
-        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
+        public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {
             Type innertype = param.Type.GetGenericArguments()[0];
 
@@ -20,17 +20,20 @@ namespace ConsoleRouting
                     if (value is not null)
                     {
                         used += 2;
-                        return value;
+                        result = value;
+                        return BindStatus.Success;
                     }
                 } 
 
                 // we do not increment, because it's not a valid parameter.
                 // used++;
-                return FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+                result = FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+                return BindStatus.Failed;
             }
             else
             {
-                return FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+                result = FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+                return BindStatus.NotFound;
             }
         }
 

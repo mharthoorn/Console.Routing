@@ -8,16 +8,18 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type == typeof(bool);
 
-        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
+        public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {
             if (arguments.TryGet(param, out Flag _))
             {
                 used++;
-                return true;
+                result = true;
+                return BindStatus.Success;
             }
             else
             {
-                return false;
+                result = false;
+                return BindStatus.NotFound;
             }
         }
     }

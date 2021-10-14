@@ -8,16 +8,18 @@ namespace ConsoleRouting
 
         public bool Match(Type type) => type == typeof(Assignment);
 
-        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
+        public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {
             if (arguments.TryGetAssignment(param.Name, out Assignment assignment))
             {
                 used++;
-                return assignment;
+                result = assignment;
+                return BindStatus.Success;
             }
             else
             {
-                return Assignment.NotProvided; 
+                result = Assignment.NotProvided;
+                return BindStatus.NotFound;
             }
             
         }

@@ -2,11 +2,18 @@
 
 namespace ConsoleRouting
 {
+    public enum BindStatus
+    {
+        Success,
+        Failed,
+        NotFound, 
+    }
+
     public interface IBinder
     {
         bool Optional { get; }
         bool Match(Type type);
-        object TryUse(Arguments arguments, Parameter param, int index, ref int used);
+        BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result);
     }
 
 }

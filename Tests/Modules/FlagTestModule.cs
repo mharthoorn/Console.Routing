@@ -28,5 +28,11 @@
         {
 
         }
+
+        [Command]
+        public void FlagWithArgs(string command, Flag<string> speed, Arguments arguments)
+        {
+
+        }
     };
 }

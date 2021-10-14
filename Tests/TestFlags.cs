@@ -133,8 +133,7 @@ namespace ConsoleRouting.Tests
             var result = router.Bind(args);
 
             Assert.AreEqual("FlagRun", result.Bind.Route.Method.Name);
-            Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).HasFlag);
-            Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).HasValue);
+            Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).IsSet);
             Assert.AreEqual("fast", (result.Bind.Parameters[1] as Flag<string>).Value);
 
             
@@ -142,20 +141,22 @@ namespace ConsoleRouting.Tests
             args = router.Parse("flagrun command --speed");
             result = router.Bind(args);
             Assert.IsFalse(result.Ok);
-            //Assert.AreEqual("FlagRun", result.Bind.Route.Method.Name);
-            //Assert.AreEqual(true, (result.Bind.Parameters[1] as Flag<string>).HasFlag);
-            //Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).HasValue);
-            //Assert.AreEqual(null, (result.Bind.Parameters[1] as Flag<string>).Value);
+          
+            // The Arguments parameter at the end of flagwithargs method, consumes remaining arguments,
+            // which causes a failed flag to pass as correct.
+            args = router.Parse("flagwithargs command --speed");
+            result = router.Bind(args);
+            Assert.IsFalse(result.Ok);
 
             args = router.Parse("flagrun command");
             result = router.Bind(args);
 
             Assert.AreEqual("FlagRun", result.Bind.Route.Method.Name);
-            Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).HasFlag);
-            Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).HasValue);
+            Assert.AreEqual(false, (result.Bind.Parameters[1] as Flag<string>).IsSet);
             Assert.AreEqual(null, (result.Bind.Parameters[1] as Flag<string>).Value);
 
 
+           
         }
 
         [TestMethod]
@@ -167,8 +168,7 @@ namespace ConsoleRouting.Tests
 
             Assert.AreEqual("TypedParse", result.Bind.Route.Method.Name);
             Assert.AreEqual(Format.Json, (result.Bind.Parameters[0] as Flag<Format>).Value);
-            Assert.IsTrue((result.Bind.Parameters[0] as Flag<Format>).HasFlag);
-            Assert.IsTrue((result.Bind.Parameters[0] as Flag<Format>).HasValue);
+            Assert.IsTrue((result.Bind.Parameters[0] as Flag<Format>).IsSet);
 
             // Test invalid value
             args = router.Parse("typedparse --format bson");

@@ -97,16 +97,19 @@ namespace ConsoleRouting
                 var binder = binders.FindMatch(param.Type);
                 if (binder is null) return false;
 
-                object value = binder.TryUse(arguments, param, index, ref used);
-                if (value is not null | binder.Optional | param.Optional)
+                var status = binder.TryUse(arguments, param, index, ref used, out object value);
+                if (status == BindStatus.Success)
                 {
                     values[index++] = value;
                 }
-                else
+                else if (status == BindStatus.NotFound & (binder.Optional | param.Optional))
+                {
+                    values[index++] = value;
+                }
+                else // BindStatus.Failed | or NotFound non optional param.
                 {
                     return false;
                 }
-
             }
             return (arguments.Count == used);
         }

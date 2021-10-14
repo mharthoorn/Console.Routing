@@ -2,16 +2,18 @@
 
 namespace ConsoleRouting
 {
+
     public class ArgumentsBinder : IBinder
     {
         public bool Optional => true;
 
         public bool Match(Type type) => type == typeof(Arguments);
 
-        public object TryUse(Arguments arguments, Parameter param, int index, ref int used)
+        public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {
             used = arguments.Count;
-            return new Arguments(arguments);
+            result = new Arguments(arguments);
+            return BindStatus.Success;
         }
     }
 
