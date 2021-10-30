@@ -71,6 +71,7 @@ namespace ConsoleRouting
             binders.Add(new FlagBinder());
             binders.Add(new BoolBinder());
             binders.Add(new ArgumentsBinder());
+            binders.Add(new PocoBinder(binders)); // recursive reference
 
             return binders;
         }

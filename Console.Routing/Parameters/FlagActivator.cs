@@ -27,6 +27,8 @@ namespace ConsoleRouting
             }
             return null;
         }
+
+
         
         public static object CreateUnsetValueFlag(Type type, string name)
         {
@@ -40,7 +42,6 @@ namespace ConsoleRouting
             return flagType; 
         }
 
-        
 
         private static object CreateGenericFlagForObject(Type type, string name, object value) 
         {

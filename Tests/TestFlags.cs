@@ -251,5 +251,4 @@ namespace ConsoleRouting.Tests
         }
 
     }
-
 }

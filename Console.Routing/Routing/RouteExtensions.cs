@@ -30,6 +30,17 @@ namespace ConsoleRouting
             };
         }
 
+        public static Parameter AsRoutingParameter(this MemberInfo info)
+        {
+            return new Parameter
+            {
+                Name = info.Name.ToLower(),
+                Type = info.GetMemberType(),
+                AltName = info.GetCustomAttribute<Alt>()?.Name,
+                Optional = true // for now.
+            };
+        }
+
         public static bool IsOptionalParameter(this ParameterInfo parameter)
         {
             bool hasAttr = parameter.HasAttribute<Optional>();

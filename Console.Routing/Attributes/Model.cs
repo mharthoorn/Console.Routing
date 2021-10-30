@@ -2,5 +2,5 @@
 
 namespace ConsoleRouting
 {
-    public class Optional : Attribute { }
+    public class Model: Attribute { }
 }
