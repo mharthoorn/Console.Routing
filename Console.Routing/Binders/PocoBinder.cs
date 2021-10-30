@@ -16,7 +16,7 @@ namespace ConsoleRouting
             this.binders = binders;
         }
 
-        public bool Match(Type type) => type.HasAttribute<Model>();
+        public bool Match(Type type) => type.HasAttribute<Bucket>();
 
         public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {
@@ -25,7 +25,7 @@ namespace ConsoleRouting
 
             result = Activator.CreateInstance(param.Type);
 
-            var members = type.GetMembersAndProperties().ToList();
+            var members = type.GetFieldsAndProperties().ToList();
 
             foreach (var member in members)
             {

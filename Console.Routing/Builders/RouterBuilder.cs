@@ -11,14 +11,28 @@ namespace ConsoleRouting
         public RouteDiscoverer Discovery = new();
         public List<IBinder> Binders = new();
         public IServiceCollection Services = new ServiceCollection();
-
+        
         Action<Router, Exception> exceptionHandler;
-        private bool Documentation { get; set; } = false;
+        private bool WithDocumentation { get; set; } = true;
 
         public RouterBuilder AddXmlDocumentation()
         {
-            Documentation = true;
+            WithDocumentation = true;
             return this;
+        }
+
+        private Documentation BuildDocumentation()
+        {
+            if (WithDocumentation)
+            {
+                var docs =
+                   new DocumentationBuilder()
+                   .Add(Discovery.Assemblies)
+                   .Build();
+
+                return docs;
+            }
+            else return new Documentation();
         }
 
         public RouterBuilder AddExceptionHandler(Action<Router, Exception> handler)
@@ -46,12 +60,14 @@ namespace ConsoleRouting
 
         public Router Build()
         {
-            var globals = Discovery.DiscoverGlobals();
-            var routes = Discovery.DiscoverRoutes(Documentation).ToList();
+            var documentation = BuildDocumentation();
 
+            var globals = Discovery.DiscoverGlobals();
+            var routes = Discovery.DiscoverRoutes().ToList();
+            
             var binder = CreateBinder();
             var parser = new ArgumentParser();
-            var writer = new RoutingWriter();
+            var writer = new RoutingWriter(documentation);
 
             Services.AddSingleton(writer);
             Services.AddSingleton(routes);

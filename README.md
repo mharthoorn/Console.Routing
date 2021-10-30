@@ -186,6 +186,35 @@ You can create an parameter alias with the `[Alt]` attribute:
     }
 ```
 
+### Large parameter sets
+There commands that have a large set of optional settings. For this a regular parameter list is 
+technically not an issue, but it is hard to read and manage. For this, you can use classes to group
+those parameters. An added bonus is that they can be easily re-used.
+
+You can use grouped parameter classes by simply creating a class and decorating it with a `[Bucket]` 
+attribute.
+
+```csharp
+    [Command]
+    public void Curl(CurlSettings settings)
+    { 
+    }
+
+    [Bucket]
+    class CurlSettings
+    {
+        public Flag CrlF;
+        public bool Append;
+        public Flag<string> Url;
+        
+        [Alt("use-ascii")]
+        public Flag UseAscii { get; set; }
+        public Flag Basic { get; set; }
+        public Flag<string> RemoteName { get; set; }
+    }
+```
+
+
 ## More on commands
 
 ### Command Overloading
@@ -448,3 +477,4 @@ To have a capture, add a `Capture` attribute to a command method like this:
         Console.WriteLine($"Help for these arguments: {args}");
     }
 ```
+

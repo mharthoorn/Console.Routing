@@ -9,25 +9,25 @@ using System.Xml.XPath;
 namespace ConsoleRouting
 {
 
-    public class AssemblyDocumentationBuilder
+    public class DocumentationBuilder
     {
-        XmlDocumentation documentation = new();
+        Documentation documentation = new();
 
-        public AssemblyDocumentationBuilder Add(Assembly assembly)
+        public DocumentationBuilder Add(Assembly assembly)
         {
             var xdoc = ReadXmlDocumentation(assembly);
             if (xdoc is not null)
             {
-                var items = ReadMethods(xdoc);
+                var items = ReadMembersDocumentation(xdoc);
                 foreach(var item in items)
                 {
-                    documentation.Add(item);
+                    this.documentation.Add(item);
                 }
             }
             return this;
         }
 
-        public XmlDocumentation Build()
+        public Documentation Build()
         {
             return documentation;
         }
@@ -58,23 +58,23 @@ namespace ConsoleRouting
             return document;
         }
 
-        public IEnumerable<MethodDoc> ReadMethods(XDocument xdoc)
+        public IEnumerable<MemberDoc> ReadMembersDocumentation(XDocument xdoc)
         {
-            var mnodes = xdoc.XPathSelectElements("doc/members/member").ToList();
+            var membernodes = xdoc.XPathSelectElements("doc/members/member").ToList();
 
-            foreach (var mnode in mnodes)
+            foreach (var membernode in membernodes)
             {
-                var doc = new MethodDoc();
+                var doc = new MemberDoc();
 
-                doc.Key = mnode?.Attribute("name")?.Value;
-                doc.Summary = DocumentationHelper.ConsiseTrim(mnode?.Element("summary")?.Value);
+                doc.Key = membernode?.Attribute("name")?.Value;
+                doc.Text = DocKeys.ConsiseTrim(membernode?.Element("summary")?.Value);
 
-                var pnodes = mnode?.Elements("param");
+                var paramnodes = membernode?.Elements("param");
                 
-                foreach (var pnode in pnodes)
+                foreach (var paramnode in paramnodes)
                 {
-                    var name = pnode.Attribute("name")?.Value;
-                    var summary = pnode?.Value?.Trim();
+                    var name = paramnode.Attribute("name")?.Value;
+                    var summary = paramnode?.Value?.Trim();
                     doc.Params.Add(name, summary);
                 }
                 yield return doc;

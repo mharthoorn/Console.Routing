@@ -2,5 +2,5 @@
 
 namespace ConsoleRouting
 {
-    public class Model: Attribute { }
+    public class Bucket: Attribute { }
 }

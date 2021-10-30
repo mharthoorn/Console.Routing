@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace ConsoleRouting
 {
-    public static class DocumentationHelper
+    public static class DocKeys
     {
-        public static string GetParamKey(Type type)
+        public static string BuildParamKey(Type type)
         {
             var builder = new StringBuilder();
             builder.Append(type.Namespace);
@@ -29,14 +29,13 @@ namespace ConsoleRouting
             }
             return builder.ToString();
         }
-        
 
-        public static string GetKey(MethodInfo method)
+        public static string BuildMethodKey(MethodInfo method)
         {
             var builder = new StringBuilder();
             builder.Append("M:");
 
-            string typename = method.DeclaringType.FullName.Replace("+", ".");
+            string typename = GetTypeName(method);//.FullName.Replace("+", ".");
             builder.Append(typename);
 
             builder.Append(".");
@@ -51,13 +50,30 @@ namespace ConsoleRouting
                 foreach (var param in method.GetParameters())
                 {
                     if (!first) builder.Append(",");
-                    var paramkey = GetParamKey(param.ParameterType);
+                    var paramkey = BuildParamKey(param.ParameterType);
                     first = false;
                     builder.Append(paramkey);
                 }
                 builder.Append(")");
             }
 
+            return builder.ToString();
+        }
+
+        private static string GetTypeName(MemberInfo info)
+        {
+            return info.DeclaringType.FullName.Replace("+", ".");
+        }
+
+        public static string BuildMemberKey(MemberInfo member)
+        {
+            var builder = new StringBuilder();
+            string c = member is PropertyInfo p ? "P" : "F"; // not exhoustive yet!
+            builder.Append($"{c}:");
+            string typename = GetTypeName(member);
+            builder.Append(typename);
+            builder.Append(".");
+            builder.Append(member.Name);
             return builder.ToString();
         }
 

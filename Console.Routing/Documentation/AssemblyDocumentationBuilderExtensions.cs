@@ -5,7 +5,7 @@ namespace ConsoleRouting
 {
     public static class AssemblyDocumentationBuilderExtensions
     {
-        public static AssemblyDocumentationBuilder Add(this AssemblyDocumentationBuilder builder, IEnumerable<Assembly> assemblies)
+        public static DocumentationBuilder Add(this DocumentationBuilder builder, IEnumerable<Assembly> assemblies)
         {
             foreach (var assembly in assemblies) builder.Add(assembly);
             return builder;

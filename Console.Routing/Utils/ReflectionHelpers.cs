@@ -48,7 +48,7 @@ namespace ConsoleRouting
             return null;
         }
 
-        public static IEnumerable<MemberInfo> GetMembersAndProperties(this Type type)
+        public static IEnumerable<MemberInfo> GetFieldsAndProperties(this Type type)
         {
             foreach (var field in type.GetFields()) yield return field;
             foreach (var prop in type.GetProperties()) yield return prop;

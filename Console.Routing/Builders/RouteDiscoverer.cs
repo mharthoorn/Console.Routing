@@ -9,12 +9,12 @@ namespace ConsoleRouting
     {
         List<Route> routes = new();
         List<Node> start = new();
-        HashSet<Assembly> assemblies = new();
+        public HashSet<Assembly> Assemblies = new();
         HashSet<Type> modules = new();
 
         public RouteDiscoverer AddModules(Assembly assembly)
         {
-            assemblies.Add(assembly);
+            Assemblies.Add(assembly);
             var types = assembly.GetTypes().Where(t => t.HasAttribute<Module>());
 
             foreach (var type in types) modules.Add(type);
@@ -24,37 +24,22 @@ namespace ConsoleRouting
 
         public RouteDiscoverer AddModule<T>()
         {
-            assemblies.Add(typeof(T).Assembly);
+            Assemblies.Add(typeof(T).Assembly);
             modules.Add(typeof(T));
             return this;
         }
 
         public IEnumerable<Type> DiscoverGlobals()
         {
-            return assemblies.SelectMany(DiscoverGlobals);
+            return Assemblies.SelectMany(DiscoverGlobals);
         }
 
-        public IEnumerable<Route> DiscoverRoutes(bool documentation)
+        public IEnumerable<Route> DiscoverRoutes()
         {
             // we collect globally, to avoid passing down.
             routes.Clear();
             DiscoverRoutes(modules);
-            if (documentation) AttachRouteDocumentation();
             return routes;
-        }
-
-
-        private void AttachRouteDocumentation()
-        {
-            var docs =
-                new AssemblyDocumentationBuilder()
-                .Add(assemblies)
-                .Build();
-
-            foreach (var route in routes)
-            {
-                route.Documentation = docs.Get(route.Method);
-            }
         }
 
         private IEnumerable<Type> DiscoverGlobals(Assembly assembly)
@@ -74,12 +59,6 @@ namespace ConsoleRouting
         {
             foreach (var type in types)
                 DiscoverRoutes(type);
-        }
-
-        private IEnumerable<Type> DiscoverModules(Assembly assembly)
-        {
-            var types = assembly.GetAttributeTypes<Module>().ToList();
-            return types; 
         }
 
         public void DiscoverRoutes(Type type)

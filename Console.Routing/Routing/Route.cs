@@ -14,7 +14,6 @@ namespace ConsoleRouting
         public List<Node> Nodes;
         public Help Help; 
         public MethodInfo Method;
-        public MethodDoc Documentation;
 
         public Route(Module module, IEnumerable<Node> nodes, MethodInfo method, Help help, bool hidden, Capture capture, bool isdefault)
         {

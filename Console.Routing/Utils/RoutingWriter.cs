@@ -1,40 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ConsoleRouting
 {
-    public class RoutingError
-    {
-        public string Message;
-        public IList<Route> Candidates;
-    }
 
-    public static class DisplayExtensions
-    {
-        public static string GetCommandPath(this Route route)
-        {
-            var path = string.Join(" ", route.Nodes.Select(n => n.Names.First())).ToLower();
-            return path;
-        }
 
-        public static string GetErrorMessage(this Exception exception)
-        {
-            if (exception.InnerException is null)
-            {
-                return exception.Message;
-            }
-            else
-            {
-                return GetErrorMessage(exception.InnerException);
-            }
-
-        }
-    }
-
-          
     public class RoutingWriter
     {
+        private readonly Documentation documentation;
+
+        public RoutingWriter(Documentation doc)
+        {
+            this.documentation = doc;
+        }
+
         public void WriteResult(RoutingResult result)
         {
             switch(result.Status)
@@ -102,8 +83,9 @@ namespace ConsoleRouting
         {
             WriteWrouteCommand(route);
             WriteWrouteDescription(route);
-            WriteRouteParameters(route);
-            WriteRouteDocumentation(route);
+            var doc = documentation.GetDoc(route);
+            WriteRouteParameters(route, doc);
+            WriteRouteDocumentation(doc);
         }
 
         public void WriteRouteHelp(RoutingResult result)
@@ -140,8 +122,65 @@ namespace ConsoleRouting
         {
             //string path = route.GetCommandPath();
             Console.WriteLine($"Command:");
-            Console.WriteLine($"  {route}");
+        
+            string commands = string.Join(" ", route.Nodes).ToLower();
+            var parameters = ParametersAsText(route.Method);
+
+            string s = commands;
+            if (parameters.Length > 0) s += " " + parameters;
+            Console.WriteLine($"  {s}");
         }
+
+        private static string ParametersAsText(MethodInfo method)
+        {
+            var parameters = method.GetParameters().AsRoutingParameters();
+            return string.Join(" ", parameters.Select(p => ParameterAsText(p)));
+        }
+
+        public static string ParameterAsText(Parameter parameter)
+        {
+            return ParameterAsText(parameter.Type, parameter.Name, parameter.Optional);
+        }
+
+        public static string ParameterAsText(Type type, string name, bool optional = false)
+        {
+            string rep;
+
+            if (type == typeof(Flag) || type == typeof(bool))
+            {
+                rep = $"--{name}";
+            }
+            else if (type == typeof(Assignment))
+            {
+                rep = $"{name}=<value>";
+            }
+            else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>))
+            {
+                rep = $"--{name} <value>";
+            }
+            else if (type == typeof(Arguments))
+            {
+                rep = $"<{name}>...";
+            }
+            else if (type == typeof(string))
+            {
+                rep = $"<{name}>";
+            }
+            else if (type.HasAttribute<Bucket>())
+            {
+                rep = "<flags>";
+            }
+            else
+            {
+                rep = $"{name}";
+            }
+            if (optional) rep = $"({rep})";
+
+            return rep;
+        }
+
+
+     
 
         private void WriteWrouteDescription(Route route)
         {
@@ -152,7 +191,7 @@ namespace ConsoleRouting
             }
         }
 
-        private void WriteRouteParameters(Route route)
+        private void WriteRouteParameters(Route route, MemberDoc doc)
         {
             var parameters = route.GetRoutingParameters().ToList();
             if (parameters.Count > 0)
@@ -160,23 +199,50 @@ namespace ConsoleRouting
                 Console.WriteLine($"\nParameters:");
                 foreach (var parameter in route.GetRoutingParameters())
                 {
-                    var paramdoc = route.GetParamDoc(parameter.Name);
-                    if (paramdoc.HasValue())
-                        Console.WriteLine($"  {parameter.AsText(),-20} {paramdoc}");
-                    else
-                        Console.WriteLine($"  {parameter.AsText()}");
+                    if (parameter.Type.HasAttribute<Bucket>())
+                        WriteBucketParameters(parameter.Type);
+                    else 
+                        WriteRoutingParameter(parameter, doc);
                 }
             }
         }
 
-        private void WriteRouteDocumentation(Route route)
+        private void WriteRoutingParameter(Parameter parameter, MemberDoc? memberdoc)
         {
-            string doc = route.GetMethodDoc();
-            if (doc.HasValue())
+            string text = ParameterAsText(parameter);
+            var paramdoc = memberdoc?.GetParamDoc(parameter.Name);
+            WriteRoutingParameter(text, paramdoc);
+        }
+
+        private void WriteRoutingParameter(string display, string doc)
+        {
+            if (doc is not null)
+                Console.WriteLine($"  {display,-20} {doc}");
+            else
+                Console.WriteLine($"  {display}");
+        }
+
+      
+
+        private void WriteBucketParameters(Type type)
+        {
+            var members = type.GetFieldsAndProperties();
+            foreach(var member in members)
+            {
+                var doc = documentation.GetMemberDoc(member);
+                string display = ParameterAsText(member.GetMemberType(), member.Name);
+                WriteRoutingParameter(display, doc?.Text);
+            }
+        }
+
+        private void WriteRouteDocumentation(MemberDoc doc)
+        {
+            if (doc is not null)
             {
                 Console.WriteLine($"\nDocumentation:");
-                Console.WriteLine($"{doc}\n");
+                Console.WriteLine($"{doc.Text}\n");
             }
+            
         }
 
         private void WriteRouteDescription(Route route)
@@ -209,11 +275,6 @@ namespace ConsoleRouting
             if (stacktrace) Console.WriteLine(e.StackTrace);
         }
         
-    }
-
-    public static class RoutingWriterExtensions
-    {
-        public static void WriteRoutes(this RoutingWriter writer, Router router) => writer.WriteRoutes(router?.Routes);
     }
 
 }

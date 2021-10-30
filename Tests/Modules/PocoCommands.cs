@@ -10,7 +10,7 @@
 
     }
 
-    [Model]
+    [Bucket]
     public class CurlSettings
     {
         public Flag CrlF;

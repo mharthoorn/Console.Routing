@@ -71,8 +71,7 @@ namespace ConsoleRouting
 
         public static string ParametersAsText(this MethodInfo method)
         {
-            var paraminfo = method.GetParameters();
-            var parameters = AsRoutingParameters(paraminfo);
+            var parameters = method.GetParameters().AsRoutingParameters();
             return string.Join(" ", parameters.Select(p => AsText(p)));
         }
 
@@ -112,19 +111,7 @@ namespace ConsoleRouting
             return rep;
         }
 
-        public static string GetMethodDoc(this Route route)
-        {
-            var doc = route.Documentation;
-            if (doc is null) return null;
-            return doc.Summary;
-        }
-
-        public static string GetParamDoc(this Route route, string name)
-        {
-            var doc = route.Documentation;
-            if (doc is null) return null;
-            return doc.Params.TryGetValue(name, out var value) ? value : null;
-        }
+    
 
         public static Arguments Parse(this Router router, string text)
         {
