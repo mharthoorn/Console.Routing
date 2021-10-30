@@ -213,6 +213,7 @@ attribute.
         public Flag<string> RemoteName { get; set; }
     }
 ```
+Documentation can be added to each property or field, and will show up in the tool documentation. See below for more on documentation.
 
 
 ## More on commands
