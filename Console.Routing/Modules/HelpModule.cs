@@ -16,7 +16,6 @@ namespace ConsoleRouting
             this.router = router;
         }
 
-#warning currently this fails, because commands are included in the arguments..
         [Command("help"), Help("Provides this help list or detailed help about a command")]
         public void Help(Arguments args = null)
         {

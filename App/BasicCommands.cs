@@ -44,7 +44,7 @@ namespace ConsoleAppTemplate
         public void Greeting([Optional] string name, bool uppercase, Flag<int> repeats)
         {
             if (uppercase) name = name.ToUpper();
-            for (int i = 0; i < (repeats.HasValue ? repeats.Value : 1); i++)
+            for (int i = 0; i < (repeats.IsSet ? repeats.Value : 1); i++)
             {
                 Console.WriteLine($"Hello {name}!");
             }
@@ -60,6 +60,7 @@ namespace ConsoleAppTemplate
         [Command]
         public void Show()
         {
+            Console.WriteLine("Show");
         }
 
         [Command]

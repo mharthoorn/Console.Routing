@@ -207,7 +207,7 @@ namespace ConsoleRouting
             }
         }
 
-        private void WriteRoutingParameter(Parameter parameter, MemberDoc? memberdoc)
+        private void WriteRoutingParameter(Parameter parameter, MemberDoc memberdoc)
         {
             string text = ParameterAsText(parameter);
             var paramdoc = memberdoc?.GetParamDoc(parameter.Name);
