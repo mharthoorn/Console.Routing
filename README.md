@@ -1,15 +1,12 @@
 # Console.Routing
-Console.Routing is a framework that makes it easy to build command line tools. Proper command line parsing can be tricky and time consuming. This framework hopes to take that away.
-With this library You can implement a command line tool with almost no overhead.
+Console.Routing is a framework that makes it easy to build command line tools. Proper command line parsing can be tricky and time consuming. This library helps you implement a command line tool with almost no overhead.
 
-Console.Routing works with a router that somewhat similar to ASP.NET. It routes commands and parameters from the command line 
-to a specific C# method and fills in all method parameters with the matching command line arguments. 
-If no route is found, a clear user friendly error is given. 
+Console.Routing works with a router similar to ASP.NET. Commands and parameters from the command line are routed to a specific C# method and fills in all method parameters with the matching command line arguments.
 
 # Documentation
 
 ## Setup
-By adding one line of code to the ``Program.Main`` you enable route discovery and handling of arguments.
+By adding two lines of code to ``Program.cs``, you enable route discovery and handling of arguments.
 
 ```csharp
  using ConsoleRouting;
@@ -17,7 +14,7 @@ By adding one line of code to the ``Program.Main`` you enable route discovery an
  Routing.Handle(args);
  ```
 
-The examples below describe commands for a fictitious tool named ``tool``.
+The examples below describe commands using a fictitious tool named ``tool``.
 
 ## Discovery
 You can expose any method to command line argument with the `[Command]` attribute. To avoid accidental exposure, 
@@ -37,6 +34,7 @@ public class MyTool
 Which can be executed on the command line with:
 ```powershell
 > tool hello
+Hello world!
 ```
 
 ## Parameter types
@@ -55,8 +53,7 @@ To interpret a command line parameter as a string, you can add a string paramete
 ```
 
 ### Flag parameters
-Flags are used to set a setting to true. 
-Each of the following three command lines statements will route to this method:
+Flags are used to set a switch to true. Each of the following two statements will route to method below:
 ```powershell
 > tool hello John 
 > tool hello John --upper
@@ -70,9 +67,7 @@ Each of the following three command lines statements will route to this method:
         Console.Writeline("Hello " + name);
     }
 ```
-The Flag has a default cast to bool.
-
-Alternatively, you can also use a bool parameter. The following method has the same command line signature as above. 
+The Flag has a default cast to bool. So you can also use a `bool` parameter. The following method has the same command line signature as above. 
 ```csharp
     [Command]
     public void Hello(string name, bool upper)
@@ -116,14 +111,40 @@ You can create this behaviour with a `Flag<string>` parameter.
 ```
 Notice that the `Flag<T>` has an implicit cast to `T`.
 
-The `Flag<T>` implementation currently also supports enums and `int`.
+The `Flag<T>` implementation currently also supports `int`:
 ```powershell
 > tool loop --count 5
 ```
 ```csharp   
     [Command]
     public void Loop(Flag<int> count)
-    { ... }
+    { 
+    	... 
+    }
+```
+
+And it supports enums, which are interpreted case insensitive:
+
+```powershell
+> tool paint -c yellow
+```
+```csharp   
+    public enum Colors { Yellow, Blue }
+    
+    [Command]
+    public void Paint(Flag<Color> color)
+    {
+    	... 
+    }
+```
+You can check if a flag is set using:
+```csharp    
+    [Command]
+    public void Paint(Flag<Color> color)
+    {
+    	if (color.IsSet) 
+	...
+    }
 ```
 
 ### Assignment parameters
@@ -138,8 +159,7 @@ You can provide key value pairs (assignments) as a parameter as well:
 ```
 
 ## Integer parameters
-Integers are also regognised as parameter types. If the user provides anything else than an integer,
-in this case, the routing will not be match this method
+Integers are also recognised as parameter types: 
 ```powershell
 > tool count 5
 ```
@@ -150,8 +170,11 @@ in this case, the routing will not be match this method
         for (int i = 0; i < count; i++) Console.WriteLine(i);
     }
 ```
+If the user provides anything else than an integer,
+in this case, the routing will not be match this method:
 
 ## More on parameters
+
 ### Optional paramters
 To make a parameter optional, you can add an `[Optional]` attribute to it. The value will be set to null or default if it is not provided.
 ```powershell
@@ -173,8 +196,17 @@ To make a parameter optional, you can add an `[Optional]` attribute to it. The v
 ```
 This attribute is not necessary on any type of flag or assignment parameter since they are optional by design.
 
+If you have the C# nullable feature enabled, you can also use that for making a parameter optional:
+```csharp
+    [Command]
+    public void Greet(string? name)
+    {
+	...
+    }
+```
+
 ### Parameter aliases
-You can create an parameter alias with the `[Alt]` attribute:
+For parameters that cannot be expressed with a csharp symbol, You can define an parameter alternative with the `[Alt]` attribute:
 ```csharp
 > tool debug --no-color
 ```
@@ -186,13 +218,10 @@ You can create an parameter alias with the `[Alt]` attribute:
     }
 ```
 
-### Large parameter sets
-There commands that have a large set of optional settings. For this a regular parameter list is 
-technically not an issue, but it is hard to read and manage. For this, you can use classes to group
-those parameters. An added bonus is that they can be easily re-used.
-
-You can use grouped parameter classes by simply creating a class and decorating it with a `[Bucket]` 
-attribute.
+### Parameter buckets
+Some times you need a large set of optional settings. For this a regular parameter list is 
+hard to read and manage. For this, you can use classes to group those parameters. This also convenient for re-use:.
+You can use parameter buckets by decorating a class with a `[Bucket]` attribute.
 
 ```csharp
     [Command]
@@ -213,18 +242,17 @@ attribute.
         public Flag<string> RemoteName { get; set; }
     }
 ```
-Documentation can be added to each property or field, and will show up in the tool documentation. See below for more on documentation.
-
 
 ## More on commands
 
 ### Command Overloading
-You can overload your commands. So if you provide two commands with the same name, but different parameter types,
+You can overload your commands. So if you provide two commands with the same name, but different parameter types, or different parameter count.
 the proper command route will be found:
 ```powershell
 > tool count
 > tool count 3
-> tool count Count
+> tool count Dracula
+> tool count your luck
 ```
 Each of the above inputs, will route to a different method below:
 
@@ -236,9 +264,13 @@ Each of the above inputs, will route to a different method below:
     [Command]
     public void Count(int number)
     { ...  }
-
+    
     [Command]
     public void Count(string name)
+    { ...  }
+
+    [Command]
+    public void Count(string whos, string item)
     { ... }
 ```
 
@@ -330,9 +362,19 @@ public class Main
 ```
 
 ### Help text
-A command can have an additional `[Help]` attribute for descriptions in automatic documentation.
-A mature command line tool, should have a help line for each command.
-
+If you use the default implementation, you get a help command. And a help flag, that can capture any route.
+With no other commands or parameters, the command list is printed to the output.
+```
+  > tool help
+  > tool -h
+```
+, more detailed help is shown on the specific command
+if you provide it through either:
+```
+  > tool help command
+  > tool command -?
+```
+There are two ways of providing the help, with information. One is through the [Help(text)] attribute, that can be provided with each command:
 ```csharp
     [Command, Help("This greeting greets any provided name")]
     public void Greet(string name)
@@ -341,25 +383,14 @@ A mature command line tool, should have a help line for each command.
     }
 ```
 
-You can invoke the help documentation by calling `PrintHelp`:
-```csharp
-    [Command, Help("Prints this help text")]
-    public void Help(Flag version)
-    {
-        Routing.PrintHelp();
-    }
-
-    [Command, Help("Says hello to name")]
-    public void Greet(string name)
-    { ... }
-```
 The produced help text looks like this:
 ```
-My tool:
+Module title:
     Help    --version | Prints this help text
     Greet   <name> | Says hello to name
 ```
-The router gives you access to all route data, if you want to write your own implementation.
+
+
 
 ## Documentation
 By default ConsoleRouting provides a help command, that lists all the available visible commands.
@@ -417,6 +448,84 @@ it either your build settings (Visual Studio / Project / properties / Build / Ou
   </PropertyGroup>
 ```
 
+
+## Write your own help
+You can replace the default help by providing your own implementation, and not letting the route builder discover the default.
+This is the default startup 
+```
+  Routing.Hanlde(args);
+```
+In the background that runs a command that looks something like this:
+
+```csharp
+    var router = new RouterBuilder()
+        .AddAssemblyOf<Program>()
+	.AddDefaultHelp(this RouterBuilder builder)
+        .Buid();
+```
+If you want to write your own implementation, you should construct a router without the default help, and write your own help method.
+
+```csharp
+    [Command, Help("Prints this help text")]
+    public void Help(Flag version)
+    {
+        Routing.PrintHelp();
+    }
+
+    [Command, Help("Says hello to name")]
+    public void Greet(string name)
+    { ... }
+```
+You can invoke the default help documentation by calling `PrintHelp`. You can also write your own. If you need the data from the router,
+you can have the router injected inthe module like this:
+
+```
+  [Module]
+  public class MyCommands
+  {
+  	Router router;
+	
+  	public MyCommands(Router router)
+	{
+	      	this.router = router
+	}
+	
+	 [Command("help"), Help("Provides this help list or detailed help about a command")]
+        public void Help(Arguments args = null)
+        {
+            if (args is null || args.Count == 0)
+            {
+	    	WriteMyOwnRoutes(router);
+                // router.Writer.WriteRoutes(router); <- default
+            }
+            else
+            {
+	    	var result = router.Bind(args);
+	    	WriteMyOwnRouteHelp(result);
+                
+                // router.Writer.WriteRouteHelp(result);
+            }
+        } 
+  }
+```
+If you also want to capture the `-?` or `--help` flags at the end, you should implement a capturing command. See below.
+
+
+# Capturing 
+If you want a certain parameter to capture the route, you can add a `Capture` attribute.
+If the defined capture parameter is found anywhere in a argument list, the route execution will go 
+to that command, without further resolving other routes.
+
+To have a capture, add a `Capture` attribute to a command method like this:
+
+```csharp
+    [Command, Capture("--help", "-h")]
+    public void Help(Args args)
+    {
+        Console.WriteLine($"Help for these arguments: {args}");
+    }
+```
+
 ## Global Settings
 You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
 Only properties (not fields) will be set when a matching name is found. And currently only `bool` is supported (a flag on the command line)
@@ -454,7 +563,7 @@ the options:
 
 ```
 
-# Adding services through dependency injection
+# Dependency Injection
 You can add services available for dependency injection through the RouterBuilder.
 To add a service, use the `.AddService()` method.
 ```csharp
@@ -462,20 +571,22 @@ To add a service, use the `.AddService()` method.
         .AddAssemblyOf<Program>()
         .AddService<SomeService>()
         .Buid();
+	
 ```
-
-# Capturing 
-If you want a certain parameter to capture the route, you can add a `Capture`.
-If the capture parameter is found anywhere in the argument list, the execution will go 
-to that command, without further resolving other routes.
-
-To have a capture, add a `Capture` attribute to a command method like this:
-
+Which can then be used in your command modules:
 ```csharp
-    [Command, Capture("--help", "-h")]
-    public void Help(Args args)
-    {
-        Console.WriteLine($"Help for these arguments: {args}");
-    }
+  [Module]
+  public class MyCommands
+  {
+     public MyCommand(SomeService service)  
+     { ... }
+     
+     [Command]
+     public Action()
+     {
+         service.DoWork();
+     }
+  }
 ```
+
 
