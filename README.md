@@ -539,9 +539,9 @@ If you also want to capture the `-?` or `--help` flags at the end, you should im
 
 
 
+# Configuring the router
 
-
-# Working with Multiple Projects or Commands not in your Startup Project.
+## Additional assmblies
 By using the default `Routing.Handle(args)` all modules and commands in your startup project will
 be discovered as a route candidate. If you have commands in a different library (dll) or in multiple libraries,
 you can use the RouteBuilder class instead.
@@ -560,9 +560,8 @@ the options:
     router.Handle(args);
 
 ```
-
-# Dependency Injection
-You can add services available for dependency injection through the RouterBuilder.
+## Dependency Injection
+You can add also services available for dependency injection through the RouterBuilder.
 To add a service, use the `.AddService()` method.
 ```csharp
     var router = new RouterBuilder()
@@ -585,6 +584,13 @@ Which can then be used in your command modules:
          service.DoWork();
      }
   }
+```
+
+## Custom Exception handling
+You can define your own exception handling, using the following extension on the route builder.
+```csharp
+  .AddExceptionHandler(Action<Router, Exception> handler)
+        
 ```
 
 
