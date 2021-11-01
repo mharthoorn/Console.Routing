@@ -337,8 +337,8 @@ If you want a command to be usable, but not showing up in the help, you can use 
     { ... }
 ```
 
-## The Default command
-You should always provide a command that respons when the user has given no input at all.
+## Default command
+You should always provide a command that responds when the user has given no additinal input at all.
 This command can also be used for root flags: if no command or sub command has been given.
 
 ```powershell
