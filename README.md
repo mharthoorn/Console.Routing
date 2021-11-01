@@ -3,9 +3,7 @@ Console.Routing is a framework that makes it easy to build command line tools. P
 
 Console.Routing works with a router similar to ASP.NET. Commands and parameters from the command line are routed to a specific C# method and fills in all method parameters with the matching command line arguments.
 
-# Documentation
-
-## Setup
+# Setup and discovery
 By adding two lines of code to ``Program.cs``, you enable route discovery and handling of arguments.
 
 ```csharp
@@ -37,8 +35,8 @@ Which can be executed on the command line with:
 Hello world!
 ```
 
-## Parameter types
-### String parameters
+# Parameters
+## String parameters
 To interpret a command line parameter as a string, you can add a string parameter to your command method.
 ```powershell
 > tool hello John
@@ -52,7 +50,7 @@ To interpret a command line parameter as a string, you can add a string paramete
 	
 ```
 
-### Flag parameters
+## Flag parameters
 Flags are used to set a switch to true. Each of the following two statements will route to method below:
 ```powershell
 > tool hello John 
@@ -93,7 +91,7 @@ You can group multiple letter flags:
     }
 ```
 
-### Flag parameters with a value
+## Flag parameters with a value
 In some tools it's common to add an argument that  comes with a flag. A good exmple of this is the equivalent of Git's commit message.
 
 ```powershell
@@ -147,7 +145,7 @@ You can check if a flag is set using:
     }
 ```
 
-### Assignment parameters
+## Assignment parameters
 You can provide key value pairs (assignments) as a parameter as well:
 ```powershell
 > tool login user=john password=secret
@@ -173,9 +171,7 @@ Integers are also recognised as parameter types:
 If the user provides anything else than an integer,
 in this case, the routing will not be match this method:
 
-## More on parameters
-
-### Optional paramters
+## Optional paramters
 To make a parameter optional, you can add an `[Optional]` attribute to it. The value will be set to null or default if it is not provided.
 ```powershell
 > tool greet John
@@ -205,7 +201,7 @@ If you have the C# nullable feature enabled, you can also use that for making a 
     }
 ```
 
-### Parameter aliases
+## Parameter aliases
 For parameters that cannot be expressed with a csharp symbol, You can define an parameter alternative with the `[Alt]` attribute:
 ```csharp
 > tool debug --no-color
@@ -218,7 +214,7 @@ For parameters that cannot be expressed with a csharp symbol, You can define an 
     }
 ```
 
-### Parameter buckets
+## Parameter buckets
 Some times you need a large set of optional settings. For this a regular parameter list is 
 hard to read and manage. For this, you can use classes to group those parameters. This also convenient for re-use:.
 You can use parameter buckets by decorating a class with a `[Bucket]` attribute.
@@ -243,9 +239,42 @@ You can use parameter buckets by decorating a class with a `[Bucket]` attribute.
     }
 ```
 
-## More on commands
 
-### Command Overloading
+## Capturing 
+If you want a certain parameter to capture the route, you can add a `Capture` attribute.
+If the defined capture parameter is found anywhere in a argument list, the route execution will go 
+to that command, without further resolving other routes.
+
+To have a capture, add a `Capture` attribute to a command method like this:
+
+```csharp
+    [Command, Capture("--help", "-h")]
+    public void Help(Args args)
+    {
+        Console.WriteLine($"Help for these arguments: {args}");
+    }
+```
+
+
+## Global Settings
+You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
+Only properties (not fields) will be set when a matching name is found. And currently only `bool` is supported (a flag on the command line)
+But it's the plan to add `string`   and `int` (valued flags) later.
+
+For this, use the `[Global]` flag.
+```csharp
+[Global]
+public static class Settings
+{
+    public static bool Debug { get; set; }
+    public static bool Verbose { get; set; }
+}
+```
+You can have multple static classes marked as global.
+
+# commands
+
+## Command Overloading
 You can overload your commands. So if you provide two commands with the same name, but different parameter types, or different parameter count.
 the proper command route will be found:
 ```powershell
@@ -274,7 +303,7 @@ Each of the above inputs, will route to a different method below:
     { ... }
 ```
 
-### Command name aliases
+## Command name aliases
 As an opposite of overloading, Console.Routing allows a single command to have multiple aliases.
 ```powershell
 > tool greet Anna
@@ -308,7 +337,7 @@ If you want a command to be usable, but not showing up in the help, you can use 
     { ... }
 ```
 
-### The Default command
+## The Default command
 You should always provide a command that respons when the user has given no input at all.
 This command can also be used for root flags: if no command or sub command has been given.
 
@@ -326,7 +355,7 @@ This command can also be used for root flags: if no command or sub command has b
 
 ```
 
-### Nested Commands
+## Nested Commands
 You can create nested commands, or command groups, by marking a Module class as a command in itself:
 ```powershell
 > tool database update
@@ -361,20 +390,19 @@ public class Main
 }
 ```
 
-### Help text
-If you use the default implementation, you get a help command. And a help flag, that can capture any route.
-With no other commands or parameters, the command list is printed to the output.
+# Help and Documentation
+By default ConsoleRouting provides a help command, that lists all the available visible commands.
 ```
   > tool help
   > tool -h
 ```
-, more detailed help is shown on the specific command
-if you provide it through either:
+More detailed help is shown on a specific command if you provide it through either:
 ```
   > tool help command
   > tool command -?
 ```
-There are two ways of providing the help, with information. One is through the [Help(text)] attribute, that can be provided with each command:
+
+To provide a one liner help text in the command list, use the [Help(text)] attribute:
 ```csharp
     [Command, Help("This greeting greets any provided name")]
     public void Greet(string name)
@@ -391,12 +419,11 @@ Module title:
 ```
 
 
-
-## Documentation
-By default ConsoleRouting provides a help command, that lists all the available visible commands.
-But it also allows for more indepth documentation by writing
+## Detailed documentation
+You can also generate more indepth documentation by writing by using C# XML documentation
 ```
 > tool help <command> 
+> tool command -?
 ```
 This can optionally be followed bu subcommands.
 The help can print out four segments:
@@ -421,7 +448,7 @@ A fully documentation enriched command will look something like this:
         }
 ```
 
-This will produce:
+This example produces:
 
 ```
 > tool help greet
@@ -511,36 +538,7 @@ you can have the router injected inthe module like this:
 If you also want to capture the `-?` or `--help` flags at the end, you should implement a capturing command. See below.
 
 
-# Capturing 
-If you want a certain parameter to capture the route, you can add a `Capture` attribute.
-If the defined capture parameter is found anywhere in a argument list, the route execution will go 
-to that command, without further resolving other routes.
 
-To have a capture, add a `Capture` attribute to a command method like this:
-
-```csharp
-    [Command, Capture("--help", "-h")]
-    public void Help(Args args)
-    {
-        Console.WriteLine($"Help for these arguments: {args}");
-    }
-```
-
-## Global Settings
-You can mark any static class as a global settings class. This allows you to use the same parameters on all commands in your tool.
-Only properties (not fields) will be set when a matching name is found. And currently only `bool` is supported (a flag on the command line)
-But it's the plan to add `string`   and `int` (valued flags) later.
-
-For this, use the `[Global]` flag.
-```csharp
-[Global]
-public static class Settings
-{
-    public static bool Debug { get; set; }
-    public static bool Verbose { get; set; }
-}
-```
-You can have multple static classes marked as global.
 
 
 # Working with Multiple Projects or Commands not in your Startup Project.
