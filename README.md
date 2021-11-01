@@ -391,15 +391,19 @@ public class Main
 ```
 
 # Help and Documentation
-By default ConsoleRouting provides a help command, that lists all the available visible commands.
+
+## Command listing information
+The help command works out of the box and that lists all the available commands.
 ```
   > tool help
   > tool -h
 ```
-More detailed help is shown on a specific command if you provide it through either:
+
+The help text will look look something like this:
 ```
-  > tool help command
-  > tool command -?
+Module title:
+    Help    --version | Prints this help text
+    Greet   <name> | Says hello to someone
 ```
 
 To provide a one liner help text in the command list, use the [Help(text)] attribute:
@@ -411,26 +415,31 @@ To provide a one liner help text in the command list, use the [Help(text)] attri
     }
 ```
 
-The produced help text looks like this:
-```
-Module title:
-    Help    --version | Prints this help text
-    Greet   <name> | Says hello to name
-```
-
-
 ## Detailed documentation
-You can also generate more indepth documentation by writing by using C# XML documentation
+By default you also get more detailed help using the following:
 ```
 > tool help <command> 
 > tool command -?
 ```
-This can optionally be followed bu subcommands.
-The help can print out four segments:
+
+The help will be contain four segments:
 1. The route, enabled by default
 2. The description, provided by the `[Help( ... )]` attribute.
-3. The parameter list. This one can be enriched by providing C# XML inline documentation in your code.
-4. The extendeddocumentation, also provided by the `///<summary>` field in the C# XML documentation
+3. The parameter list. 
+4. The extended documentation text
+
+## C# XML Documentation
+Note that to make full use of this feature, you should enable C# XML inline documentation in your project.
+You can enable xml documentation to be published with your tool - necessary for the help enrichment to work, you have to enable 
+it either your build settings (Visual Studio -> Project -> properties -> Build -> Output -> Xml Documentation file) or 
+directly in the `.csproj` file of the app or dll where your commands reside:
+```xml
+  <PropertyGroup>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+```
+
+## Example
 A fully documentation enriched command will look something like this:
 ```csharp
         /// <summary>Says hello to the person in question</summary>
@@ -447,11 +456,10 @@ A fully documentation enriched command will look something like this:
             }
         }
 ```
-
-This example produces:
+This example produces
 
 ```
-> tool help greet
+> tool greet -?
 Command:
   Greet (<name>) --uppercase --repeats <value>
 
@@ -465,14 +473,6 @@ Parameters:
 
 Documentation:
 Says hello to the name in question
-```
-
-In order to enable xml documentation to be published with your tool - necessary for the help enrichment to work, you have to enable 
-it either your build settings (Visual Studio / Project / properties / Build / Output / Xml Documentation file) or directly in the `.csproj` file of the app or dll where your commands reside:
-```xml
-  <PropertyGroup>
-	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
 ```
 
 
