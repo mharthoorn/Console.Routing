@@ -171,7 +171,7 @@ Integers are also recognised as parameter types:
 If the user provides anything else than an integer,
 in this case, the routing will not be match this method:
 
-## Optional paramters
+## Optional parameters
 To make a parameter optional, you can add an `[Optional]` attribute to it. The value will be set to null or default if it is not provided.
 ```powershell
 > tool greet John
@@ -272,7 +272,7 @@ public static class Settings
 ```
 You can have multple static classes marked as global.
 
-# commands
+# Commands
 
 ## Command Overloading
 You can overload your commands. So if you provide two commands with the same name, but different parameter types, or different parameter count.
