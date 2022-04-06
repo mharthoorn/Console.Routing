@@ -15,7 +15,7 @@ namespace ConsoleRouting.Tests
         public void LogWord(string word)
         {
             string detail = SomeSettings.Debug ? "DEBUG" : "ERROR";
-            System.Console.WriteLine($"{DateTime.Now} {detail} {word}");
+            Console.WriteLine($"{DateTime.Now} {detail} {word}");
         }
 
         [Command]

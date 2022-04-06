@@ -217,7 +217,7 @@ namespace ConsoleRouting
 
         private void WriteRoutingParameter(string display, string info)
         {
-            System.Console.WriteLine(!string.IsNullOrEmpty(info)
+            Console.WriteLine(!string.IsNullOrEmpty(info)
                 ? $"  {display,-20} {info}"
                 : $"  {display}");
         }
