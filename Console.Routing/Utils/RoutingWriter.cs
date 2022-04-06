@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace ConsoleRouting
 {
@@ -154,7 +155,7 @@ namespace ConsoleRouting
             {
                 rep = $"{name}=<value>";
             }
-            else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>))
+            else if (type.IsGenericFlag())
             {
                 rep = $"--{name} <value>";
             }
@@ -211,15 +212,53 @@ namespace ConsoleRouting
         {
             string text = ParameterAsText(parameter);
             var paramdoc = memberdoc?.GetParamDoc(parameter.Name);
-            WriteRoutingParameter(text, paramdoc);
+            WriteRoutingParameter(text, GetParameterInfo(paramdoc, parameter.Type.GetEnumType()));
         }
 
-        private void WriteRoutingParameter(string display, string doc)
+        private void WriteRoutingParameter(string display, string info)
         {
+            System.Console.WriteLine(!string.IsNullOrEmpty(info)
+                ? $"  {display,-20} {info}"
+                : $"  {display}");
+        }
+
+        private string GetParameterInfo(string doc, Type enumType)
+        {
+            var sb = new StringBuilder();
+
+            // Append parameter description
             if (doc is not null)
-                Console.WriteLine($"  {display,-20} {doc}");
-            else
-                Console.WriteLine($"  {display}");
+                sb.Append(doc);
+
+            if (enumType == null)
+                return sb.ToString();
+
+            if (doc is not null)
+                sb.Append(doc.EndsWith(".") ? " " : ". ");
+
+            // Add description of enum values
+            sb.AppendLine("Possible values are:");
+
+            var values = new List<string>();
+
+            foreach (var value in Enum.GetValues(enumType))
+                values.Add(value.ToString());
+
+            var maxValueLength = values.Max(x => x.Length);
+
+            foreach (var value in Enum.GetValues(enumType))
+            {
+                var valueDoc = documentation.GetValueDoc(value);
+
+                sb.Append(valueDoc is not null
+                    ? $"  {string.Empty,-20} - {value.ToString().PadRight(maxValueLength)}: {valueDoc.Text}"
+                    : $"  {string.Empty,-20} - {value}");
+
+                if (value.ToString() != values.Last())
+                    sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
       
@@ -230,8 +269,10 @@ namespace ConsoleRouting
             foreach(var member in members)
             {
                 var doc = documentation.GetMemberDoc(member);
-                string display = ParameterAsText(member.GetMemberType(), member.Name);
-                WriteRoutingParameter(display, doc?.Text);
+                var memberType = member.GetMemberType();
+                string display = ParameterAsText(memberType, member.Name);
+
+                WriteRoutingParameter(display, GetParameterInfo(doc?.Text, memberType.GetEnumType()));
             }
         }
 

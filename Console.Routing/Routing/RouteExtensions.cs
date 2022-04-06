@@ -90,7 +90,7 @@ namespace ConsoleRouting
             {
                 rep = $"{name}=<value>";
             }
-            else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>))
+            else if (type.IsGenericFlag())
             {
                 rep = $"--{name} <value>";
             }

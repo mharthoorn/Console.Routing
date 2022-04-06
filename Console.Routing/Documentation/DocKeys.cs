@@ -23,7 +23,7 @@ namespace ConsoleRouting
                 builder.Append("{");
                 foreach (var arg in generics)
                 {
-                    builder.Append(arg.FullName); // this will fail on recursive generic types
+                    builder.Append(GetTypeName(arg)); // this will fail on recursive generic types
                 }
                 builder.Append("}");
             }
@@ -35,7 +35,7 @@ namespace ConsoleRouting
             var builder = new StringBuilder();
             builder.Append("M:");
 
-            string typename = GetTypeName(method);//.FullName.Replace("+", ".");
+            string typename = GetTypeName(method);
             builder.Append(typename);
 
             builder.Append(".");
@@ -60,9 +60,19 @@ namespace ConsoleRouting
             return builder.ToString();
         }
 
+        public static string BuildValueKey(object value)
+        {
+            return $"F:{GetTypeName(value.GetType())}.{value}";
+        }
+
         private static string GetTypeName(MemberInfo info)
         {
-            return info.DeclaringType.FullName.Replace("+", ".");
+            return GetTypeName(info.DeclaringType);
+        }
+
+        private static string GetTypeName(Type type)
+        {
+            return type.FullName.Replace("+", ".");
         }
 
         public static string BuildMemberKey(MemberInfo member)
