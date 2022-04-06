@@ -1,4 +1,6 @@
-﻿namespace ConsoleRouting.Tests
+﻿using System;
+
+namespace ConsoleRouting.Tests
 {
     public enum Component
     {
@@ -14,7 +16,7 @@
         [Command, Default]
         public void Info([Alt("?")] Flag help)
         {
-            System.Console.WriteLine("Info");
+            Console.WriteLine("Info");
         }
 
         [Command]
@@ -37,7 +39,7 @@
         [Command]
         public void Save([Optional]string filename, Flag all, Flag json, Flag xml, Flag<string> pattern)
         {
-            System.Console.WriteLine("Saving");
+            Console.WriteLine("Saving");
         }
 
 

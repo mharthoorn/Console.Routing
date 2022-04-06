@@ -1,4 +1,6 @@
-﻿namespace ConsoleRouting.Tests
+﻿using System;
+
+namespace ConsoleRouting.Tests
 {
     [Module("Nest"), Command("main")]
     public class NestModule
@@ -6,7 +8,7 @@
         [Command] 
         public void Action(string message)
         {
-            System.Console.WriteLine(message);
+            Console.WriteLine(message);
         }
 
         [Module("Sub"), Command("sub")]
@@ -15,7 +17,7 @@
             [Command]
             public void Detail(string message)
             {
-                System.Console.WriteLine(message);
+                Console.WriteLine(message);
             }
    
         }

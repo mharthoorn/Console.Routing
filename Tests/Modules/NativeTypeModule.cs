@@ -1,4 +1,6 @@
-﻿namespace ConsoleRouting.Tests
+﻿using System;
+
+namespace ConsoleRouting.Tests
 {
     [Module("native")]
     public class NativesModule
@@ -7,7 +9,7 @@
         public void ActionB(bool verbose)
         {
             if (verbose)
-                System.Console.WriteLine("Hello world!");
+                Console.WriteLine("Hello world!");
         }
 
         [Command]

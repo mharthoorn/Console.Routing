@@ -6,7 +6,7 @@ namespace ConsoleRouting
     {
         public bool Optional => true;
 
-        public bool Match(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>);
+        public bool Match(Type type) => type.IsGenericFlag();
     
         public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
         {

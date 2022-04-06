@@ -1,4 +1,6 @@
-﻿namespace ConsoleRouting.Tests
+﻿using System;
+
+namespace ConsoleRouting.Tests
 {
     [Module]
     public class EnumCommands
@@ -7,7 +9,7 @@
         [Command]
         public void Bump(Component component)
         {
-            System.Console.WriteLine(component.ToString());
+            Console.WriteLine(component.ToString());
         }
     }
     

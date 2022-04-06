@@ -32,10 +32,14 @@ namespace ConsoleRouting
         public MemberDoc GetMemberDoc(MemberInfo member)
         {
             var key = DocKeys.BuildMemberKey(member);
-            var doc = GetEntry(key);
-            return doc;
+            return GetEntry(key);
         }
 
+        public MemberDoc GetValueDoc(object value)
+        {
+            var key = DocKeys.BuildValueKey(value);
+            return GetEntry(key);
+        }
     }
 
     public static class DocumentationExtensions
