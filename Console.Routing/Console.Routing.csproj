@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<PackageId>Console.Routing</PackageId>
 		<Title>Console Routing</Title>
-		<Version>3.2.0</Version>
+		<Version>3.2.2</Version>
 		<Authors>M.Harthoorn</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
@@ -18,10 +18,15 @@
 		<RepositoryUrl>https://github.com/mharthoorn/Console.Routing</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/mharthoorn/Console.Routing</PackageProjectUrl>
 		<PackageReleaseNotes>
-			Added C# inline XML documentation for commands and parameters
 		</PackageReleaseNotes>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		
 	</PropertyGroup>
-
+	
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+	
     <ItemGroup>
         <PackageReference Include="microsoft.extensions.hosting" Version="5.0.0" />
     </ItemGroup>
