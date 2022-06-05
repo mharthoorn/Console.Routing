@@ -1,34 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleRouting
+namespace ConsoleRouting;
+
+
+public class Node
 {
-    public class Node
+    public string[] Names;
+
+    public Node(IEnumerable<string> names)
     {
-        public string[] Names;
+        this.Names = names.ToArray();
+    }
 
-        public Node(IEnumerable<string> names)
-        {
-            this.Names = names.ToArray();
-        }
+    public Node(string name)
+    {
+        this.Names = new string[] { name };
+    }
 
-        public Node(string name)
+    public bool Matches(string name)
+    {
+        for (int i = 0; i < Names.Length; i++)
         {
-            this.Names = new string[] { name };
+            if (string.Compare(Names[i], name, ignoreCase: true) == 0) return true; 
         }
+        return false;
+    }
 
-        public bool Matches(string name)
-        {
-            for (int i = 0; i < Names.Length; i++)
-            {
-                if (string.Compare(Names[i], name, ignoreCase: true) == 0) return true; 
-            }
-            return false;
-        }
-
-        public override string ToString()
-        {
-            return string.Join(" | ", Names);
-        }
+    public override string ToString()
+    {
+        return string.Join(" | ", Names);
     }
 }

@@ -2,20 +2,20 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace ConsoleRouting
-{
-    [DebuggerDisplay("{Text}")]
-    public class Arguments : List<IArgument>
-    {
-        //List<IArgument> arguments = new();
-        //public IArgument this[int index] => arguments[index];
-        //public int Count => arguments.Count;
+namespace ConsoleRouting;
 
-        public Arguments(IEnumerable<IArgument> arguments)
-        {
-            
-            this.AddRange(arguments);
-        }
+[DebuggerDisplay("{Text}")]
+public class Arguments : List<IArgument>
+{
+    //List<IArgument> arguments = new();
+    //public IArgument this[int index] => arguments[index];
+    //public int Count => arguments.Count;
+
+    public Arguments(IEnumerable<IArgument> arguments)
+    {
+        
+        this.AddRange(arguments);
+    }
 
 //        public Arguments(IEnumerable<IArgument> arguments)
 //        {
@@ -23,47 +23,45 @@ namespace ConsoleRouting
 //            this.AddRange(arguments);
 //        }
 
-        public IList<T> Match<T>(string name) where T: IArgument
-        {
-            var oftype = this.OfType<T>();
-            var matches = oftype.Where(a => a.Match(name)).ToList();
-            return matches;
-        }
-
-        public IList<T> Match<T>(Parameter parameter) where T : IArgument
-        {
-            var oftype = this.OfType<T>();
-            var matches = oftype.Where(a => a.Match(parameter)).ToList();
-            return matches;
-        }
-         
-        public bool TryGetCommand(int index, out string result) 
-        {
-            if (index < this.Count)
-            {
-                result = this[index].Original;
-                return true;
-            }
-            else
-            {
-                
-                result = null;
-                return false;
-            }
-        }
-
-        public bool TryGet<T>(int index, out T result) where T: IArgument
-        {
-            if (index < Count && this[index] is T item)
-            {
-                result = item;
-                return true;
-            }
-            result = default;
-            return false;
-        }
-
-        public string Text => string.Join(" ", this);
+    public IList<T> Match<T>(string name) where T: IArgument
+    {
+        var oftype = this.OfType<T>();
+        var matches = oftype.Where(a => a.Match(name)).ToList();
+        return matches;
     }
 
+    public IList<T> Match<T>(Parameter parameter) where T : IArgument
+    {
+        var oftype = this.OfType<T>();
+        var matches = oftype.Where(a => a.Match(parameter)).ToList();
+        return matches;
+    }
+     
+    public bool TryGetCommand(int index, out string result) 
+    {
+        if (index < this.Count)
+        {
+            result = this[index].Original;
+            return true;
+        }
+        else
+        {
+            
+            result = null;
+            return false;
+        }
+    }
+
+    public bool TryGet<T>(int index, out T result) where T: IArgument
+    {
+        if (index < Count && this[index] is T item)
+        {
+            result = item;
+            return true;
+        }
+        result = default;
+        return false;
+    }
+
+    public string Text => string.Join(" ", this);
 }

@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Linq;
 
-namespace ConsoleRouting
+namespace ConsoleRouting;
+
+
+internal static class TypeExtensions
 {
-    internal static class TypeExtensions
+    public static bool IsGenericFlag(this Type type)
     {
-        public static bool IsGenericFlag(this Type type)
-        {
-            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>);
-        }
+        return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Flag<>);
+    }
 
-        public static Type GetEnumType(this Type type)
-        {
-            if (!type.IsGenericFlag())
-                return null;
+    public static Type GetEnumType(this Type type)
+    {
+        if (!type.IsGenericFlag())
+            return null;
 
-            var flagType = type.GenericTypeArguments.First();
+        var flagType = type.GenericTypeArguments.First();
 
-            return flagType.IsEnum ? flagType : null;
-        }
+        return flagType.IsEnum ? flagType : null;
     }
 }

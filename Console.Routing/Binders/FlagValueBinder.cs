@@ -1,43 +1,43 @@
 ﻿using System;
 
-namespace ConsoleRouting
+namespace ConsoleRouting;
+
+
+public class FlagValueBinder : IBinder
 {
-    public class FlagValueBinder : IBinder
+    public bool Optional => true;
+
+    public bool Match(Type type) => type.IsGenericFlag();
+
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
     {
-        public bool Optional => true;
+        Type innertype = param.Type.GetGenericArguments()[0];
 
-        public bool Match(Type type) => type.IsGenericFlag();
-    
-        public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
+        if (arguments.TryGet(param, out Flag flag))
         {
-            Type innertype = param.Type.GetGenericArguments()[0];
-
-            if (arguments.TryGet(param, out Flag flag))
+            if (arguments.TryGetFollowing(flag, out Text text))
             {
-                if (arguments.TryGetFollowing(flag, out Text text))
+                var value = FlagActivator.CreateValueFlag(innertype, param.Name, text.Value);
+                if (value is not null)
                 {
-                    var value = FlagActivator.CreateValueFlag(innertype, param.Name, text.Value);
-                    if (value is not null)
-                    {
-                        used += 2;
-                        result = value;
-                        return BindStatus.Success;
-                    }
-                } 
+                    used += 2;
+                    result = value;
+                    return BindStatus.Success;
+                }
+            } 
 
-                // we do not increment, because it's not a valid parameter.
-                // used++;
-                result = FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
-                return BindStatus.Failed;
-            }
-            else
-            {
-                result = FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
-                return BindStatus.NotFound;
-            }
+            // we do not increment, because it's not a valid parameter.
+            // used++;
+            result = FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+            return BindStatus.Failed;
         }
-
-       
+        else
+        {
+            result = FlagActivator.CreateUnsetValueFlag(innertype, param.Name);
+            return BindStatus.NotFound;
+        }
     }
 
+   
 }
+

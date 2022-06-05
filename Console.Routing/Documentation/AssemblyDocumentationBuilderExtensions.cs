@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace ConsoleRouting
+namespace ConsoleRouting;
+
+
+public static class DocumentationBuilderExtensions
 {
-    public static class AssemblyDocumentationBuilderExtensions
+    public static DocumentationBuilder Add(this DocumentationBuilder builder, IEnumerable<Assembly> assemblies)
     {
-        public static DocumentationBuilder Add(this DocumentationBuilder builder, IEnumerable<Assembly> assemblies)
-        {
-            foreach (var assembly in assemblies) builder.Add(assembly);
-            return builder;
-        }
+        foreach (var assembly in assemblies) builder.Add(assembly);
+        return builder;
     }
 }

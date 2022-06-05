@@ -1,18 +1,16 @@
 ﻿using System;
 
-namespace ConsoleRouting
+namespace ConsoleRouting;
+
+
+public class Module: Attribute
 {
-    public class Module: Attribute
+    public string Title { get; }
+
+    
+    public Module(string title = null)
     {
-        public string Title { get; }
-
+        this.Title = title;
         
-        public Module(string title = null)
-        {
-            this.Title = title;
-            
-        }
     }
-
-
 }

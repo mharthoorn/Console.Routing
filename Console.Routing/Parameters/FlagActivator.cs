@@ -1,56 +1,50 @@
 ﻿using System;
 
-namespace ConsoleRouting
+namespace ConsoleRouting;
+
+internal static class FlagActivator
 {
-    internal static class FlagActivator
+    public static object CreateValueFlag(Type innertype, string name, string text)
     {
-        public static object CreateValueFlag(Type innertype, string name, string text)
+        if (innertype == typeof(string))
         {
-            if (innertype == typeof(string))
+            return CreateGenericFlagForObject(innertype, name, (object)text);
+
+        }
+        else if (innertype == typeof(int))
+        {
+            if (int.TryParse(text, out int n))
             {
-                return CreateGenericFlagForObject(innertype, name, (object)text);
-
+                return CreateGenericFlagForObject(innertype, name, n);
             }
-            else if (innertype == typeof(int))
+        }
+        else if (innertype.IsEnum)
+        {
+            if (StringHelpers.TryParseEnum(innertype, text, out object enumvalue))
             {
-                if (int.TryParse(text, out int n))
-                {
-                    return CreateGenericFlagForObject(innertype, name, n);
-                }
+                return CreateGenericFlagForObject(innertype, name, enumvalue);
             }
-            else if (innertype.IsEnum)
-            {
-                if (StringHelpers.TryParseEnum(innertype, text, out object enumvalue))
-                {
-                    return CreateGenericFlagForObject(innertype, name, enumvalue);
-                }
-            }
-            return null;
         }
-
-
-        
-        public static object CreateUnsetValueFlag(Type type, string name)
-        {
-            var flagtype = MakeGenericFlagType(type);
-            return Activator.CreateInstance(flagtype, name, default, false);
-        }
-
-        private static Type MakeGenericFlagType(Type type) 
-        {
-            Type flagType = typeof(Flag<>).MakeGenericType(type);
-            return flagType; 
-        }
-
-
-        private static object CreateGenericFlagForObject(Type type, string name, object value) 
-        {
-            var flagtype = MakeGenericFlagType(type); 
-            return Activator.CreateInstance(flagtype, name, value, true);
-        }
-
-        
+        return null;
     }
 
+    public static object CreateUnsetValueFlag(Type type, string name)
+    {
+        var flagtype = MakeGenericFlagType(type);
+        return Activator.CreateInstance(flagtype, name, default, false);
+    }
 
+    private static Type MakeGenericFlagType(Type type) 
+    {
+        Type flagType = typeof(Flag<>).MakeGenericType(type);
+        return flagType; 
+    }
+
+    private static object CreateGenericFlagForObject(Type type, string name, object value) 
+    {
+        var flagtype = MakeGenericFlagType(type); 
+        return Activator.CreateInstance(flagtype, name, value, true);
+    }
+
+    
 }

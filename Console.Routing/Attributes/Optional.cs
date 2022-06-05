@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleRouting
-{
-    public class Optional : Attribute { }
-}
+namespace ConsoleRouting;
+
+
+public class Optional : Attribute { }
