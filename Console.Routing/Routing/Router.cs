@@ -11,7 +11,7 @@ public class Router
     public RouteCollection Routes { get; }
     public Binder Binder;
     public ArgumentParser Parser;
-    private RoutingWriter Writer;
+    public RoutingWriter Writer;
     private List<Type> Globals;
     public bool DebugMode { get; set; }
     public Action<Router, Exception> HandleException;
