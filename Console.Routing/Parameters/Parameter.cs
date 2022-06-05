@@ -8,6 +8,7 @@ public class Parameter
     public Type Type;
     public string AltName;
     public bool Optional = false;
+    public bool TakeAll;
 
     public override string ToString()
     {
@@ -15,14 +16,16 @@ public class Parameter
         return $"{optional}{Type.Name} {Name}";
     }
 
-    public static Parameter Create<T>(string name, string alt = null, bool optional = false)
+    public static Parameter Create<T>(string name, string alt = null, bool optional = false, bool all = false)
     {
         return new Parameter
         {
             Name = name,
             Type = typeof(T),
             AltName = alt,
-            Optional = optional
+            Optional = optional,
+            TakeAll = all
+
         };
     }
 }

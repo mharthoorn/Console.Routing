@@ -6,7 +6,7 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestEnums
     {
-        Router router = new RouterBuilder().AddAssemblyOf<TestEnums>().Build();
+        Router router = new RouterBuilder().AddModule<EnumCommands>().Build();
 
         [TestMethod]
         public void EnumValue()

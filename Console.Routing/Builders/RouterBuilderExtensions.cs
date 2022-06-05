@@ -71,6 +71,7 @@ public static class RouterBuilderExtensions
         binders.Add(new FlagBinder());
         binders.Add(new BoolBinder());
         binders.Add(new ArgumentsBinder());
+        binders.Add(new StringArrayBinder());
         binders.Add(new PocoBinder(binders)); // recursive reference
 
         return binders;

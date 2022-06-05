@@ -5,19 +5,20 @@ using System.Reflection;
 
 namespace ConsoleRouting;
 
+
 public class Router
 {
-    public List<Route> Routes { get; }
+    public RouteCollection Routes { get; }
     public Binder Binder;
     public ArgumentParser Parser;
-    public RoutingWriter Writer;
+    private RoutingWriter Writer;
     private List<Type> Globals;
     public bool DebugMode { get; set; }
     public Action<Router, Exception> HandleException;
     public IServiceProvider services;
 
     public Router(
-        List<Route> routes,
+        RouteCollection routes,
         Binder binder,
         ArgumentParser parser,
         RoutingWriter writer,
@@ -43,7 +44,11 @@ public class Router
     public RoutingResult Handle(Arguments arguments)
     {
         RoutingResult result = Bind(arguments);
+        return Handle(result);
+    }
 
+    private RoutingResult Handle(RoutingResult result)
+    {
         if (result.Ok)
         {
             Invoke(result);
@@ -71,16 +76,6 @@ public class Router
         }
     }
 
-    private Bind CreateCaptureBind(Arguments arguments, Candidate candidate)
-    {
-        var args = arguments.WithoutCapture(candidate.Route.Capture);
-        if (Binder.TryCreateBind(candidate.Route, args, out Bind bind))
-            return bind;
-        else 
-            throw new Exception("Capture was invoked, but could not be matched");
-    }
-
-
     public RoutingResult Bind(Arguments arguments)
     {
         Binder.Bind(Globals, arguments);
@@ -89,31 +84,30 @@ public class Router
         {
             var bind = CreateCaptureBind(arguments, candidate);
             return CreateResult(arguments, candidate, bind);
-            
         }
         else
         {
-            var candidates = GetCandidates(arguments).ToList();
+            var candidates = GetRegularCandidates(arguments).ToList();
             var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default, RouteMatch.Capture);
             var binds = Binder.Bind(routes, arguments).ToList();
+
+            if (binds.Count == 0)
+            {
+                var fallbacks = Routes.ThatAre(RouteFlag.Fallback);
+                binds = Binder.BindRaw(fallbacks, arguments).ToList();
+            }
 
             return CreateResult(arguments, candidates, binds);
         }
     }
 
-
-    public bool TryGetCaptureCandidate(Arguments arguments, out Candidate candidate)
+    private Bind CreateCaptureBind(Arguments arguments, Candidate candidate)
     {
-        foreach(var route in Routes.Where(r => r.Capture is not null))
-        {
-            if (route.Capture.Match(arguments))
-            {
-                candidate = new Candidate(RouteMatch.Capture, route);
-                return true;
-            }
-        }
-        candidate = null;
-        return false;
+        var args = arguments.WithoutCapture(candidate.Route.Capture);
+        if (Binder.TryCreateBind(candidate.Route, args, out Bind bind))
+            return bind;
+        else
+            throw new Exception("Capture was invoked, but could not be matched");
     }
 
     private static RoutingResult CreateResult(Arguments arguments, Candidate candidate, Bind binding)
@@ -132,14 +126,32 @@ public class Router
         return new RoutingResult(arguments, status, bindings, candidates);
     }
 
-    public IEnumerable<Candidate> GetCandidates(Arguments arguments)
+    private bool TryGetCaptureCandidate(Arguments arguments, out Candidate candidate)
     {
-        foreach (var route in Routes)
+        var route = TryMatchCapture(Routes, arguments);
+        var match = route is not null;
+        candidate = match ? new Candidate(RouteMatch.Capture, route) : null;
+
+        return match;
+    }
+
+    private IEnumerable<Candidate> GetRegularCandidates(Arguments arguments)
+    {
+        foreach (var route in Routes.ThatAreNot(RouteFlag.Fallback | RouteFlag.Capturing))
         {
             var match = RouteMatcher.Match(route, arguments);
             if (match == RouteMatch.Not) continue;
             else yield return new Candidate(match, route);
         }
+    }
+
+    private static Route TryMatchCapture(RouteCollection routes, Arguments arguments)
+    {
+        foreach (var route in routes.ThatAre(RouteFlag.Capturing))
+        {
+            if (route.Capture.Match(arguments)) return route;
+        }
+        return null;
     }
 
 }

@@ -97,14 +97,37 @@ public class RouteDiscoverer
 
     private void DiscoverCommand(Module module, MethodInfo method, in List<Node> trail)
     {
-        var isdefault = method.HasAttribute<Default>();
-        var help = method.GetCustomAttribute<Help>();
-        var hidden = method.HasAttribute<Hidden>();
-        var capture = method.GetCustomAttribute<Capture>();
-        var node = method.TryCreateRoutingNode();
-        var clone = isdefault ? trail : trail.CloneAndAppend(node);
-        var route = new Route(module, clone, method, help, hidden, capture, isdefault);
+        var route = BuildRoute(module, method, trail);
         routes.Add(route);
+    }
+
+    private Route BuildRoute(Module module, MethodInfo method, in List<Node> trail)
+    {
+        RouteFlag flags = new();
+
+        if (method.HasAttribute<Default>())
+            flags = flags | RouteFlag.Default;
+
+        if (method.HasAttribute<Fallback>())
+            flags = flags | RouteFlag.Fallback;
+
+        if (method.HasAttribute<Hidden>())
+            flags = flags | RouteFlag.Hidden;
+
+        if (method.HasAttribute<Capture>())
+            flags = flags | RouteFlag.Capturing;
+
+        var capture = method.GetCustomAttribute<Capture>();
+
+        var help = method.GetCustomAttribute<Help>();
+
+
+        var node = method.TryCreateRoutingNode();
+        var clone = flags.HasFlag(RouteFlag.Default)
+            ? trail
+            : trail.CloneAndAppend(node);
+
+        return new Route(module, clone, method, help, capture, flags);
     }
   
 }

@@ -6,11 +6,12 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestFlags
     {
-        Router router = new RouterBuilder().AddAssemblyOf<TestFlags>().Build();
-
+     
         [TestMethod]
         public void BaseFlags()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             Arguments args; bool found;
 
             // long flag found
@@ -32,6 +33,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void LongFlags()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             Arguments args; bool found;
 
             args = router.Parse("-a --test");
@@ -59,6 +62,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void ShortFlags()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             Arguments args; bool found;
 
             args = router.Parse("-a -t");
@@ -77,6 +82,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void MultiFlags()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             Arguments args; bool found;
 
             args = router.Parse("-a -txy");
@@ -107,6 +114,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Generics()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             var fs = new Flag<Format>("option", Format.Json);
             
             var t = fs.GetType();
@@ -119,6 +128,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TestFlagValues()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             var args = router.Parse("parse --format xml");
             var result = router.Bind(args);
 
@@ -129,6 +140,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TestFlagWithoutValue()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             var args = router.Parse("flagrun command --speed fast");
             var result = router.Bind(args);
 
@@ -162,6 +175,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TestEnumFlags()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             // Enum Parsing
             var args = router.Parse("typedparse --format json");
             var result = router.Bind(args);
@@ -185,6 +200,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void TypedFlagNotSet()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             // Test not set flag:
             var args = router.Parse("typedparse");
             var result = router.Bind(args);
@@ -195,8 +212,10 @@ namespace ConsoleRouting.Tests
 
 
         [TestMethod]
-        public void TestIntFlags() 
+        public void TestIntFlags()
         {
+            Router router = new RouterBuilder().AddModule<FlagTestModule>().Build();
+
             var args = router.Parse("intparse --number 4");
             var result = router.Bind(args);
 
@@ -215,6 +234,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void FlagValues_GitCommit()
         {
+            Router router = new RouterBuilder().AddModule<Git>().Build();
+
             var arguments = router.Parse("commit", "-m", "\"ux: change layout\""); // git parameters
 
             var result = router.Bind(arguments);
@@ -226,6 +247,8 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void MixedFlags()
         {
+            Router router = new RouterBuilder().AddModule<MixedFlags>().Build();
+
             // We know this works.
             var args = router.Parse("search alias Entity --pages 2");
             var result = router.Bind(args);

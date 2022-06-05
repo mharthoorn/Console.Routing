@@ -21,7 +21,7 @@ public class HelpModule
     {
         if (args is null || args.Count == 0)
         {
-            router.Writer.WriteRoutes(router);
+            router.Writer.WriteRoutes(router.Routes);
         }
         else
         {
@@ -35,7 +35,7 @@ public class HelpModule
     {
         if (args is null || args.Count == 0)
         {
-            router.Writer.WriteRoutes(router);
+            router.Writer.WriteRoutes(router.Routes);
         }
         else
         {

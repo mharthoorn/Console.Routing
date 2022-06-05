@@ -44,7 +44,7 @@ public static class Routing
         if (Router?.Routes is null)
             throw new Exception("You are not using the default router. Use RoutingPrinter.WriteRoutes() instead.");
 
-        Router.Writer.WriteRoutes(Router);
+        Router.Writer.WriteRoutes(Router.Routes);
     }
 
     public static void Interactive()

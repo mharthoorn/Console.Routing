@@ -58,13 +58,12 @@ public class RouterBuilder
     /// You can add the default binders yourself if you want to append more.
     /// If you don't configure any binders at all, the defaults will be used regardless.
     /// </summary>
-
     public Router Build()
     {
         var documentation = BuildDocumentation();
 
         var globals = Discovery.DiscoverGlobals();
-        var routes = Discovery.DiscoverRoutes().ToList();
+        var routes = new RouteCollection(Discovery.DiscoverRoutes());
         
         var binder = CreateBinder();
         var parser = new ArgumentParser();

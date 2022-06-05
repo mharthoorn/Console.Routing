@@ -63,7 +63,7 @@ public class RoutingWriter
 
     public void WriteRoutes(IEnumerable<Route> routes)
     {
-        var groups = routes.Where(r => r.Hidden == false).GroupBy(r => r.Module);
+        var groups = routes.ThatAreNot(RouteFlag.Hidden).GroupBy(r => r.Module);
         foreach (var group in groups)
         {
             if (group.Count() == 0) continue;
@@ -110,8 +110,6 @@ public class RoutingWriter
         WriteRouteHelp(route);
 
     }
-
-
 
     private void WriteCandidates(IEnumerable<Route> routes)
     {
@@ -260,8 +258,6 @@ public class RoutingWriter
         return sb.ToString();
     }
 
-  
-
     private void WriteBucketParameters(Type type)
     {
         var members = type.GetFieldsAndProperties();
@@ -287,7 +283,8 @@ public class RoutingWriter
 
     private void WriteRouteDescription(Route route)
     {
-        if (route.Hidden) return;
+        if (route.Is(RouteFlag.Hidden)) return;
+
         var parameters = route.AsText().Trim();
         var command = route.GetCommandPath();
         var description = route.Description;

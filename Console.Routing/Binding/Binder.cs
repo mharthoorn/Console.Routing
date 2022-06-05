@@ -28,6 +28,21 @@ public class Binder
         }
     }
 
+    /// <summary>
+    /// BindRaw does not remove route commands from the argument list
+    /// </summary>
+    public IEnumerable<Bind> BindRaw(IEnumerable<Route> routes, Arguments arguments)
+    {
+        foreach (var route in routes)
+        {
+            var args = arguments.Clone();
+            if (TryCreateBind(route, args, out var bind))
+            {
+                yield return bind;
+            }
+        }
+    }
+
     public void Bind(IEnumerable<Type> types, Arguments arguments)
     {
         if (types is null) return;
@@ -37,7 +52,6 @@ public class Binder
             Bind(type, arguments);
         }
     }
-
     
     public void Bind(Type type, Arguments arguments)
     {
@@ -114,6 +128,7 @@ public class Binder
         }
         return (arguments.Count == used);
     }
+
 
 }
 

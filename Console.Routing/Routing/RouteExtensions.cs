@@ -7,10 +7,10 @@ namespace ConsoleRouting;
 
 public static class RouteExtensions
 {
-    public static IEnumerable<Route> NonDefault(this IEnumerable<Route> routes)
-    {
-        return routes.Where(r => !r.Default);
-    }
+    //public static IEnumerable<Route> NonDefault(this IEnumerable<Route> routes)
+    //{
+    //    return routes.Where(r => !r.IsDefault);
+    //}
 
     public static IEnumerable<Parameter> AsRoutingParameters(this IEnumerable<ParameterInfo> parameters)
     {
@@ -26,10 +26,12 @@ public static class RouteExtensions
             Name = info.Name.ToLower(),
             Type = info.ParameterType,
             AltName = info.GetCustomAttribute<Alt>()?.Name,
+            TakeAll = info.HasAttribute<All>(),
             Optional = info.IsOptionalParameter(),
         };
     }
 
+    
     public static Parameter AsRoutingParameter(this MemberInfo info)
     {
         return new Parameter

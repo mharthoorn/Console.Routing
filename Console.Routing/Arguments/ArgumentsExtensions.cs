@@ -13,6 +13,11 @@ public static class ArgumentsExtensions
         return new Arguments(args);
     }
 
+    public static Arguments Clone(this Arguments arguments)
+    {
+        return new Arguments(arguments);
+    }
+
     public static Arguments WithoutCapture(this Arguments arguments, Capture capture)
     {
         return new Arguments(arguments.Where(a => !capture.Match(a)));

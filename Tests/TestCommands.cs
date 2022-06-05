@@ -20,15 +20,7 @@ namespace ConsoleRouting.Tests
             Assert.AreEqual(0, result.Bind.Parameters.Length);
         }
 
-        [TestMethod]
-        public void DefaultCommand()
-        {
-            var arguments = router.Parse("");
-            var result = router.Bind(arguments);
-
-            Assert.AreEqual("Info", result.Route.Method.Name);
-        }
-
+    
 
         [TestMethod]
         public void Binding()

@@ -6,11 +6,12 @@ namespace ConsoleRouting.Tests
     [TestClass]
     public class TestNativeTypes
     {
-        Router router = new RouterBuilder().AddAssemblyOf<TestNativeTypes>().Build();
+        
 
         [TestMethod]
         public void Booleans()
         {
+            Router router = new RouterBuilder().AddModule<NativesModule>().Build();
             // ActionB should be matched, with '--verbose' set to false.
             var arguments = router.Parse("actionb");
             var result = router.Bind(arguments);
@@ -38,6 +39,7 @@ namespace ConsoleRouting.Tests
         [TestMethod]
         public void Integers()
         {
+            Router router = new RouterBuilder().AddModule<NativesModule>().Build();
             var args = router.Parse("add 3 4");
             var result = router.Bind(args);
             Assert.AreEqual(1, result.BindCount);
