@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<PackageId>Console.Routing</PackageId>
 		<Title>Console Routing</Title>
-		<Version>3.2.2</Version>
+		<Version>3.3.0-beta-1</Version>
 		<Authors>M.Harthoorn</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
@@ -24,7 +24,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<None Include="..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	
     <ItemGroup>
