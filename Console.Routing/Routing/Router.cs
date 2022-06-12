@@ -79,7 +79,6 @@ public class Router
     public RoutingResult Bind(Arguments arguments)
     {
         Binder.Bind(Globals, arguments);
-
         if (TryGetCaptureCandidate(arguments, out Candidate candidate))
         {
             var bind = CreateCaptureBind(arguments, candidate);
@@ -88,16 +87,23 @@ public class Router
         else
         {
             var candidates = GetRegularCandidates(arguments).ToList();
-            var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default, RouteMatch.Capture);
-            var binds = Binder.Bind(routes, arguments).ToList();
-
-            if (binds.Count == 0)
-            {
-                var fallbacks = Routes.ThatAre(RouteFlag.Fallback);
-                binds = Binder.BindRaw(fallbacks, arguments).ToList();
-            }
-
+            var binds = BindCandidates(candidates, arguments);
             return CreateResult(arguments, candidates, binds);
+        }
+    }
+
+    List<Bind> BindCandidates(List<Candidate> candidates, Arguments arguments)
+    {
+        if (candidates.Count > 0)
+        {
+            var routes = candidates.Matching(RouteMatch.Full, RouteMatch.Default, RouteMatch.Capture);
+            return Binder.Bind(routes, arguments).ToList();
+
+        }
+        else
+        {
+            var fallbacks = Routes.ThatAre(RouteFlag.Fallback);
+            return Binder.BindRaw(fallbacks, arguments).ToList();
         }
     }
 
