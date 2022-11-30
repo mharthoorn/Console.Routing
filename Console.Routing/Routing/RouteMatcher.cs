@@ -43,10 +43,9 @@ public static class RouteMatcher
         {
             if (full > 0) return RoutingStatus.InvalidParameters;
             if (partial > 0) return RoutingStatus.PartialCommand;
-            //if (def > 0) return RoutingStatus.InvalidDefault;
             return RoutingStatus.UnknownCommand;
         }
-        else // if (binds.Count > 1)
+        else // if (binds > 1)
         {
             return RoutingStatus.AmbigousParameters;
         }
