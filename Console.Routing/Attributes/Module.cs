@@ -11,6 +11,5 @@ public class Module: Attribute
     public Module(string title = null)
     {
         this.Title = title;
-        
     }
 }

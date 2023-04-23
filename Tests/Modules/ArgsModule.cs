@@ -1,6 +1,6 @@
 ﻿namespace ConsoleRouting.Tests
 {
-    [Module]
+    [Module("Args commands")]
     public class ArgsModule
     {
         [Command]

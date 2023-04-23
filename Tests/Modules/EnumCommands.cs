@@ -2,7 +2,7 @@
 
 namespace ConsoleRouting.Tests
 {
-    [Module]
+    [Module("Enum commands")]
     public class EnumCommands
     {
 

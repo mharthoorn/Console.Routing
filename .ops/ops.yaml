@@ -1,0 +1,12 @@
+build: dotnet build -c Release Console.Routing/Console.Routing.csproj
+
+pack: dotnet pack -c Release Console.Routing/Console.Routing.csproj
+
+push: |
+  write-host 'Please publish to nuget manually (by uploading)' -ForegroundColor Red
+
+latest: |
+    $latest = latest-file Console.Routing/bin/release/*.nupkg
+    write-host $latest
+
+version: version-of .\Console.Routing\bin\release\netstandard2.0\Console.Routing.dll

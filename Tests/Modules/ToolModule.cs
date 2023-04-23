@@ -42,7 +42,43 @@ namespace ConsoleRouting.Tests
             Console.WriteLine("Saving");
         }
 
+        [Command]
+        public void CmdWithDefault(bool apply = true)
+        {
 
+        }
+
+        [Command]
+        public void ShortFlagBug(Flag values, Flag actions, Flag variables)
+        {
+            //(p, l, s, v, f, m, a, v) (note the twice: v)
+            //Won't bind on -v
+            //Won't bind on -va
+            //Won't bind on -r
+            //Won't bind on -aq
+
+            //Will bind on -var
+            //Will bind on -vr
+            //Will bind on -vq
+            //Will bind on -aqv (does actions, variables, source)
+
+        }
+
+        [Command]
+        public void ParamCaseSensitive(Flag values, Flag multiline, Flag Actions, Flag Variables)
+        {
+            //(p, l, s, v, f, m, a, v) (note the twice: v)
+            //Won't bind on -v
+            //Won't bind on -va
+            //Won't bind on -r
+            //Won't bind on -aq
+
+            //Will bind on -var
+            //Will bind on -vr
+            //Will bind on -vq
+            //Will bind on -aqv (does actions, variables, source)
+
+        }
     }
     
 }

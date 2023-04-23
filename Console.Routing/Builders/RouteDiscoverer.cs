@@ -91,7 +91,7 @@ public class RouteDiscoverer
 
     private void DiscoverCommands(Module module, Type type, List<Node> trail)
     {
-        var methods = type.GetAttributeMethods<Command>();
+        var methods = type.GetMethodsWithAttribute<Command>();
         foreach (var method in methods) DiscoverCommand(module, method, trail);
     }
 

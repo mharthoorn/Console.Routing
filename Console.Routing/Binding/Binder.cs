@@ -103,7 +103,6 @@ public class Binder
     {
         values = new object[parameters.Count];
 
-        //int offset = arguments.Commands;
         int index = 0; // index of parameters
         int used = 0; // arguments used;
 
@@ -119,16 +118,23 @@ public class Binder
             }
             else if (status == BindStatus.NotFound & (binder.Optional | param.Optional))
             {
+                if (param.HasDefaultValue) value = param.DefaultValue;
                 values[index++] = value;
             }
-            else // BindStatus.Failed | or NotFound non optional param.
+            else // BindStatus.Failed | or NotFound | non optional param.
             {
                 return false;
             }
         }
-        return (arguments.Count == used);
+        bool success = (arguments.Count == used);
+        return success; 
     }
 
+    static bool AllTrue(bool[] array)
+    {
+        for (int i = 0; i < array.Length; i++) if (array[i] == false) return false;
+        return true;
+    }
 
 }
 

@@ -21,7 +21,7 @@ public class HelpModule
     {
         if (args is null || args.Count == 0)
         {
-            router.Writer.WriteRoutes(router.Routes);
+            router.Writer.WriteShortRoutes(router.Routes);
         }
         else
         {
@@ -30,12 +30,12 @@ public class HelpModule
         }
     }
 
-    [Command, Capture("?", "--help", "-?", "-h")]
+    [Command, Capture("?", "--help", "-?", "-h"), Hidden]
     public void CaptureHelp(Arguments args = null)
     {
         if (args is null || args.Count == 0)
         {
-            router.Writer.WriteRoutes(router.Routes);
+            router.Writer.WriteShortRoutes(router.Routes);
         }
         else
         {

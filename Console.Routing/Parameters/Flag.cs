@@ -42,11 +42,12 @@ public class Flag : IArgument
 
         if (Short) // short flag
         {
-            return name.StartsWith(this.Name, StringComparison.OrdinalIgnoreCase);
+            return name.StartsWith(this.Name); // DO NOT IGNORE CASE!
+            //if we match case here, we get less ambiguity (for example the parameters --value --Variable (-vV)
         }
         else
         {
-            return string.Compare(this.Name, name, ignoreCase: true) == 0;
+            return string.Compare(this.Name, name, ignoreCase: true) == 0; // DO IGNORE CASE!
         }
     }
 
@@ -57,13 +58,14 @@ public class Flag : IArgument
 
     public override string ToString()
     {
+        string value = IsSet ? " (set)" : "(not set)";
         if (Short)
         {
-            return $"-{Name}";
+            return $"-{Name}{value}";
         }
         else
         {
-            return $"--{Name}";
+            return $"--{Name}{value}";
         }
     }
 }

@@ -1,0 +1,20 @@
+# Default parameters
+Default parameter values are now respected for optional parameters
+
+# Capturehelp visible
+The capturehelp command 'hijacks' a command path,
+and reroutes it to the help commmand. But this command was visible in the help.
+It's made invisible
+
+# Shorter help
+Help was too verbose. the default help command list display is now
+without parameters. They are still in the expanded help for a specific command.
+And you can still use the old `RoutingWriter.WriteRoutes(..)`
+
+# Help distinct
+Overloaded commands are displayed only once in the shorter help
+    
+# Uppercase flags
+Flags are now treated as case sensitive when abbreviated.
+
+

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleRouting;
 
@@ -60,6 +61,44 @@ public class RoutingWriter
         }
        
     }
+    Dictionary<string, Dictionary<string, string>> GetHelpSummary(IEnumerable<Route> routes)
+    {
+        Dictionary<string, Dictionary<string, string>> summary = new();
+
+        var groups = routes.GroupBy(r => r.Module.Title);
+        foreach (var group in groups)
+        {
+            var title = group.Key ?? group.FirstOrDefault()?.Method.DeclaringType.Name ?? "Module";
+
+            Dictionary<string, string> dict = new();
+            foreach (var route in group) 
+            {
+                var key = route.GetCommandPath();
+                if (!dict.ContainsKey(key))
+                    dict.Add(key, route.Description);
+            }
+            summary.Add(title, dict);
+            
+        }
+        return summary;
+    }
+
+    public void WriteShortRoutes(IEnumerable<Route> routes)
+    {
+        var summary = GetHelpSummary(routes.ThatAreNot(RouteFlag.Hidden));
+        foreach(var module in summary)
+        {
+            var title = module.Key;
+            var commands = module.Value;
+            Console.WriteLine($"{title}:");
+            foreach(var command in module.Value)
+            {
+                
+                Console.WriteLine($"  {command.Key,-15} {command.Value}");
+            }
+            Console.WriteLine(); // space between groups
+        }
+    }
 
     public void WriteRoutes(IEnumerable<Route> routes)
     {
@@ -73,7 +112,7 @@ public class RoutingWriter
 
             foreach (var route in group)
             {
-                WriteRouteDescription(route);
+                WriteRouteLine(route);
             }
             Console.WriteLine();
         }
@@ -81,8 +120,8 @@ public class RoutingWriter
     
     public void WriteRouteHelp(Route route)
     {
-        WriteWrouteCommand(route);
-        WriteWrouteDescription(route);
+        WriteRouteCommand(route);
+        WriteRouteDescription(route);
         var doc = documentation.GetDoc(route);
         WriteRouteParameters(route, doc);
         WriteRouteDocumentation(doc);
@@ -116,7 +155,7 @@ public class RoutingWriter
         foreach (var route in routes) Console.WriteLine($"  {route}");
     }
 
-    private void WriteWrouteCommand(Route route)
+    private void WriteRouteCommand(Route route)
     {
         //string path = route.GetCommandPath();
         Console.WriteLine($"Command:");
@@ -180,7 +219,7 @@ public class RoutingWriter
 
  
 
-    private void WriteWrouteDescription(Route route)
+    private void WriteRouteDescription(Route route)
     {
         if (route.Description is not null)
         {
@@ -281,7 +320,30 @@ public class RoutingWriter
         
     }
 
-    private void WriteRouteDescription(Route route)
+    private void WriteShortRouteDescription(Route route)
+    {
+        if (route.Is(RouteFlag.Hidden)) return;
+
+        var parameters = route.AsText().Trim();
+        var command = route.GetCommandPath();
+        var description = route.Description;
+        var text = parameters;
+        if (!string.IsNullOrEmpty(parameters) && !string.IsNullOrEmpty(description)) text += " | ";
+        text += description;
+
+        if (command.Length > 15)
+        {
+            Console.WriteLine($"  {command,-15}");
+            Console.WriteLine($"  {"",-12}{text}");
+
+        }
+        else
+        {
+            Console.WriteLine($"  {command,-15} {text}");
+        }
+    }
+
+    private void WriteRouteLine(Route route)
     {
         if (route.Is(RouteFlag.Hidden)) return;
 

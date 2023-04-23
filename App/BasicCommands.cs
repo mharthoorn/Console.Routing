@@ -4,7 +4,7 @@ using System;
 namespace ConsoleAppTemplate;
 
 
-[Module, Hidden]
+[Module("Basic commands"), Hidden]
 internal class BasicCommands
 {
     private Router router;

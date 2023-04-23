@@ -15,12 +15,12 @@ namespace ConsoleRouting;
 public class Command : Attribute
 {
     public string[] Names { get; }
-    public bool IsGeneric;
+    public bool HasName;
 
 
     public Command(params string[] names)
     {
-        IsGeneric = (names.Length == 0);
+        HasName = (names.Length == 0);
         this.Names = names;
     }
 

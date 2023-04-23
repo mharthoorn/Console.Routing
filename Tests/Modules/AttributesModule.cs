@@ -2,7 +2,7 @@
 
 namespace ConsoleRouting.Tests
 {
-    [Module]
+    [Module("Attributes commands")]
     public class AttributesModule
     {
      

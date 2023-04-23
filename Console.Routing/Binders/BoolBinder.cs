@@ -11,7 +11,7 @@ public class BoolBinder : IBinder
 
     public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
     {
-        if (arguments.TryGet(param, out Flag _))
+        if (arguments.TryGet(param, out Flag flag))
         {
             used++;
             result = true;

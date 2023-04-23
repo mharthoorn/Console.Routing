@@ -23,11 +23,13 @@ public static class RouteExtensions
     {
         return new Parameter
         {
-            Name = info.Name.ToLower(),
+            Name = info.Name,
             Type = info.ParameterType,
             AltName = info.GetCustomAttribute<Alt>()?.Name,
             TakeAll = info.HasAttribute<All>(),
             Optional = info.IsOptionalParameter(),
+            HasDefaultValue = info.HasDefaultValue,
+            DefaultValue = info.DefaultValue
         };
     }
 

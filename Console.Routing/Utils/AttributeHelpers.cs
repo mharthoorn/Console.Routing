@@ -9,7 +9,7 @@ namespace ConsoleRouting;
 public static class AttributeHelpers
 {
 
-    public static IEnumerable<Type> GetAttributeTypes<T>(this Assembly assembly) where T : Attribute
+    public static IEnumerable<Type> GetTypesWithAttribute<T>(this Assembly assembly) where T : Attribute
     {
         var types = assembly.GetTypes().Where(t => !t.IsNested);
         foreach (var type in types)
@@ -22,7 +22,7 @@ public static class AttributeHelpers
         }
     }
 
-    public static IEnumerable<(MethodInfo method, T attribute)> GetAttributeAndMethods<T>(this Type type) where T : Attribute
+    public static IEnumerable<(MethodInfo method, T attribute)> GetMethodWithAttribute<T>(this Type type) where T : Attribute
     {
         foreach (var method in type.GetMethods())
         {
@@ -34,24 +34,24 @@ public static class AttributeHelpers
         }
     }
 
-    public static IEnumerable<MethodInfo> GetAttributeMethods<T>(this Type type, Func<T, bool> predicate) where T : Attribute
+    public static IEnumerable<MethodInfo> GetMethodsWithAttribute<T>(this Type type, Func<T, bool> predicate) where T : Attribute
     {
         return type.GetMethods().Where(m => m.GetCustomAttributes<T>().Any(predicate));
     }
 
-    public static IEnumerable<MethodInfo> GetAttributeMethods<T>(this IEnumerable<Type> type, Func<T, bool> predicate) where T : Attribute
+    public static IEnumerable<MethodInfo> GetMethodsWithAttribute<T>(this IEnumerable<Type> type, Func<T, bool> predicate) where T : Attribute
     {
-        return type.SelectMany(t => t.GetAttributeMethods<T>(predicate));
+        return type.SelectMany(t => t.GetMethodsWithAttribute<T>(predicate));
     }
 
-    public static IEnumerable<MethodInfo> GetAttributeMethods<T>(this Type type) where T : Attribute
+    public static IEnumerable<MethodInfo> GetMethodsWithAttribute<T>(this Type type) where T : Attribute
     {
         return type.GetMethods().Where(m => m.GetCustomAttributes<T>().Any());
     }
 
-    public static IEnumerable<MethodInfo> GetAttributeMethods<T>(this IEnumerable<Type> type) where T : Attribute
+    public static IEnumerable<MethodInfo> GetMethodsWithAttribute<T>(this IEnumerable<Type> type) where T : Attribute
     {
-        return type.SelectMany(t => t.GetAttributeMethods<T>());
+        return type.SelectMany(t => t.GetMethodsWithAttribute<T>());
     }
 
     public static bool HasAttribute<T>(this ParameterInfo parameter) where T : Attribute

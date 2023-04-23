@@ -9,6 +9,8 @@ public class Parameter
     public string AltName;
     public bool Optional = false;
     public bool TakeAll;
+    public bool HasDefaultValue;
+    public object DefaultValue;
 
     public override string ToString()
     {

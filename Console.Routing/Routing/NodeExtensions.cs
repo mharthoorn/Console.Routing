@@ -27,7 +27,7 @@ public static class NodeExtensions
         var command = method.GetCustomAttribute<Command>();
         if (command is null) return null;
 
-        var names = command.IsGeneric ? new string[] { method.Name } : command.Names;
+        var names = command.HasName ? new string[] { method.Name } : command.Names;
         var node = new Node(names);
         return node;
     }
@@ -37,7 +37,7 @@ public static class NodeExtensions
         var command = type.GetCustomAttribute<Command>();
         if (command is null) return null;
 
-        var names = command.IsGeneric ? new string[] { type.Name } : command.Names;
+        var names = command.HasName ? new string[] { type.Name } : command.Names;
         var node = new Node(names);
         return node;
     }

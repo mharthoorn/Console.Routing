@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -8,7 +8,7 @@
 	<PropertyGroup>
 		<PackageId>Console.Routing</PackageId>
 		<Title>Console Routing</Title>
-		<Version>3.3.0-beta-2</Version>
+		<Version>3.3.0-beta-4</Version>
 		<Authors>M.Harthoorn</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
@@ -20,7 +20,9 @@
 		<PackageReleaseNotes>
 		</PackageReleaseNotes>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		
+        <PackageReleaseNotes>
+            $([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/release-notes.txt"))
+        </PackageReleaseNotes>
 	</PropertyGroup>
 	
 	<ItemGroup>
