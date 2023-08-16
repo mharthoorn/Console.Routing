@@ -14,6 +14,6 @@ public interface IBinder
 {
     bool Optional { get; }
     bool Match(Type type);
-    BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result);
+    BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result);
 }
 

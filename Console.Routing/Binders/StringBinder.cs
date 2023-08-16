@@ -11,12 +11,11 @@ public class StringBinder : IBinder
         return type == typeof(string);
     }
 
-    public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result)
     {
 
-        if (arguments.TryGetText(index, out Text Text))
+        if (arguments.TryUseText(index, out Text Text))
         {
-            used++;
             result = Text.Value;
             return BindStatus.Success;
             

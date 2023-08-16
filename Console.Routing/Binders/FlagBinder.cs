@@ -9,11 +9,10 @@ public class FlagBinder : IBinder
 
     public bool Match(Type type) => type == typeof(Flag);
 
-    public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result)
     {
-        if (arguments.TryGet(param, out Flag flag))
+        if (arguments.TryUse(param, out Flag flag))
         {
-            used++;
             result = flag;
             return BindStatus.Success;
         }

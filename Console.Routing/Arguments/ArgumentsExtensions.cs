@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleRouting;
@@ -28,55 +29,32 @@ public static class ArgumentsExtensions
         return args.TryGet(index, out literal);
     }
 
-    public static bool TryGetEnum(this Arguments args, int index, Parameter param, out object value)
-    {
-        if (args.TryGetText(index, out Text literal))
-        {
-            try
-            {
-                value = Enum.Parse(param.Type, literal, ignoreCase: true);
-                return true;
-            }
-            catch
-            {
-            }
-        }
-        value = null;
-        return false;
-    }
 
-    public static bool TryGetInt(this Arguments args, int index, out int value)
+    public static IEnumerable<T> Match<T>(this IEnumerable<IArgument> args, string name) where T : IArgument
     {
-        if (args.TryGet(index, out Text s))
-        {
-            return int.TryParse(s, out value);
-        }
-        value = default;
-        return false;
-    }
-
-    public static bool TryGetAssignment(this Arguments args, string name, out Assignment assignment)
-    { 
-        var matches = args.OfType<Text>();
-        
-        foreach (var m in matches) 
-        {
-            if (m.TryGetAssignment(name, out assignment)) return true;
-        }
-        assignment = Assignment.NotProvided;
-        return false;
+        var oftype = args.OfType<T>();
+        var matches = oftype.Where(a => a.Match(name));
+        return matches;
     }
 
     public static bool TryGet<T>(this Arguments args, string name, out T item) where T : IArgument
     {
-        var items = args.Match<T>(name);
+        var items = args.Match<T>(name).ToList();
         item = items.FirstOrDefault();
         return items.Count == 1;
     }
 
+
+    public static IEnumerable<T> Match<T>(this IEnumerable<IArgument> args, Parameter parameter) where T : IArgument
+    {
+        var oftype = args.OfType<T>();
+        var matches = oftype.Where(a => a.Match(parameter)).ToList();
+        return matches;
+    }
+
     public static bool TryGet<T>(this Arguments args, Parameter parameter, out T item) where T: IArgument
     {
-        var items = args.Match<T>(parameter);
+        var items = args.Match<T>(parameter).ToList();
         item = items.FirstOrDefault();
         return items.Count == 1;
     }
@@ -120,4 +98,83 @@ public static class ArgumentsExtensions
         return false;
     }
 
+}
+
+public static class ArgumentUseExtensions
+{
+    public static bool TryUseInt(this Arguments args, int index, out int value)
+    {
+        if (args.TryGet(index, out Text text))
+        {
+            if (!args.IsUsed(text) && int.TryParse(text, out value))
+            {
+                args.Use(text);
+                return true;
+            }
+        }
+        value = default;
+        return false;
+    }
+
+    public static bool TryUseAssignment(this Arguments args, string name, out Assignment assignment)
+    {
+        var matches = args.Unused().OfType<Text>();
+
+        foreach (var m in matches)
+        {
+            if (m.TryGetAssignment(name, out assignment))
+            {
+
+                args.Use(m);
+                return true;
+            }
+        }
+        assignment = Assignment.NotProvided;
+        return false;
+    }
+    
+    public static bool TryUseEnum(this Arguments args, int index, Parameter param, out object value)
+    {
+        if (args.TryGetText(index, out Text text) && !args.IsUsed(text))
+        {
+            try
+            {
+                args.Use(text);
+                value = Enum.Parse(param.Type, text, ignoreCase: true);
+                return true;
+            }
+            catch
+            {
+            }
+        }
+        value = null;
+        return false;
+    }
+
+   
+    public static bool TryUse<T>(this Arguments args, Parameter param, out T item) where T : IArgument
+    {
+        var matches = args.Unused().Match<T>(param).ToList();
+        if (matches.Count == 1)
+        {
+            item = matches.FirstOrDefault();
+            args.Use(item);
+            return true;
+        }
+        item = default;
+        return false;
+    }
+
+    public static bool TryUseText(this Arguments args, int index, out Text text)
+    {
+        if (args.TryGet(index, out text) && !args.IsUsed(text))
+        {
+            args.Use(text);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

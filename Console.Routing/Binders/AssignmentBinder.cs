@@ -9,11 +9,10 @@ public class AssignmentBinder : IBinder
 
     public bool Match(Type type) => type == typeof(Assignment);
 
-    public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result)
     {
-        if (arguments.TryGetAssignment(param.Name, out Assignment assignment))
+        if (arguments.TryUseAssignment(param.Name, out Assignment assignment))
         {
-            used++;
             result = assignment;
             return BindStatus.Success;
         }

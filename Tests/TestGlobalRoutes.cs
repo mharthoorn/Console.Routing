@@ -1,34 +1,33 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ConsoleRouting.Tests
+namespace ConsoleRouting.Tests;
+
+[TestClass]
+public class TestGlobalRoutes
 {
-    [TestClass]
-    public class TestGlobalRoutes
+    Router router = new RouterBuilder()
+        .AddAssemblyOf<GlobalCommands>()
+        .Build();
+
+    [TestMethod]
+    public void GlobalRoute()
     {
-        Router router = new RouterBuilder()
-            .AddAssemblyOf<GlobalCommands>()
-            .Build();
+        var args = router.Parse("ding dong bar bor");
 
-        [TestMethod]
-        public void GlobalRoute()
-        {
-            var args = router.Parse("ding dong bar bor");
+        var result = router.Bind(args);
 
-            var result = router.Bind(args);
-
-            Assert.AreEqual("Foo", result.Route.Method.Name);
-        }
-
+        Assert.AreEqual("Foo", result.Route.Method.Name);
     }
 
-    
-    [Module]
-    public class GlobalCommands
+}
+
+
+[Module]
+public class GlobalCommands
+{
+    [Command, Capture("bar"), Hidden]
+    public void Foo(Arguments arguments)
     {
-        [Command, Capture("bar"), Hidden]
-        public void Foo(Arguments arguments)
-        {
-            
-        }
+        
     }
 }

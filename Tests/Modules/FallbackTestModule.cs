@@ -56,4 +56,10 @@ public class ConsumingTestModule
     {
 
     }
+
+    [Command]
+    public void Search(string source, string type, Flag<string> pages, Flag split, Arguments arguments)
+    {
+
+    }
 }

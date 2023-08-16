@@ -18,7 +18,7 @@ public class PocoBinder : IBinder
 
     public bool Match(Type type) => type.HasAttribute<Bucket>();
 
-    public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result)
     {
         Type type = param.Type;
         // check for: parameterless constructor.
@@ -34,7 +34,8 @@ public class PocoBinder : IBinder
             if (binder is null) continue;
             var memberAsParam = member.AsRoutingParameter();
 
-            var status = binder.TryUse(arguments, memberAsParam, index, ref used, out object value);
+            
+            var status = binder.TryUse(arguments, memberAsParam, index, out object value);
             if (status is BindStatus.Failed) return status;
 
             member.SetValue(result, value);

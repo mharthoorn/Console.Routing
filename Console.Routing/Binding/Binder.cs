@@ -101,17 +101,18 @@ public class Binder
     // from the command line that will set those paremeters.
     private bool TryBindParameters(Parameters parameters, Arguments arguments, out object[] values)
     {
+        arguments = arguments.Clone();
         values = new object[parameters.Count];
 
         int index = 0; // index of parameters
-        int used = 0; // arguments used;
+        //int used = 0; // arguments used;
 
         foreach (var param in parameters)
         {
             var binder = binders.FindMatch(param.Type);
             if (binder is null) return false;
 
-            var status = binder.TryUse(arguments, param, index, ref used, out object value);
+            var status = binder.TryUse(arguments, param, index, out object value);
             if (status == BindStatus.Success)
             {
                 values[index++] = value;
@@ -126,7 +127,7 @@ public class Binder
                 return false;
             }
         }
-        bool success = (arguments.Count == used);
+        bool success = arguments.AllUsed();
         return success; 
     }
 

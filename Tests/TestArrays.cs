@@ -59,7 +59,7 @@ public class TestArrays
         var args = router.Parse("allarray a b c");
         var result = router.Bind(args);
 
-        Assert.IsFalse(result.Ok);
+        Assert.IsTrue(result.Ok);
         Assert.AreEqual(1, result.Candidates.Count);
         Assert.AreEqual("AllArray", result.Candidates[0].Route.Method.Name);
     }
@@ -78,5 +78,20 @@ public class TestArrays
         Assert.AreEqual("c", arguments[0].Value);
         Assert.AreEqual("d", arguments[1].Value);
         Assert.AreEqual("e", arguments[2].Value);
+    }
+
+    [TestMethod]
+    public void AssignmentsAsArguments()
+    {
+        Router router = new RouterBuilder().AddModule<ConsumingTestModule>().Build();
+        var args = router.Parse("search srv Patient _count=2 --split");
+        var result = router.Bind(args);
+
+        Assert.AreEqual("Search", result.Bind.Route.Method.Name);
+        Assert.AreEqual(5, result.Bind.Parameters.Length);
+        Assert.IsInstanceOfType(result.Bind.Parameters[4], typeof(Arguments));
+        var arguments = result.Bind.Parameters[4] as Arguments;
+        Assert.AreEqual("_count=2", arguments[0].Value);
+        
     }
 }

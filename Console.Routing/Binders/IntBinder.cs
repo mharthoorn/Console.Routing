@@ -9,11 +9,10 @@ public class IntBinder : IBinder
 
     public bool Match(Type type) => type == typeof(int);
 
-    public BindStatus TryUse(Arguments arguments, Parameter param, int index, ref int used, out object result)
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result)
     {
-        if (arguments.TryGetInt(index, out int i))
+        if (arguments.TryUseInt(index, out int i))
         {
-            used++;
             result = i;
             return BindStatus.Success;
         }

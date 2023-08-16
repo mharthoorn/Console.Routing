@@ -7,35 +7,50 @@ namespace ConsoleRouting;
 [DebuggerDisplay("{Text}")]
 public class Arguments : List<IArgument>
 {
-    //List<IArgument> arguments = new();
-    //public IArgument this[int index] => arguments[index];
-    //public int Count => arguments.Count;
-
+    List<bool> used = new();
+    
     public Arguments(IEnumerable<IArgument> arguments)
     {
-        
-        this.AddRange(arguments);
+        foreach (var arg in arguments)
+        {
+            this.Add(arg);
+            this.used.Add(false);
+        }
     }
 
-//        public Arguments(IEnumerable<IArgument> arguments)
-//        {
-////            this.Commands = commands;
-//            this.AddRange(arguments);
-//        }
-
-    public IList<T> Match<T>(string name) where T: IArgument
+    public void Use(IArgument argument)
     {
-        var oftype = this.OfType<T>();
-        var matches = oftype.Where(a => a.Match(name)).ToList();
-        return matches;
+        int index = this.IndexOf(argument);
+        used[index] = true;
     }
 
-    public IList<T> Match<T>(Parameter parameter) where T : IArgument
+    public void UseAll()
     {
-        var oftype = this.OfType<T>();
-        var matches = oftype.Where(a => a.Match(parameter)).ToList();
-        return matches;
+        for (int i = 0; i < used.Count; i++) used[i] = true;
     }
+
+    public bool IsUsed(IArgument argument)
+    {
+        int index = this.IndexOf(argument);
+        return used[index];
+    }
+    public bool AllUsed()
+    {
+        foreach(bool u in used)
+        {
+            if (u == false) return false;
+        }
+        return true;
+    }
+
+    public IEnumerable<IArgument> Unused()
+    {
+        for (int i = 0; i < used.Count; i++) 
+        {
+            if (used[i] == false) yield return this[i];
+        }
+    }
+
      
     public bool TryGetCommand(int index, out string result) 
     {

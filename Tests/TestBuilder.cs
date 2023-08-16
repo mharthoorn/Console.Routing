@@ -1,30 +1,29 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 
-namespace ConsoleRouting.Tests
-{
-    [TestClass]
-    public class TestBuilder
-    {
-        [TestMethod]
-        public void TestGlobals()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var router = new RouterBuilder().AddAssembly(assembly).Build();
-            var args=  router.Parse("--alpha --beta --gamma");
-            var result = router.Bind(args);
-            
-            Assert.IsTrue(BuilderSettings.Beta);
-            Assert.IsTrue(BuilderSettings.Gamma);
-            Assert.IsFalse(BuilderSettings.Delta);
-        }
-    }
+namespace ConsoleRouting.Tests;
 
-    [Global]
-    public static class BuilderSettings
+[TestClass]
+public class TestBuilder
+{
+    [TestMethod]
+    public void TestGlobals()
     {
-        public static bool Beta { get; set; }
-        public static bool Gamma { get; set; }
-        public static bool Delta { get; set; }
+        var assembly = Assembly.GetExecutingAssembly();
+        var router = new RouterBuilder().AddAssembly(assembly).Build();
+        var args=  router.Parse("--alpha --beta --gamma");
+        var result = router.Bind(args);
+        
+        Assert.IsTrue(BuilderSettings.Beta);
+        Assert.IsTrue(BuilderSettings.Gamma);
+        Assert.IsFalse(BuilderSettings.Delta);
     }
+}
+
+[Global]
+public static class BuilderSettings
+{
+    public static bool Beta { get; set; }
+    public static bool Gamma { get; set; }
+    public static bool Delta { get; set; }
 }

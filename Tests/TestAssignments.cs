@@ -1,92 +1,90 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace ConsoleRouting.Tests
+namespace ConsoleRouting.Tests;
+
+[TestClass]
+public class TestAssignments
 {
-    [TestClass]
-    public class TestAssignments
+    Router router = new RouterBuilder().AddAssemblyOf<ToolModule>().Build();
+
+    [TestMethod]
+    public void BasicAssignments()
     {
-        Router router = new RouterBuilder().AddAssemblyOf<ToolModule>().Build();
+        var arguments = router.Parser.Parse("single a=b");
+        var result = router.Bind(arguments);
+    
+        Assert.AreEqual(1, result.Routes.Count());
+        Assert.AreEqual("Single", result.Route.Method.Name);
+        Assert.AreEqual(2, result.Arguments.Count);
 
-        [TestMethod]
-        public void BasicAssignments()
-        {
-            var arguments = router.Parser.Parse("single a=b");
-            var result = router.Bind(arguments);
+        var args = result.Bind.Parameters;
+
+        Assert.AreEqual(1, args.Length);
+        Assert.IsTrue(args[0] is Assignment);
         
-            Assert.AreEqual(1, result.Routes.Count());
-            Assert.AreEqual("Single", result.Route.Method.Name);
-            Assert.AreEqual(2, result.Arguments.Count);
+        var assignment = args[0] as Assignment;
+        Assert.AreEqual("a", assignment.Key);
+        Assert.AreEqual("b", assignment.Value);
+    }
 
-            var args = result.Bind.Parameters;
+    [TestMethod]
+    public void TestExpressions()
+    {
+        // even though the query might contain an equals sign, it should not be treated as an assignment
 
-            Assert.AreEqual(1, args.Length);
-            Assert.IsTrue(args[0] is Assignment);
-            
-            var assignment = args[0] as Assignment;
-            Assert.AreEqual("a", assignment.Key);
-            Assert.AreEqual("b", assignment.Value);
+        var arguments = router.Parse("expression -f 'name.where(given=''john'')'");
+        var result = router.Bind(arguments);
+        
+        var args = result.Bind.Parameters;
+        Assert.IsTrue(args[0] is Flag);
+        if (args[0] is Flag f)
+            Assert.AreEqual("f", f.Name);
+
+        Assert.IsTrue(args[1] is string);
+        if (args[0] is string raw)
+            Assert.AreEqual("'name.where(given=''john'')'", raw);
+    }
+
+
+    [TestMethod]
+    public void TestMix()
+    { 
+        // even though the query might contain an equals sign, it should not be treated as an assignment
+
+        var arguments = router.Parse("mix format=xml 'name.where(given=''john'')'");
+        var result = router.Bind(arguments);
+
+        var args = result.Bind.Parameters;
+        Assert.IsTrue(args[0] is Assignment);
+        if (args[0] is Assignment a)
+        { 
+            Assert.AreEqual("format", a.Key);
+            Assert.AreEqual("xml", a.Value);
         }
 
-        [TestMethod]
-        public void TestExpressions()
+        Assert.IsTrue(args[1] is string);
+        if (args[0] is string raw)
+            Assert.AreEqual("'name.where(given=''john'')'", raw);
+    }
+
+    [TestMethod]
+    public void AssignmentsAreOptional() 
+    { 
+        // even though the query might contain an equals sign, it should not be treated as an assignment
+
+        var arguments = router.Parse("orderfries");
+        var result = router.Bind(arguments);
+
+        var args = result.Bind.Parameters;
+        Assert.IsTrue(args[0] is Assignment);
+        if (args[0] is Assignment assignment)
         {
-            // even though the query might contain an equals sign, it should not be treated as an assignment
+            Assert.AreEqual(false, assignment.Provided);
+            Assert.AreEqual(null, assignment.Key);
+            Assert.AreEqual(null, assignment.Value);
 
-            var arguments = router.Parse("expression -f 'name.where(given=''john'')'");
-            var result = router.Bind(arguments);
-            
-            var args = result.Bind.Parameters;
-            Assert.IsTrue(args[0] is Flag);
-            if (args[0] is Flag f)
-                Assert.AreEqual("f", f.Name);
-
-            Assert.IsTrue(args[1] is string);
-            if (args[0] is string raw)
-                Assert.AreEqual("'name.where(given=''john'')'", raw);
         }
-
-
-        [TestMethod]
-        public void TestMix()
-        { 
-            // even though the query might contain an equals sign, it should not be treated as an assignment
-
-            var arguments = router.Parse("mix format=xml 'name.where(given=''john'')'");
-            var result = router.Bind(arguments);
-
-            var args = result.Bind.Parameters;
-            Assert.IsTrue(args[0] is Assignment);
-            if (args[0] is Assignment a)
-            { 
-                Assert.AreEqual("format", a.Key);
-                Assert.AreEqual("xml", a.Value);
-            }
-
-            Assert.IsTrue(args[1] is string);
-            if (args[0] is string raw)
-                Assert.AreEqual("'name.where(given=''john'')'", raw);
-        }
-
-        [TestMethod]
-        public void AssignmentsAreOptional() 
-        { 
-            // even though the query might contain an equals sign, it should not be treated as an assignment
-
-            var arguments = router.Parse("orderfries");
-            var result = router.Bind(arguments);
-
-            var args = result.Bind.Parameters;
-            Assert.IsTrue(args[0] is Assignment);
-            if (args[0] is Assignment assignment)
-            {
-                Assert.AreEqual(false, assignment.Provided);
-                Assert.AreEqual(null, assignment.Key);
-                Assert.AreEqual(null, assignment.Value);
-
-            }
-        }
-
     }
 
 }
