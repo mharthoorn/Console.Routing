@@ -98,6 +98,27 @@ public static class ArgumentsExtensions
         return false;
     }
 
+
+    public static IEnumerable<Assignment> UseAssignments(this Arguments arguments)
+    {
+        foreach (var arg in arguments)
+        {
+            if (arg is Text text && text.TryGetAssignment(out Assignment assignment))
+            {
+                if (!arguments.IsUsed(arg))
+                {
+                    arguments.Use(arg);
+                    yield return assignment;
+                }
+            }
+        }
+    }
+
+    public static void Use(this Arguments arguments, IEnumerable<IArgument> args)
+    {
+        foreach (var arg in args) arguments.Use(arg);
+    }
+
 }
 
 public static class ArgumentUseExtensions

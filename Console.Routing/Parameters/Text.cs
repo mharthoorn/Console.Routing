@@ -36,6 +36,17 @@ public class Text : IArgument
         return match;
     }
 
+    public bool TryGetAssignment(out Assignment assignment)
+    {
+        var parts = Value.Split('=');
+        var ok = parts.Length == 2;
+        assignment = ok
+            ? new Assignment(parts[0], parts[1])
+            : Assignment.NotProvided;
+
+        return ok;
+    }
+
     public bool IsLiteral()
     {
         return Regex.IsMatch(Value, @"^[a-zA-Z]+$");

@@ -87,4 +87,26 @@ public class TestAssignments
         }
     }
 
+    [TestMethod]
+    public void TestAssignmentsArray()
+    {
+        var arguments = router.Parse("assignmentsarray number=3 name=John animal=Dog");
+        var result = router.Bind(arguments);
+        Assert.AreEqual(1, result.Bind.Parameters.Length);
+        Assert.IsTrue(result.Bind.Parameters[0] is Assignment[]);
+        if (result.Bind.Parameters[0] is Assignment[] a)
+        {
+            Assert.AreEqual("number", a[0].Key);
+            Assert.AreEqual("3", a[0].Value);
+
+            Assert.AreEqual("name", a[1].Key);
+            Assert.AreEqual("John", a[1].Value);
+
+            Assert.AreEqual("animal", a[2].Key);
+            Assert.AreEqual("Dog", a[2].Value);
+        }
+
+
+    }
+
 }

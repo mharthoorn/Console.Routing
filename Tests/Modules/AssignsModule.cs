@@ -28,6 +28,12 @@
         {
              
         }
+
+        [Command] 
+        public void AssignmentsArray(Assignment[] assignments)
+        {
+
+        }
     }
     
 }

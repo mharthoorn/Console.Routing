@@ -26,6 +26,21 @@ public class ArgumentsBinder : IBinder
     }
 }
 
+public class AssignmentArrayBinder : IBinder
+{
+    public bool Optional => true;
+
+    public bool Match(Type type) => type == typeof(Assignment[]);
+
+
+    public BindStatus TryUse(Arguments arguments, Parameter param, int index, out object result)
+    {
+        result = arguments.UseAssignments().ToArray();
+    
+        return BindStatus.Success;
+    }
+}
+
 public class StringArrayBinder : IBinder
 {
     public bool Optional => true;

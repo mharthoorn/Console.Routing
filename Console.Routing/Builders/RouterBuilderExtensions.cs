@@ -67,6 +67,7 @@ public static class RouterBuilderExtensions
         binders.Add(new EnumBinder());
         binders.Add(new IntBinder());
         binders.Add(new AssignmentBinder());
+        binders.Add(new AssignmentArrayBinder());
         binders.Add(new FlagValueBinder());
         binders.Add(new FlagBinder());
         binders.Add(new BoolBinder());
